@@ -1,0 +1,68 @@
+/* ═══════════════════════════════════════════════
+   SKZ TRACKER — Design Tokens
+   Paleta: Crows & Roses
+   ═══════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --bg-base:     #111111;
+  --bg-surface:  #1C1C1C;
+  --bg-elevated: #2A2A2A;
+  --bg-hover:    #333333;
+
+  --accent:       #F2C4CE;
+  --accent-deep:  #C47A90;
+  --accent-muted: rgba(242, 196, 206, 0.12);
+  --accent-border:rgba(242, 196, 206, 0.20);
+
+  --text-primary:   #F0EAE0;
+  --text-secondary: #D4C5A9;
+  --text-muted:     #7A7575;
+  --text-faint:     #4A4848;
+
+  --status-pending-color:  #C4773A;
+  --status-pending-bg:     rgba(196, 119, 58, 0.12);
+  --status-pending-border: rgba(196, 119, 58, 0.25);
+
+  --status-transit-color:  #9A8FAA;
+  --status-transit-bg:     rgba(154, 143, 170, 0.12);
+  --status-transit-border: rgba(154, 143, 170, 0.25);
+
+  --status-done-color:  #5A9A6A;
+  --status-done-bg:     rgba(90, 154, 106, 0.12);
+  --status-done-border: rgba(90, 154, 106, 0.25);
+
+  --status-waiting-color:  #7A7575;
+  --status-waiting-bg:     rgba(122, 117, 117, 0.10);
+  --status-waiting-border: rgba(122, 117, 117, 0.20);
+
+  --status-cancelled-color:  #A05050;
+  --status-cancelled-bg:     rgba(160, 80, 80, 0.10);
+  --status-cancelled-border: rgba(160, 80, 80, 0.20);
+
+  --border:       rgba(255, 255, 255, 0.07);
+  --border-hover: rgba(255, 255, 255, 0.13);
+  --border-accent:rgba(242, 196, 206, 0.22);
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', -apple-system, sans-serif;
+  --font-mono:    'Courier New', Courier, monospace;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10:40px;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-pill: 100px;
+
+  --transition: 180ms ease;
+}
