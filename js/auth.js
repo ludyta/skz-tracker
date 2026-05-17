@@ -1,17 +1,17 @@
 const CONFIG = {
   CLIENT_ID:  '866600271883-9gmf20e4aqr5gimnbic80hg9ojd56o0a.apps.googleusercontent.com',
-  SHEET_ID:   '1TdQGVXt9dTZGgkDi0jENVtNCl03puUuv',
+  SHEET_ID:   '1WXAYkDfD3DPtPawQBOtUmbw5uhH1oxpJ-0cc-JjMHeo',
   SCOPES:     'https://www.googleapis.com/auth/spreadsheets',
   DISCOVERY:  'https://sheets.googleapis.com/$discovery/rest?version=v4',
   SHEETS: {
-    ITEMS:       '📦 Itens',
-    PAYMENTS:    '💸 Pagamentos',
-    COMMUNITIES: '🏘️ Comunidades',
+    ITEMS:       'Itens',
+    PAYMENTS:    'Pagamentos',
+    COMMUNITIES: 'Comunidades',
   },
   RANGES: {
-    ITEMS:       '📦 Itens!A4:AB503',
-    COMMUNITIES: '🏘️ Comunidades!A4:F103',
-    PAYMENTS:    '💸 Pagamentos!A4:F1003',
+    ITEMS:       'Itens!A4:AB',
+    COMMUNITIES: 'Comunidades!A3:F',
+    PAYMENTS:    'Pagamentos!A3:F',
   },
 };
 
@@ -138,21 +138,14 @@ const COL = {
   STATUS:     17,
   ETAPA:      18,
   DATA_CLAIM: 19,
-  VL_ALF:     21,
-  ST_ALF:     22,
-  VL_FNAC:    23,
-  ST_FNAC:    24,
-  TOTAL_PAGO: 25,
-  PENDENTE:   26,
-  DATA_REC:   27,
-};
-
-const STATUS = {
-  PENDING:   '💰 Pgto pendente',
-  TRANSIT:   '🚢 Em trânsito',
-  WAITING:   '⏳ Aguardando',
-  DONE:      '✅ Recebido',
-  CANCELLED: '❌ Cancelado',
+  NOTAS:      20,
+  DATA_REC:   21,
+  VL_ALF:     22,
+  ST_ALF:     23,
+  VL_FNAC:    24,
+  ST_FNAC:    25,
+  TOTAL_PAGO: 26,
+  PENDENTE:   27,
 };
 
 function statusClass(status) {
