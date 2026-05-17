@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Novo item — SKZ Tracker</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <style>
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 13px; text-decoration: none; margin-bottom: 20px; transition: color var(--transition); }
+    .back-btn:hover { color: var(--text-primary); }
+    .step-indicator { display: flex; gap: 6px; margin-bottom: 28px; }
+    .step-dot { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background var(--transition); }
+    .step-dot.active { background: var(--accent); }
+    .step-dot.done   { background: var(--status-done-color); }
+    .form-step { display: none; }
+    .form-step.active { display: block; }
+    .step-title { font-family: var(--font-display); font-size: 20px; margin-bottom: 4px; }
+    .step-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+    .field { margin-bottom: var(--space-4); }
+    .field label { display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+    .field input, .field select { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; font-family: var(--font-body); font-size: 14px; color: var(--text-primary); outline: none; transition: border-color var(--transition); -webkit-appearance: none; }
+    .field input:focus, .field select:focus { border-color: var(--accent-border); }
+    .field input::placeholder { color: var(--text-faint); }
+    .field-hint { font-size: 11px; color: var(--text-faint); margin-top: 5px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+    .conditional { display: none; }
+    .conditional.show { display: block; }
+    .nav-btns { display: flex; gap: var(--space-3); margin-top: var(--space-6); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { animation: spin 1s linear infinite; display: inline-block; }
+    .success-screen { display: none; text-align: center; padding: 48px 24px; }
+    .success-screen.show { display: block; }
+    .success-icon { font-size: 48px; color: var(--status-done-color); display: block; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="../index.html" class="navbar-brand"><div class="brand-dot"></div>SKZ Tracker</a>
+    <div class="navbar-nav">
+      <a href="../index.html" class="nav-link"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a>
+      <a href="items.html" class="nav-link"><i class="ti ti-package"></i><span>Itens</span></a>
+      <a href="portfolio.html" class="nav-link"><i class="ti ti-grid-dots"></i><span>Portfólio</span></a>
+    </div>
+    <div style="margin-left:16px;">
+      <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()"><i class="ti ti-logout" style="font-size:15px;"></i></button>
+    </div>
+  </nav>
+  <main class="container" style="padding-top:24px; padding-bottom:60px; max-width:560px;">
+    <a href="items.html" class="back-btn"><i class="ti ti-arrow-left"></i> Voltar</a>
+    <h1 style="margin-bottom:6px;">Novo item</h1>
+    <div class="step-indicator" id="step-indicator">
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+    </div>
+    <div class="form-step active" id="step-1">
+      <div class="step-title">Identificação</div>
+      <div class="step-sub">Sobre o item que você está comprando.</div>
+      <div class="field">
+        <label>Tipo de item</label>
+        <select id="f-tipo">
+          <option value="">Selecione...</option>
+          <option>Photocard</option><option>Álbum</option><option>Merch</option><option>Incluso de Álbum</option><option>Outro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Comeback</label>
+        <select id="f-comeback">
+          <option value="">Selecione...</option>
+          <option>DO IT</option><option>Karma</option><option>Malestar</option><option>5-STAR</option><option>MAXIDENT</option><option>ODDINARY</option><option>NOEASY</option><option>Outro</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Set / POB</label><input type="text" id="f-set" placeholder="ex: Malestar POB"></div>
+        <div class="field"><label>Nº do set</label><input type="number" id="f-numset" placeholder="ex: 3"></div>
+      </div>
+      <div class="field">
+        <label>Link da imagem</label>
+        <input type="url" id="f-img" placeholder="https://...">
+        <div class="field-hint">Link direto da foto do item (Google Drive, etc.)</div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn btn-primary" style="flex:1;" onclick="goStep(2)">Próximo <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+    <div class="form-step" id="step-2">
+      <div class="step-title">Claim & Origem</div>
+      <div class="step-sub">Como foi feito o claim e de onde vem.</div>
+      <div class="field">
+        <label>Tipo de claim</label>
+        <select id="f-claim-type" onchange="onClaimType()">
+          <option value="">Selecione...</option>
+          <option>Por membro (OT8)</option><option>Set genérico</option><option>Sem claim</option>
+        </select>
+      </div>
+      <div class="conditional" id="cond-membro">
+        <div class="field">
+          <label>Membro</label>
+          <select id="f-membro">
+            <option value="">Selecione...</option>
+            <option>Bang Chan</option><option>Lee Know</option><option>Changbin</option>
+            <option>Hyunjin</option><option>Han</option><option>Felix</option>
+            <option>Seungmin</option><option>I.N</option><option>OT8</option>
+          </select>
+        </div>
+      </div>
+      <div class="conditional" id="cond-numclaim">
+        <div class="field">
+          <label>Nº do item no set</label>
+          <input type="number" id="f-numclaim" placeholder="ex: 7">
+        </div>
+      </div>
+      <div class="field"><label>Comunidade</label><input type="text" id="f-comunidade" placeholder="Nome do grupo no WhatsApp"></div>
+      <div class="field"><label>GOM / CEG</label><input type="text" id="f-gom" placeholder="Nome da organizadora"></div>
+      <div class="field"><label>Link da planilha da CEG</label><input type="url" id="f-link-ceg" placeholder="https://docs.google.com/..."></div>
+      <div class="field"><label>Data do claim</label><input type="date" id="f-data-claim"></div>
+      <div class="nav-btns">
+        <button class="btn btn-ghost" style="flex:1;" onclick="goStep(1)"><i class="ti ti-arrow-left"></i> Voltar</button>
+        <button class="btn btn-primary" style="flex:2;" onclick="goStep(3)">Próximo <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+    <div class="form-step" id="step-3">
+      <div class="step-title">Valor do item</div>
+      <div class="step-sub">Quanto você pagou ou vai pagar pelo item.</div>
+      <div class="field"><label>Valor do item (R$)</label><input type="number" id="f-vl-item" placeholder="0.00" step="0.01" min="0"></div>
+      <div class="field">
+        <label>Status do pagamento do item</label>
+        <select id="f-st-item">
+          <option>Aguardando cobrança</option>
+          <option>Cobrado — pendente</option>
+          <option>Pago</option>
+        </select>
+      </div>
+      <div class="field-hint" style="margin-top:-8px; margin-bottom:16px;">Os fretes você atualiza depois, na tela de detalhe do item.</div>
+      <div class="nav-btns">
+        <button class="btn btn-ghost" style="flex:1;" onclick="goStep(2)"><i class="ti ti-arrow-left"></i> Voltar</button>
+        <button class="btn btn-primary" style="flex:2;" onclick="submit()" id="submit-btn"><i class="ti ti-check"></i> Salvar item</button>
+      </div>
+    </div>
+    <div class="success-screen" id="success-screen">
+      <i class="ti ti-circle-check success-icon"></i>
+      <h2 style="margin-bottom:8px;">Item salvo!</h2>
+      <p style="color:var(--text-muted); font-size:13px; margin-bottom:28px;">O item foi adicionado à sua planilha.</p>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <a href="items.html" class="btn btn-primary" style="justify-content:center;"><i class="ti ti-list"></i> Ver todos os itens</a>
+        <button class="btn btn-ghost" onclick="resetForm()" style="justify-content:center;"><i class="ti ti-plus"></i> Adicionar outro item</button>
+      </div>
+    </div>
+  </main>
+  <script src="../js/auth.js"></script>
+  <script>
+    let currentStep = 1;
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      const restored = await Auth.tryRestore();
+      if (!restored) { window.location.href = '../index.html'; return; }
+    });
+    function goStep(n) {
+      if (n > currentStep && !validateStep(currentStep)) return;
+      document.getElementById('step-' + currentStep).classList.remove('active');
+      currentStep = n;
+      document.getElementById('step-' + currentStep).classList.add('active');
+      updateIndicator();
+      window.scrollTo(0, 0);
+    }
+    function updateIndicator() {
+      document.querySelectorAll('.step-dot').forEach((dot, i) => {
+        dot.classList.remove('active','done');
+        if (i + 1 === currentStep) dot.classList.add('active');
+        if (i + 1 < currentStep)  dot.classList.add('done');
+      });
+    }
+    function validateStep(n) {
+      if (n === 1) {
+        if (!document.getElementById('f-tipo').value)     { alert('Selecione o tipo de item.'); return false; }
+        if (!document.getElementById('f-comeback').value) { alert('Selecione o comeback.'); return false; }
+      }
+      if (n === 2) {
+        if (!document.getElementById('f-claim-type').value) { alert('Selecione o tipo de claim.'); return false; }
+        if (!document.getElementById('f-comunidade').value) { alert('Informe a comunidade.'); return false; }
+        if (!document.getElementById('f-gom').value)        { alert('Informe a GOM/CEG.'); return false; }
+      }
+      return true;
+    }
+    function onClaimType() {
+      const val = document.getElementById('f-claim-type').value;
+      document.getElementById('cond-membro').classList.toggle('show', val === 'Por membro (OT8)');
+      document.getElementById('cond-numclaim').classList.toggle('show', val === 'Set genérico');
+    }
+    async function submit() {
+      if (!validateStep(3)) return;
+      const btn = document.getElementById('submit-btn');
+      btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
+      btn.disabled = true;
+      const g = id => document.getElementById(id).value;
+      const row = [
+        g('f-tipo'), g('f-comeback'), g('f-set'), g('f-numset'), g('f-img'),
+        g('f-claim-type'), g('f-membro'), g('f-numclaim'),
+        g('f-comunidade'), g('f-gom'), g('f-link-ceg'),
+        g('f-vl-item'), g('f-st-item'),
+        '', 'Aguardando cobrança',
+        '', 'Aguardando cobrança',
+        '', '',
+        g('f-data-claim'), '',
+        '', 'Aguardando cobrança',
+        '', 'Aguardando cobrança',
+      ];
+      try {
+        await Sheets.append(CONFIG.RANGES.ITEMS, [row]);
+        document.getElementById('step-3').classList.remove('active');
+        document.getElementById('success-screen').classList.add('show');
+        document.getElementById('step-indicator').style.display = 'none';
+      } catch(e) {
+        alert('Erro ao salvar. Tente novamente.');
+        btn.innerHTML = '<i class="ti ti-check"></i> Salvar item';
+        btn.disabled = false;
+      }
+    }
+    function resetForm() {
+      document.querySelectorAll('input, select').forEach(el => el.value = '');
+      document.getElementById('success-screen').classList.remove('show');
+      document.getElementById('step-indicator').style.display = 'flex';
+      currentStep = 1;
+      document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step-1').classList.add('active');
+      updateIndicator();
+      document.getElementById('submit-btn').innerHTML = '<i class="ti ti-check"></i> Salvar item';
+      document.getElementById('submit-btn').disabled = false;
+    }
+  </script>
+</body>
+</html>
