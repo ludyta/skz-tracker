@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurações — SKZ Tracker</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <style>
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 13px; text-decoration: none; margin-bottom: 20px; transition: color var(--transition); }
+    .back-btn:hover { color: var(--text-primary); }
+    .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--space-3); margin-top: var(--space-5); display: flex; align-items: center; gap: var(--space-2); }
+    .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+    .list-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 12px; }
+    .list-items { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+    .list-item { display: flex; align-items: center; gap: 8px; background: var(--bg-elevated); border-radius: var(--radius-md); padding: 8px 12px; }
+    .list-item-text { flex: 1; font-size: 13px; color: var(--text-primary); }
+    .list-item-edit { display: none; flex: 1; }
+    .list-item-edit input { width: 100%; background: transparent; border: none; font-size: 13px; color: var(--text-primary); font-family: var(--font-body); outline: none; }
+    .list-item.editing .list-item-text { display: none; }
+    .list-item.editing .list-item-edit { display: flex; }
+    .icon-btn { width: 28px; height: 28px; border-radius: var(--radius-sm); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-faint); transition: all var(--transition); background: transparent; flex-shrink: 0; }
+    .icon-btn:hover { border-color: var(--border-hover); color: var(--text-primary); }
+    .icon-btn.danger:hover { border-color: var(--status-cancelled-border); color: var(--status-cancelled-color); }
+    .icon-btn.save { border-color: var(--status-done-border); color: var(--status-done-color); }
+    .add-row { display: flex; gap: 8px; }
+    .add-row input { flex: 1; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px 12px; font-family: var(--font-body); font-size: 13px; color: var(--text-primary); outline: none; transition: border-color var(--transition); }
+    .add-row input:focus { border-color: var(--accent-border); }
+    .add-row input::placeholder { color: var(--text-faint); }
+    .empty-state { text-align: center; padding: 48px 16px; color: var(--text-muted); }
+    .empty-state i { font-size: 32px; display: block; margin-bottom: 12px; color: var(--text-faint); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { animation: spin 1s linear infinite; display: inline-block; }
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 16px; font-size: 12px; color: var(--text-primary); display: none; z-index: 100; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="../index.html" class="navbar-brand"><div class="brand-dot"></div>SKZ Tracker</a>
+    <div class="navbar-nav">
+      <a href="../index.html" class="nav-link"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a>
+      <a href="items.html" class="nav-link"><i class="ti ti-package"></i><span>Itens</span></a>
+      <a href="portfolio.html" class="nav-link"><i class="ti ti-grid-dots"></i><span>Portfólio</span></a>
+      <a href="communities.html" class="nav-link"><i class="ti ti-building-community"></i><span>Comunidades</span></a>
+    </div>
+    <div style="margin-left:16px;">
+      <a href="settings.html" class="btn btn-ghost" style="padding:6px 10px;" title="Configurações"><i class="ti ti-settings" style="font-size:15px;"></i></a>
+      <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()"><i class="ti ti-logout" style="font-size:15px;"></i></button>
+    </div>
+  </nav>
+  <main class="container" style="padding-top:24px; padding-bottom:80px;">
+    <a href="../index.html" class="back-btn"><i class="ti ti-arrow-left"></i> Voltar</a>
+    <h1 style="margin-bottom:4px;">Configurações</h1>
+    <p style="color:var(--text-muted); font-size:13px; margin-bottom:0;">Gerencie as opções dos dropdowns do app.</p>
+    <div id="content"><div class="empty-state"><i class="ti ti-loader spinner"></i><p>Carregando...</p></div></div>
+  </main>
+  <div class="toast" id="toast"></div>
+  <script src="../js/auth.js"></script>
+  <script>
+    const LISTS = [
+      { key: 'tipo',     title: 'Tipos de item', placeholder: 'ex: Photocard' },
+      { key: 'comeback', title: 'Comebacks',      placeholder: 'ex: MIROH' },
+      { key: 'membro',   title: 'Membros',        placeholder: 'ex: Han' },
+    ];
+    let data = {};
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      const restored = await Auth.tryRestore();
+      if (!restored) { window.location.href = '../index.html'; return; }
+      await loadLists();
+    });
+
+    async function loadLists() {
+      const rows = await Sheets.get('Listas!A2:E100');
+      LISTS.forEach(list => { data[list.key] = []; });
+      (rows||[]).forEach(row => {
+        LISTS.forEach((list, i) => { if (row[i] && row[i].trim()) data[list.key].push(row[i].trim()); });
+      });
+      render();
+    }
+
+    function render() {
+      document.getElementById('content').innerHTML = LISTS.map(list => `
+        <div class="section-title">${list.title} <span></span></div>
+        <div class="list-card">
+          <div class="list-items" id="items-${list.key}">${renderItems(list)}</div>
+          <div class="add-row">
+            <input type="text" id="new-${list.key}" placeholder="${list.placeholder}" onkeydown="if(event.key==='Enter')addItem('${list.key}')">
+            <button class="btn btn-primary" style="padding:8px 14px;font-size:12px;" onclick="addItem('${list.key}')"><i class="ti ti-plus"></i></button>
+          </div>
+        </div>`).join('');
+    }
+
+    function renderItems(list) {
+      if (!data[list.key].length) return `<p style="font-size:13px;color:var(--text-faint);text-align:center;padding:8px 0;">Nenhum item ainda.</p>`;
+      return data[list.key].map((item, idx) => `
+        <div class="list-item" id="${list.key}-${idx}">
+          <div class="list-item-text">${item}</div>
+          <div class="list-item-edit"><input type="text" value="${item}" onkeydown="if(event.key==='Enter')saveItem('${list.key}',${idx})"></div>
+          <button class="icon-btn" onclick="editItem('${list.key}',${idx})"><i class="ti ti-pencil" style="font-size:12px;"></i></button>
+          <button class="icon-btn save" onclick="saveItem('${list.key}',${idx})" style="display:none;" id="save-${list.key}-${idx}"><i class="ti ti-check" style="font-size:12px;"></i></button>
+          <button class="icon-btn danger" onclick="removeItem('${list.key}',${idx})"><i class="ti ti-trash" style="font-size:12px;"></i></button>
+        </div>`).join('');
+    }
+
+    function editItem(key, idx) {
+      const el = document.getElementById(`${key}-${idx}`);
+      el.classList.add('editing');
+      document.getElementById(`save-${key}-${idx}`).style.display = 'flex';
+      el.querySelector('.list-item-edit input').focus();
+    }
+
+    async function saveItem(key, idx) {
+      const el = document.getElementById(`${key}-${idx}`);
+      const newVal = el.querySelector('.list-item-edit input').value.trim();
+      if (!newVal) return;
+      data[key][idx] = newVal;
+      await saveList();
+      reRenderList(key);
+    }
+
+    async function removeItem(key, idx) {
+      if (!confirm(`Remover "${data[key][idx]}"?`)) return;
+      data[key].splice(idx, 1);
+      await saveList();
+      reRenderList(key);
+    }
+
+    async function addItem(key) {
+      const input = document.getElementById(`new-${key}`);
+      const val = input.value.trim();
+      if (!val) return;
+      if (data[key].includes(val)) { showToast('Este item já existe!'); return; }
+      data[key].push(val);
+      await saveList();
+      input.value = '';
+      reRenderList(key);
+    }
+
+    async function saveList() {
+      const maxRows = Math.max(...LISTS.map(l => data[l.key].length), 1);
+      const rows = Array.from({ length: maxRows }, (_, i) => LISTS.map(l => data[l.key][i] || ''));
+      try {
+        await Sheets.set(`Listas!A2:C${maxRows + 1}`, rows);
+        showToast('Salvo!');
+      } catch(e) { showToast('Erro ao salvar.'); }
+    }
+
+    function reRenderList(key) {
+      const list = LISTS.find(l => l.key === key);
+      document.getElementById(`items-${key}`).innerHTML = renderItems(list);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.style.display = 'block';
+      setTimeout(() => t.style.display = 'none', 2000);
+    }
+  </script>
+</body>
+</html>
