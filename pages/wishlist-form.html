@@ -35,6 +35,7 @@
       <a href="portfolio.html" class="nav-link active"><i class="ti ti-grid-dots"></i><span>Portfólio</span></a>
     </div>
     <div style="margin-left:16px;">
+      <a href="settings.html" class="btn btn-ghost" style="padding:6px 10px;" title="Configurações"><i class="ti ti-settings" style="font-size:15px;"></i></a>
       <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()"><i class="ti ti-logout" style="font-size:15px;"></i></button>
     </div>
   </nav>
@@ -44,47 +45,21 @@
     <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;">Photocards que você quer comprar no futuro.</p>
     <div class="wish-hero">
       <i class="ti ti-heart"></i>
-      <p>Itens da wishlist aparecem no binder virtual com marcação especial e podem ser convertidos em comprados quando chegar a hora!</p>
+      <p>Itens da wishlist aparecem no binder virtual com marcação especial e podem ser convertidos em comprados!</p>
     </div>
     <div id="form-content">
-      <div class="field">
-        <label>Tipo de item</label>
-        <select id="f-tipo">
-          <option value="">Selecione...</option>
-          <option>Photocard</option><option>Álbum</option><option>Merch</option><option>Incluso de Álbum</option><option>Outro</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Comeback</label>
-        <select id="f-comeback">
-          <option value="">Selecione...</option>
-          <option>DO IT</option><option>Karma</option><option>Malestar</option><option>5-STAR</option><option>MAXIDENT</option><option>ODDINARY</option><option>NOEASY</option><option>Outro</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Set / POB</label>
-        <input type="text" id="f-set" placeholder="ex: Soundwave, Lucky Draw, POB...">
-      </div>
-      <div class="field">
-        <label>Membro</label>
-        <select id="f-membro">
-          <option value="">Selecione...</option>
-          <option>Bang Chan</option><option>Lee Know</option><option>Changbin</option>
-          <option>Hyunjin</option><option>Han</option><option>Felix</option>
-          <option>Seungmin</option><option>I.N</option><option>OT8</option>
-        </select>
-      </div>
+      <div class="field"><label>Tipo de item</label><select id="f-tipo"><option value="">Selecione...</option></select></div>
+      <div class="field"><label>Comeback</label><select id="f-comeback"><option value="">Selecione...</option></select></div>
+      <div class="field"><label>Set / POB</label><input type="text" id="f-set" placeholder="ex: Soundwave, Lucky Draw, POB..."></div>
+      <div class="field"><label>Membro</label><select id="f-membro"><option value="">Selecione...</option></select></div>
       <div class="field">
         <label>Link da imagem</label>
         <input type="url" id="f-img" placeholder="https://...">
         <div class="field-hint">Link direto da foto do photocard</div>
       </div>
-      <div class="field">
-        <label>Observações</label>
-        <input type="text" id="f-notas" placeholder="ex: prefiro versão sem autógrafo">
-      </div>
+      <div class="field"><label>Observações</label><input type="text" id="f-notas" placeholder="ex: prefiro versão sem autógrafo"></div>
       <div class="nav-btns" style="margin-top:24px;">
-        <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="submit()" id="submit-btn">
+        <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="submit()" id="submit-btn">
           <i class="ti ti-heart-plus"></i> Adicionar à wishlist
         </button>
       </div>
@@ -92,8 +67,8 @@
     <div class="success-screen" id="success-screen">
       <i class="ti ti-heart success-icon"></i>
       <h2 style="margin-bottom:8px;">Adicionado à wishlist!</h2>
-      <p style="color:var(--text-muted); font-size:13px; margin-bottom:28px;">O item aparece no binder virtual com marcação de wish.</p>
-      <div style="display:flex; flex-direction:column; gap:10px;">
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:28px;">O item aparece no binder virtual com marcação de wish.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
         <a href="portfolio.html" class="btn btn-primary" style="justify-content:center;"><i class="ti ti-layout-grid"></i> Ver portfólio</a>
         <button class="btn btn-ghost" onclick="resetForm()" style="justify-content:center;"><i class="ti ti-plus"></i> Adicionar outro</button>
       </div>
@@ -105,14 +80,29 @@
       await Auth.init();
       const restored = await Auth.tryRestore();
       if (!restored) { window.location.href = '../index.html'; return; }
+      await loadDropdowns();
     });
+    async function loadDropdowns() {
+      const listRows = await Sheets.get('Listas!A2:C100');
+      const tipos     = [...new Set((listRows||[]).map(r=>r[0]).filter(Boolean))];
+      const comebacks = [...new Set((listRows||[]).map(r=>r[1]).filter(Boolean))];
+      const membros   = [...new Set((listRows||[]).map(r=>r[2]).filter(Boolean))];
+      fillSelect('f-tipo',     tipos,     'Selecione...');
+      fillSelect('f-comeback', comebacks, 'Selecione...');
+      fillSelect('f-membro',   membros,   'Selecione...');
+    }
+    function fillSelect(id, values, placeholder) {
+      const sel = document.getElementById(id);
+      sel.innerHTML = `<option value="">${placeholder}</option>`;
+      values.forEach(v => { const o = document.createElement('option'); o.value = o.textContent = v; sel.appendChild(o); });
+    }
     async function submit() {
-      const tipo = document.getElementById('f-tipo').value;
-      const comeback = document.getElementById('f-comeback').value;
-      const membro = document.getElementById('f-membro').value;
-      if (!tipo) { alert('Selecione o tipo de item.'); return; }
+      const tipo=document.getElementById('f-tipo').value;
+      const comeback=document.getElementById('f-comeback').value;
+      const membro=document.getElementById('f-membro').value;
+      if (!tipo)     { alert('Selecione o tipo de item.'); return; }
       if (!comeback) { alert('Selecione o comeback.'); return; }
-      if (!membro) { alert('Selecione o membro.'); return; }
+      if (!membro)   { alert('Selecione o membro.'); return; }
       const btn = document.getElementById('submit-btn');
       btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
       btn.disabled = true;
@@ -134,6 +124,7 @@
       document.getElementById('form-content').style.display = 'block';
       document.getElementById('submit-btn').innerHTML = '<i class="ti ti-heart-plus"></i> Adicionar à wishlist';
       document.getElementById('submit-btn').disabled = false;
+      loadDropdowns();
     }
   </script>
 </body>
