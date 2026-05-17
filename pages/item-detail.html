@@ -63,6 +63,7 @@
       <a href="communities.html" class="nav-link"><i class="ti ti-building-community"></i><span>Comunidades</span></a>
     </div>
     <div style="margin-left:16px;">
+      <a href="settings.html" class="btn btn-ghost" style="padding:6px 10px;" title="Configurações"><i class="ti ti-settings" style="font-size:15px;"></i></a>
       <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()"><i class="ti ti-logout" style="font-size:15px;"></i></button>
     </div>
   </nav>
@@ -114,24 +115,16 @@
 
     function render() {
       const row = rowData;
-      const img  = row[COL.IMG_LINK]||'';
-      const nome = [row[COL.TIPO],row[COL.MEMBRO],row[COL.COMEBACK],row[COL.SET_POB]].filter(Boolean).join(' · ')||'Item sem nome';
-      const cls  = statusClass(row[COL.STATUS]);
-      const pendente = parseFloat(row[COL.PENDENTE])||0;
-      const pago     = parseFloat(row[COL.TOTAL_PAGO])||0;
-      const comunidade = row[COL.COMUNIDADE]||'';
-      const gom = row[COL.GOM]||'';
+      const img=row[COL.IMG_LINK]||'', nome=[row[COL.TIPO],row[COL.MEMBRO],row[COL.COMEBACK],row[COL.SET_POB]].filter(Boolean).join(' · ')||'Item sem nome';
+      const cls=statusClass(row[COL.STATUS]), pendente=parseFloat(row[COL.PENDENTE])||0, pago=parseFloat(row[COL.TOTAL_PAGO])||0;
+      const comunidade=row[COL.COMUNIDADE]||'', gom=row[COL.GOM]||'';
       const stepsHtml = STEPS.map(step => {
         const val=row[step.val]||'', st=row[step.st]||'Aguardando cobrança';
         const stCls=STEP_CLS[st]||'waiting', stIcon=STEP_ICONS[st]||'ti-clock';
         const opts=STATUS_OPTIONS.map(o=>`<option value="${o}" ${o===st?'selected':''}>${o}</option>`).join('');
-        return `<div class="payment-step">
-          <div class="step-icon" style="background:var(--status-${stCls}-bg);"><i class="ti ${stIcon}" style="color:var(--status-${stCls}-color);"></i></div>
-          <div class="step-body"><div class="step-name">${step.name}</div><div class="step-value">${val?formatBRL(val):'—'}</div></div>
-          <div class="step-action"><select data-col="${step.st}" onchange="onStatusChange(this)">${opts}</select></div>
-        </div>`;
+        return `<div class="payment-step"><div class="step-icon" style="background:var(--status-${stCls}-bg);"><i class="ti ${stIcon}" style="color:var(--status-${stCls}-color);"></i></div><div class="step-body"><div class="step-name">${step.name}</div><div class="step-value">${val?formatBRL(val):'—'}</div></div><div class="step-action"><select data-col="${step.st}" onchange="onStatusChange(this)">${opts}</select></div></div>`;
       }).join('');
-      const commOpts = communities.map(c=>`<option value="${c.nome}" ${c.nome===comunidade?'selected':''}>${c.nome}</option>`).join('');
+      const commOpts=communities.map(c=>`<option value="${c.nome}" ${c.nome===comunidade?'selected':''}>${c.nome}</option>`).join('');
       const linkCeg=row[COL.LINK_CEG]||'', dataClaim=row[COL.DATA_CLAIM]||'', dataRec=row[COL.DATA_REC]||'';
       const tipoOpts=['Photocard','Álbum','Merch','Incluso de Álbum','Outro'].map(t=>`<option ${t===row[COL.TIPO]?'selected':''}>${t}</option>`).join('');
       const membroOpts=['Bang Chan','Lee Know','Changbin','Hyunjin','Han','Felix','Seungmin','I.N','OT8'].map(m=>`<option ${m===row[COL.MEMBRO]?'selected':''}>${m}</option>`).join('');
@@ -143,9 +136,7 @@
             <div class="hero-name">${nome}</div>
             <div class="hero-meta">${[comunidade,gom].filter(Boolean).join(' · ')||'—'}</div>
             <span class="badge badge-${cls}"><i class="ti ${statusIcon(row[COL.STATUS])}"></i>${statusLabel(row[COL.STATUS])}</span>
-            <div class="hero-actions">
-              <button class="btn btn-ghost" style="font-size:12px;padding:5px 10px;" onclick="toggleEdit()"><i class="ti ti-pencil" style="font-size:13px;"></i> Editar</button>
-            </div>
+            <div class="hero-actions"><button class="btn btn-ghost" style="font-size:12px;padding:5px 10px;" onclick="toggleEdit()"><i class="ti ti-pencil" style="font-size:13px;"></i> Editar</button></div>
           </div>
         </div>
         <div class="section-title">Informações</div>
