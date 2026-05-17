@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comunidades — SKZ Tracker</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <style>
+    .top-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+    .top-tab { padding: 10px 14px; font-size: 13px; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; display: flex; align-items: center; gap: 6px; transition: all var(--transition); }
+    .top-tab.on { color: var(--text-primary); border-bottom-color: var(--accent-deep); font-weight: 500; }
+    .panel { display: none; }
+    .panel.on { display: block; }
+    .comm-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 12px; transition: border-color var(--transition); }
+    .comm-card:hover { border-color: var(--border-hover); }
+    .pending-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; padding: 2px 8px; border-radius: var(--radius-pill); background: var(--status-pending-bg); color: var(--status-pending-color); border: 1px solid var(--status-pending-border); margin-bottom: 10px; }
+    .comm-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+    .comm-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--accent-muted); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 500; color: var(--accent-deep); flex-shrink: 0; }
+    .comm-info { flex: 1; min-width: 0; }
+    .comm-name { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 3px; }
+    .comm-gom { font-size: 11px; color: var(--text-muted); }
+    .comm-actions-top { display: flex; gap: 6px; flex-shrink: 0; }
+    .icon-btn { width: 30px; height: 30px; border-radius: var(--radius-sm); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); transition: all var(--transition); background: transparent; }
+    .icon-btn:hover { border-color: var(--border-hover); color: var(--text-primary); }
+    .icon-btn.danger:hover { border-color: var(--status-cancelled-border); color: var(--status-cancelled-color); }
+    .comm-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+    .stat { background: var(--bg-elevated); border-radius: var(--radius-md); padding: 10px 12px; }
+    .stat-val { font-size: 20px; font-weight: 400; font-family: var(--font-mono); line-height: 1; margin-bottom: 3px; }
+    .stat-lab { font-size: 9px; color: var(--text-faint); letter-spacing: 0.07em; text-transform: uppercase; }
+    .comm-links { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    .link-btn { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 8px 6px; border-radius: var(--radius-md); border: 1px solid var(--border); font-size: 11px; color: var(--text-muted); cursor: pointer; transition: all var(--transition); text-decoration: none; background: transparent; }
+    .link-btn:hover { border-color: var(--border-hover); color: var(--text-primary); }
+    .link-btn.whats { border-color: rgba(37,211,102,0.25); color: #1a9e6a; background: rgba(37,211,102,0.05); }
+    .link-btn.whats:hover { background: rgba(37,211,102,0.1); }
+    .link-btn.sheet { border-color: rgba(56,168,96,0.25); color: #1a6b3a; background: rgba(56,168,96,0.05); }
+    .link-btn.sheet:hover { background: rgba(56,168,96,0.1); }
+    .link-btn.items { border-color: var(--accent-border); color: var(--accent-deep); background: var(--accent-muted); }
+    .link-btn.items:hover { background: rgba(242,196,206,0.2); }
+    .field { margin-bottom: var(--space-4); }
+    .field label { display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+    .field input { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; font-family: var(--font-body); font-size: 14px; color: var(--text-primary); outline: none; transition: border-color var(--transition); }
+    .field input:focus { border-color: var(--accent-border); }
+    .field input::placeholder { color: var(--text-faint); }
+    .empty-state { text-align: center; padding: 48px 16px; color: var(--text-muted); }
+    .empty-state i { font-size: 32px; display: block; margin-bottom: 12px; color: var(--text-faint); }
+    .empty-state p { font-size: 13px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { animation: spin 1s linear infinite; display: inline-block; }
+    .edit-form { background: var(--bg-elevated); border-radius: var(--radius-md); padding: 14px; margin-top: 10px; border: 1px solid var(--accent-border); display: none; }
+    .edit-form.open { display: block; }
+    .edit-actions { display: flex; gap: 8px; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="../index.html" class="navbar-brand"><div class="brand-dot"></div>SKZ Tracker</a>
+    <div class="navbar-nav">
+      <a href="../index.html" class="nav-link"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a>
+      <a href="items.html" class="nav-link"><i class="ti ti-package"></i><span>Itens</span></a>
+      <a href="portfolio.html" class="nav-link"><i class="ti ti-grid-dots"></i><span>Portfólio</span></a>
+      <a href="communities.html" class="nav-link active"><i class="ti ti-building-community"></i><span>Comunidades</span></a>
+    </div>
+    <div style="margin-left:16px;">
+      <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()"><i class="ti ti-logout" style="font-size:15px;"></i></button>
+    </div>
+  </nav>
+  <main class="container" style="padding-top:24px; padding-bottom:100px;">
+    <div style="margin-bottom:20px;"><h1 style="margin:0;">Comunidades</h1></div>
+    <div class="top-tabs">
+      <div class="top-tab on" data-p="lista" onclick="swTab(this)"><i class="ti ti-building-community"></i> Minhas comunidades</div>
+      <div class="top-tab" data-p="form" onclick="swTab(this)"><i class="ti ti-plus"></i> Nova</div>
+    </div>
+    <div class="panel on" id="panel-lista">
+      <div id="comm-list"><div class="empty-state"><i class="ti ti-loader spinner"></i><p>Carregando...</p></div></div>
+    </div>
+    <div class="panel" id="panel-form">
+      <div class="field"><label>Nome da comunidade</label><input type="text" id="fn-nome" placeholder="ex: SKZ Brasil OT8"></div>
+      <div class="field"><label>Nome da GOM / CEG</label><input type="text" id="fn-gom" placeholder="ex: Fulana"></div>
+      <div class="field"><label>Link do WhatsApp</label><input type="url" id="fn-whats" placeholder="https://wa.me/..."></div>
+      <div class="field"><label>Link da planilha CEG</label><input type="url" id="fn-sheet" placeholder="https://docs.google.com/..."></div>
+      <div class="field"><label>Tipos de item</label><input type="text" id="fn-tipos" placeholder="ex: Photocard, Merch"></div>
+      <div class="field"><label>Observações</label><input type="text" id="fn-obs" placeholder="opcional"></div>
+      <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="saveCommunity()" id="save-btn">
+        <i class="ti ti-check"></i> Salvar comunidade
+      </button>
+    </div>
+  </main>
+  <script src="../js/auth.js"></script>
+  <script>
+    let allItems = [], allComms = [];
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      const restored = await Auth.tryRestore();
+      if (!restored) { window.location.href = '../index.html'; return; }
+      await loadAll();
+    });
+    async function loadAll() {
+      const [commRows, itemRows] = await Promise.all([Sheets.get(CONFIG.RANGES.COMMUNITIES), Sheets.get(CONFIG.RANGES.ITEMS)]);
+      allComms = (commRows||[]).filter(r => r[0]).map((row, idx) => ({ row, sheetRow: idx + 3 }));
+      allItems = (itemRows||[]).filter(r => r[COL.TIPO]);
+      renderList();
+    }
+    function renderList() {
+      const el = document.getElementById('comm-list');
+      if (!allComms.length) { el.innerHTML = `<div class="empty-state"><i class="ti ti-building-community"></i><p>Nenhuma comunidade cadastrada ainda.<br>Adicione sua primeira comunidade!</p></div>`; return; }
+      el.innerHTML = allComms.map(({ row, sheetRow }) => {
+        const nome = row[0]||'—', gom = row[1]||'—', whats = row[2]||'', sheet = row[3]||'', tipos = row[4]||'—', obs = row[5]||'';
+        const inicial = nome.charAt(0).toUpperCase();
+        const itemsDaCom = allItems.filter(r => r[COL.COMUNIDADE] === nome);
+        const ativos = itemsDaCom.filter(r => !r[COL.STATUS]?.includes('Recebido') && !r[COL.STATUS]?.includes('Cancelado')).length;
+        const pendentes = itemsDaCom.filter(r => r[COL.STATUS]?.includes('pendente')).length;
+        return `<div class="comm-card" id="card-${sheetRow}">
+          ${pendentes > 0 ? `<div class="pending-tag"><i class="ti ti-alert-triangle" style="font-size:10px;"></i> ${pendentes} pgto${pendentes>1?'s':''} pendente${pendentes>1?'s':''}</div>` : ''}
+          <div class="comm-header">
+            <div class="comm-avatar">${inicial}</div>
+            <div class="comm-info"><div class="comm-name">${nome}</div><div class="comm-gom">GOM: ${gom} · ${tipos}</div></div>
+            <div class="comm-actions-top">
+              <button class="icon-btn" onclick="toggleEdit(${sheetRow})"><i class="ti ti-pencil" style="font-size:13px;"></i></button>
+              <button class="icon-btn danger" onclick="deleteCommunity(${sheetRow},'${nome.replace(/'/g,"\\'")}')"><i class="ti ti-trash" style="font-size:13px;"></i></button>
+            </div>
+          </div>
+          <div class="comm-stats">
+            <div class="stat"><div class="stat-val" style="color:var(--accent);">${ativos}</div><div class="stat-lab">itens ativos</div></div>
+            <div class="stat"><div class="stat-val" style="color:${pendentes>0?'var(--status-pending-color)':'var(--status-done-color)'};">${pendentes}</div><div class="stat-lab">pgto pendente</div></div>
+          </div>
+          <div class="comm-links">
+            ${whats?`<a class="link-btn whats" href="${whats}" target="_blank"><i class="ti ti-brand-whatsapp" style="font-size:13px;"></i> WhatsApp</a>`:`<div class="link-btn" style="opacity:0.4;cursor:default;"><i class="ti ti-brand-whatsapp" style="font-size:13px;"></i> WhatsApp</div>`}
+            ${sheet?`<a class="link-btn sheet" href="${sheet}" target="_blank"><i class="ti ti-table" style="font-size:13px;"></i> Planilha</a>`:`<div class="link-btn" style="opacity:0.4;cursor:default;"><i class="ti ti-table" style="font-size:13px;"></i> Planilha</div>`}
+            <a class="link-btn items" href="items.html?community=${encodeURIComponent(nome)}"><i class="ti ti-package" style="font-size:13px;"></i> Itens</a>
+          </div>
+          <div class="edit-form" id="edit-${sheetRow}">
+            <div class="field" style="margin-bottom:10px;"><label>Nome</label><input type="text" id="e-nome-${sheetRow}" value="${nome}"></div>
+            <div class="field" style="margin-bottom:10px;"><label>GOM / CEG</label><input type="text" id="e-gom-${sheetRow}" value="${gom}"></div>
+            <div class="field" style="margin-bottom:10px;"><label>Link WhatsApp</label><input type="url" id="e-whats-${sheetRow}" value="${whats}"></div>
+            <div class="field" style="margin-bottom:10px;"><label>Link Planilha</label><input type="url" id="e-sheet-${sheetRow}" value="${sheet}"></div>
+            <div class="field" style="margin-bottom:10px;"><label>Tipos</label><input type="text" id="e-tipos-${sheetRow}" value="${tipos}"></div>
+            <div class="field" style="margin-bottom:10px;"><label>Obs</label><input type="text" id="e-obs-${sheetRow}" value="${obs}"></div>
+            <div class="edit-actions">
+              <button class="btn btn-ghost" style="flex:1;" onclick="toggleEdit(${sheetRow})">Cancelar</button>
+              <button class="btn btn-primary" style="flex:2;justify-content:center;" onclick="updateCommunity(${sheetRow})"><i class="ti ti-check"></i> Salvar</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    function toggleEdit(sheetRow) { document.getElementById('edit-'+sheetRow).classList.toggle('open'); }
+    async function updateCommunity(sheetRow) {
+      const g = id => document.getElementById(id).value;
+      try {
+        await Sheets.set(`Comunidades!A${sheetRow}:F${sheetRow}`, [[g(`e-nome-${sheetRow}`),g(`e-gom-${sheetRow}`),g(`e-whats-${sheetRow}`),g(`e-sheet-${sheetRow}`),g(`e-tipos-${sheetRow}`),g(`e-obs-${sheetRow}`)]]);
+        await loadAll();
+      } catch(e) { alert('Erro ao salvar. Tente novamente.'); }
+    }
+    async function deleteCommunity(sheetRow, nome) {
+      if (!confirm(`Remover "${nome}"? Os itens cadastrados não serão afetados.`)) return;
+      try { await Sheets.set(`Comunidades!A${sheetRow}:F${sheetRow}`, [['','','','','','']]); await loadAll(); }
+      catch(e) { alert('Erro ao remover.'); }
+    }
+    async function saveCommunity() {
+      const nome = document.getElementById('fn-nome').value.trim();
+      if (!nome) { alert('Informe o nome da comunidade.'); return; }
+      const btn = document.getElementById('save-btn');
+      btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
+      btn.disabled = true;
+      try {
+        await Sheets.append(CONFIG.RANGES.COMMUNITIES, [[nome, document.getElementById('fn-gom').value, document.getElementById('fn-whats').value, document.getElementById('fn-sheet').value, document.getElementById('fn-tipos').value, document.getElementById('fn-obs').value]]);
+        document.querySelectorAll('#panel-form input').forEach(i => i.value = '');
+        await loadAll();
+        swTabByName('lista');
+      } catch(e) { alert('Erro ao salvar. Tente novamente.'); }
+      btn.innerHTML = '<i class="ti ti-check"></i> Salvar comunidade';
+      btn.disabled = false;
+    }
+    function swTab(el) { document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('on')); document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on')); el.classList.add('on'); document.getElementById('panel-'+el.dataset.p).classList.add('on'); }
+    function swTabByName(name) { const tab=document.querySelector(`.top-tab[data-p="${name}"]`); if(tab) swTab(tab); }
+  </script>
+</body>
+</html>
