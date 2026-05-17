@@ -101,6 +101,7 @@
       if (!restored) { window.location.href = '../index.html'; return; }
       const params = new URLSearchParams(window.location.search);
       if (params.get('filter') === 'pending') document.getElementById('filter-status').value = 'pending';
+      if (params.get('community')) document.getElementById('filter-community').value = decodeURIComponent(params.get('community'));
       await loadItems();
       setupFilters();
     });
