@@ -69,7 +69,7 @@
   </div>
   <script src="../js/auth.js"></script>
   <script>
-    let rowData = [], sheetRow = 0, hasChanges = false;
+    let rowData = [], sheetRow = 0, hasChanges = false, communities = [];
     const STATUS_OPTIONS = ['Aguardando cobrança','Cobrado — pendente','Pago'];
     const STEPS = [
       { name:'Item',          val: COL.VL_ITEM, st: COL.ST_ITEM },
@@ -88,6 +88,8 @@
       const params = new URLSearchParams(window.location.search);
       sheetRow = parseInt(params.get('row'));
       if (!sheetRow) { window.location.href = 'items.html'; return; }
+      const [commRows] = await Promise.all([Sheets.get(CONFIG.RANGES.COMMUNITIES)]);
+      communities = (commRows||[]).filter(r => r[0]).map(r => ({ nome: r[0], gom: r[1]||'' }));
       await loadItem();
     });
 
@@ -120,6 +122,7 @@
         </div>`;
       }).join('');
 
+      const commOpts = communities.map(c => `<option value="${c.nome}" ${c.nome===row[COL.COMUNIDADE]?'selected':''}>${c.nome}</option>`).join('');
       const linkCeg = row[COL.LINK_CEG]||'';
       const dataRec = row[COL.DATA_REC]||'';
       const dataClaim = row[COL.DATA_CLAIM]||'';
@@ -139,6 +142,13 @@
           <div class="info-card"><div class="info-label">Set / POB</div><div class="info-value">${row[COL.SET_POB]||'—'} ${row[COL.NUM_SET]?'· Nº '+row[COL.NUM_SET]:''}</div></div>
           <div class="info-card"><div class="info-label">Tipo de claim</div><div class="info-value">${row[COL.CLAIM_TYPE]||'—'}</div></div>
           <div class="info-card"><div class="info-label">Membro / Nº</div><div class="info-value">${row[COL.MEMBRO]||row[COL.NUM_CLAIM]||'—'}</div></div>
+          <div class="info-card" style="grid-column:1/-1;">
+            <div class="info-label">Comunidade <span style="font-size:9px; color:var(--accent-deep); margin-left:4px;">· toque para alterar</span></div>
+            <select data-col="${COL.COMUNIDADE}" onchange="onStatusChange(this)" style="width:100%;background:transparent;border:none;color:var(--text-primary);font-size:13px;font-family:var(--font-body);outline:none;padding:0;cursor:pointer;-webkit-appearance:none;">
+              <option value="">Selecione...</option>
+              ${commOpts}
+            </select>
+          </div>
           <div class="info-card"><div class="info-label">Data do claim</div><div class="info-value">${dataClaim||'—'}</div></div>
           <div class="info-card"><div class="info-label">Data de recebimento</div><div class="info-value">${dataRec||'—'}</div></div>
           ${linkCeg?`<div class="info-card"><div class="info-label">Planilha da CEG</div><div class="info-value"><a href="${linkCeg}" target="_blank">Abrir <i class="ti ti-external-link" style="font-size:11px;"></i></a></div></div>`:''}
