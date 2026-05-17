@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adicionar à Wishlist — SKZ Tracker</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <style>
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 13px; text-decoration: none; margin-bottom: 20px; transition: color var(--transition); }
+    .back-btn:hover { color: var(--text-primary); }
+    .field { margin-bottom: var(--space-4); }
+    .field label { display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+    .field input, .field select { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; font-family: var(--font-body); font-size: 14px; color: var(--text-primary); outline: none; transition: border-color var(--transition); -webkit-appearance: none; }
+    .field input:focus, .field select:focus { border-color: var(--accent-border); }
+    .field input::placeholder { color: var(--text-faint); }
+    .field-hint { font-size: 11px; color: var(--text-faint); margin-top: 5px; }
+    .wish-hero { background: var(--accent-muted); border: 1px solid var(--accent-border); border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+    .wish-hero i { font-size: 24px; color: var(--accent-deep); }
+    .wish-hero p { font-size: 13px; color: var(--accent-deep); margin: 0; }
+    .success-screen { display: none; text-align: center; padding: 48px 24px; }
+    .success-screen.show { display: block; }
+    .success-icon { font-size: 48px; color: var(--accent-deep); display: block; margin-bottom: 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { animation: spin 1s linear infinite; display: inline-block; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="../index.html" class="navbar-brand"><div class="brand-dot"></div>SKZ Tracker</a>
+    <div class="navbar-nav">
+      <a href="../index.html" class="nav-link"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a>
+      <a href="items.html" class="nav-link"><i class="ti ti-package"></i><span>Itens</span></a>
+      <a href="portfolio.html" class="nav-link active"><i class="ti ti-grid-dots"></i><span>Portfólio</span></a>
+    </div>
+    <div style="margin-left:16px;">
+      <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()"><i class="ti ti-logout" style="font-size:15px;"></i></button>
+    </div>
+  </nav>
+  <main class="container" style="padding-top:24px; padding-bottom:60px; max-width:560px;">
+    <a href="portfolio.html" class="back-btn"><i class="ti ti-arrow-left"></i> Voltar</a>
+    <h1 style="margin-bottom:6px;">Adicionar à Wishlist</h1>
+    <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;">Photocards que você quer comprar no futuro.</p>
+    <div class="wish-hero">
+      <i class="ti ti-heart"></i>
+      <p>Itens da wishlist aparecem no binder virtual com marcação especial e podem ser convertidos em comprados quando chegar a hora!</p>
+    </div>
+    <div id="form-content">
+      <div class="field">
+        <label>Tipo de item</label>
+        <select id="f-tipo">
+          <option value="">Selecione...</option>
+          <option>Photocard</option><option>Álbum</option><option>Merch</option><option>Incluso de Álbum</option><option>Outro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Comeback</label>
+        <select id="f-comeback">
+          <option value="">Selecione...</option>
+          <option>DO IT</option><option>Karma</option><option>Malestar</option><option>5-STAR</option><option>MAXIDENT</option><option>ODDINARY</option><option>NOEASY</option><option>Outro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Set / POB</label>
+        <input type="text" id="f-set" placeholder="ex: Soundwave, Lucky Draw, POB...">
+      </div>
+      <div class="field">
+        <label>Membro</label>
+        <select id="f-membro">
+          <option value="">Selecione...</option>
+          <option>Bang Chan</option><option>Lee Know</option><option>Changbin</option>
+          <option>Hyunjin</option><option>Han</option><option>Felix</option>
+          <option>Seungmin</option><option>I.N</option><option>OT8</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Link da imagem</label>
+        <input type="url" id="f-img" placeholder="https://...">
+        <div class="field-hint">Link direto da foto do photocard</div>
+      </div>
+      <div class="field">
+        <label>Observações</label>
+        <input type="text" id="f-notas" placeholder="ex: prefiro versão sem autógrafo">
+      </div>
+      <div class="nav-btns" style="margin-top:24px;">
+        <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="submit()" id="submit-btn">
+          <i class="ti ti-heart-plus"></i> Adicionar à wishlist
+        </button>
+      </div>
+    </div>
+    <div class="success-screen" id="success-screen">
+      <i class="ti ti-heart success-icon"></i>
+      <h2 style="margin-bottom:8px;">Adicionado à wishlist!</h2>
+      <p style="color:var(--text-muted); font-size:13px; margin-bottom:28px;">O item aparece no binder virtual com marcação de wish.</p>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <a href="portfolio.html" class="btn btn-primary" style="justify-content:center;"><i class="ti ti-layout-grid"></i> Ver portfólio</a>
+        <button class="btn btn-ghost" onclick="resetForm()" style="justify-content:center;"><i class="ti ti-plus"></i> Adicionar outro</button>
+      </div>
+    </div>
+  </main>
+  <script src="../js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      const restored = await Auth.tryRestore();
+      if (!restored) { window.location.href = '../index.html'; return; }
+    });
+    async function submit() {
+      const tipo = document.getElementById('f-tipo').value;
+      const comeback = document.getElementById('f-comeback').value;
+      const membro = document.getElementById('f-membro').value;
+      if (!tipo) { alert('Selecione o tipo de item.'); return; }
+      if (!comeback) { alert('Selecione o comeback.'); return; }
+      if (!membro) { alert('Selecione o membro.'); return; }
+      const btn = document.getElementById('submit-btn');
+      btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
+      btn.disabled = true;
+      const g = id => document.getElementById(id).value;
+      const row = [g('f-tipo'),g('f-comeback'),g('f-set'),'',g('f-img'),'Por membro (OT8)',g('f-membro'),'','','','','','','wish','',g('f-notas')];
+      try {
+        await Sheets.append('Wishlist!A2:P', [row]);
+        document.getElementById('form-content').style.display = 'none';
+        document.getElementById('success-screen').classList.add('show');
+      } catch(e) {
+        alert('Erro ao salvar. Tente novamente.');
+        btn.innerHTML = '<i class="ti ti-heart-plus"></i> Adicionar à wishlist';
+        btn.disabled = false;
+      }
+    }
+    function resetForm() {
+      document.querySelectorAll('input, select').forEach(el => el.value = '');
+      document.getElementById('success-screen').classList.remove('show');
+      document.getElementById('form-content').style.display = 'block';
+      document.getElementById('submit-btn').innerHTML = '<i class="ti ti-heart-plus"></i> Adicionar à wishlist';
+      document.getElementById('submit-btn').disabled = false;
+    }
+  </script>
+</body>
+</html>
