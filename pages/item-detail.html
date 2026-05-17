@@ -80,6 +80,7 @@
     ];
     const STEP_ICONS = { 'Aguardando cobrança':'ti-clock','Cobrado — pendente':'ti-alert-triangle','Pago':'ti-circle-check' };
     const STEP_CLS   = { 'Aguardando cobrança':'waiting','Cobrado — pendente':'pending','Pago':'done' };
+
     document.addEventListener('DOMContentLoaded', async () => {
       await Auth.init();
       const restored = await Auth.tryRestore();
@@ -89,13 +90,15 @@
       if (!sheetRow) { window.location.href = 'items.html'; return; }
       await loadItem();
     });
+
     async function loadItem() {
-      const range = `📦 Itens!A${sheetRow}:AB${sheetRow}`;
+      const range = `Itens!A${sheetRow}:AB${sheetRow}`;
       const rows = await Sheets.get(range);
       if (!rows || !rows[0]) { document.getElementById('content').innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:32px;">Item não encontrado.</p>'; return; }
       rowData = rows[0];
       render();
     }
+
     function render() {
       const row = rowData;
       const img = row[COL.IMG_LINK]||'';
@@ -103,6 +106,7 @@
       const cls = statusClass(row[COL.STATUS]);
       const pendente = parseFloat(row[COL.PENDENTE])||0;
       const pago = parseFloat(row[COL.TOTAL_PAGO])||0;
+
       let stepsHtml = STEPS.map(step => {
         const val = row[step.val]||'';
         const st  = row[step.st]||'Aguardando cobrança';
@@ -115,9 +119,11 @@
           <div class="step-action"><select data-col="${step.st}" onchange="onStatusChange(this)">${opts}</select></div>
         </div>`;
       }).join('');
+
       const linkCeg = row[COL.LINK_CEG]||'';
       const dataRec = row[COL.DATA_REC]||'';
       const dataClaim = row[COL.DATA_CLAIM]||'';
+
       document.getElementById('content').innerHTML = `
         <div class="item-hero">
           <div class="hero-img">${img?`<img src="${img}" alt="${nome}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}</div>
@@ -145,8 +151,10 @@
           <div class="total-item"><div class="total-label">Pendente</div><div class="total-value" style="color:${pendente>0?'var(--status-pending-color)':'var(--text-muted)'};">${formatBRL(pendente)}</div></div>
         </div>`;
     }
+
     function onStatusChange(el) { hasChanges = true; document.getElementById('save-bar').classList.add('visible'); }
     function discardChanges() { hasChanges = false; document.getElementById('save-bar').classList.remove('visible'); render(); }
+
     async function saveChanges() {
       const btn = document.getElementById('save-btn');
       btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
@@ -156,7 +164,7 @@
       selects.forEach(sel => {
         const colIdx = parseInt(sel.dataset.col);
         const colLetter = indexToCol(colIdx);
-        updates.push({ range: `📦 Itens!${colLetter}${sheetRow}`, value: sel.value });
+        updates.push({ range: `Itens!${colLetter}${sheetRow}`, value: sel.value });
       });
       try {
         await Promise.all(updates.map(u => Sheets.setCell(u.range, u.value)));
@@ -167,6 +175,7 @@
       btn.innerHTML = '<i class="ti ti-check"></i> Salvar alterações';
       btn.disabled = false;
     }
+
     function indexToCol(idx) {
       if (idx < 26) return String.fromCharCode(65 + idx);
       return String.fromCharCode(64 + Math.floor(idx/26)) + String.fromCharCode(65 + (idx%26));
