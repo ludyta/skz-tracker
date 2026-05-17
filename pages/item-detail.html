@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Item — SKZ Tracker</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <style>
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 13px; text-decoration: none; margin-bottom: 20px; transition: color var(--transition); }
+    .back-btn:hover { color: var(--text-primary); }
+    .item-hero { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); display: flex; gap: var(--space-5); margin-bottom: var(--space-5); }
+    .hero-img { width: 100px; height: 100px; border-radius: var(--radius-md); background: var(--bg-elevated); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--text-faint); font-size: 32px; }
+    .hero-img img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-body { flex: 1; min-width: 0; }
+    .hero-name { font-family: var(--font-display); font-size: 20px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; line-height: 1.3; }
+    .hero-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin-bottom: var(--space-5); }
+    .info-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); }
+    .info-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px; }
+    .info-value { font-size: 13px; color: var(--text-primary); }
+    .info-value a { color: var(--accent); text-decoration: none; }
+    .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2); }
+    .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+    .payment-step { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-2); display: flex; align-items: center; gap: var(--space-3); }
+    .step-icon { width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .step-body { flex: 1; min-width: 0; }
+    .step-name { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; }
+    .step-value { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); }
+    .step-action select { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 5px 10px; font-family: var(--font-body); font-size: 11px; color: var(--text-secondary); outline: none; cursor: pointer; -webkit-appearance: none; }
+    .step-action select:focus { border-color: var(--accent-border); }
+    .totals-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); margin-top: var(--space-5); display: flex; gap: var(--space-5); }
+    .total-item { flex: 1; text-align: center; }
+    .total-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px; }
+    .total-value { font-family: var(--font-mono); font-size: 20px; }
+    .save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-surface); border-top: 1px solid var(--border); padding: 12px 20px; display: flex; gap: 10px; z-index: 50; transform: translateY(100%); transition: transform 0.25s ease; }
+    .save-bar.visible { transform: translateY(0); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { animation: spin 1s linear infinite; display: inline-block; }
+    @media (max-width:640px) { .item-hero { flex-direction: column; } .info-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="../index.html" class="navbar-brand"><div class="brand-dot"></div>SKZ Tracker</a>
+    <div class="navbar-nav">
+      <a href="../index.html" class="nav-link"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a>
+      <a href="items.html" class="nav-link active"><i class="ti ti-package"></i><span>Itens</span></a>
+      <a href="portfolio.html" class="nav-link"><i class="ti ti-grid-dots"></i><span>Portfólio</span></a>
+      <a href="communities.html" class="nav-link"><i class="ti ti-building-community"></i><span>Comunidades</span></a>
+    </div>
+    <div style="margin-left:16px;">
+      <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()"><i class="ti ti-logout" style="font-size:15px;"></i></button>
+    </div>
+  </nav>
+  <main class="container" style="padding-top:24px; padding-bottom:100px;">
+    <a href="items.html" class="back-btn"><i class="ti ti-arrow-left"></i> Voltar para itens</a>
+    <div id="content">
+      <div style="text-align:center; padding:48px; color:var(--text-muted);">
+        <i class="ti ti-loader spinner" style="font-size:28px; display:block; margin-bottom:12px;"></i>
+        Carregando...
+      </div>
+    </div>
+  </main>
+  <div class="save-bar" id="save-bar">
+    <button class="btn btn-ghost" style="flex:1;" onclick="discardChanges()"><i class="ti ti-x"></i> Descartar</button>
+    <button class="btn btn-primary" style="flex:2;" onclick="saveChanges()" id="save-btn"><i class="ti ti-check"></i> Salvar alterações</button>
+  </div>
+  <script src="../js/auth.js"></script>
+  <script>
+    let rowData = [], sheetRow = 0, hasChanges = false;
+    const STATUS_OPTIONS = ['Aguardando cobrança','Cobrado — pendente','Pago'];
+    const STEPS = [
+      { name:'Item',          val: COL.VL_ITEM, st: COL.ST_ITEM },
+      { name:'Frete inter 1', val: COL.VL_FI1,  st: COL.ST_FI1  },
+      { name:'Frete inter 2', val: COL.VL_FI2,  st: COL.ST_FI2  },
+      { name:'Alfândega',     val: COL.VL_ALF,  st: COL.ST_ALF  },
+      { name:'Frete nacional',val: COL.VL_FNAC, st: COL.ST_FNAC },
+    ];
+    const STEP_ICONS = { 'Aguardando cobrança':'ti-clock','Cobrado — pendente':'ti-alert-triangle','Pago':'ti-circle-check' };
+    const STEP_CLS   = { 'Aguardando cobrança':'waiting','Cobrado — pendente':'pending','Pago':'done' };
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      const restored = await Auth.tryRestore();
+      if (!restored) { window.location.href = '../index.html'; return; }
+      const params = new URLSearchParams(window.location.search);
+      sheetRow = parseInt(params.get('row'));
+      if (!sheetRow) { window.location.href = 'items.html'; return; }
+      await loadItem();
+    });
+    async function loadItem() {
+      const range = `📦 Itens!A${sheetRow}:AB${sheetRow}`;
+      const rows = await Sheets.get(range);
+      if (!rows || !rows[0]) { document.getElementById('content').innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:32px;">Item não encontrado.</p>'; return; }
+      rowData = rows[0];
+      render();
+    }
+    function render() {
+      const row = rowData;
+      const img = row[COL.IMG_LINK]||'';
+      const nome = [row[COL.TIPO],row[COL.MEMBRO],row[COL.COMEBACK],row[COL.SET_POB]].filter(Boolean).join(' · ')||'Item sem nome';
+      const cls = statusClass(row[COL.STATUS]);
+      const pendente = parseFloat(row[COL.PENDENTE])||0;
+      const pago = parseFloat(row[COL.TOTAL_PAGO])||0;
+      let stepsHtml = STEPS.map(step => {
+        const val = row[step.val]||'';
+        const st  = row[step.st]||'Aguardando cobrança';
+        const stCls = STEP_CLS[st]||'waiting';
+        const stIcon = STEP_ICONS[st]||'ti-clock';
+        const opts = STATUS_OPTIONS.map(o => `<option value="${o}" ${o===st?'selected':''}>${o}</option>`).join('');
+        return `<div class="payment-step">
+          <div class="step-icon" style="background:var(--status-${stCls}-bg);"><i class="ti ${stIcon}" style="color:var(--status-${stCls}-color);"></i></div>
+          <div class="step-body"><div class="step-name">${step.name}</div><div class="step-value">${val?formatBRL(val):'—'}</div></div>
+          <div class="step-action"><select data-col="${step.st}" onchange="onStatusChange(this)">${opts}</select></div>
+        </div>`;
+      }).join('');
+      const linkCeg = row[COL.LINK_CEG]||'';
+      const dataRec = row[COL.DATA_REC]||'';
+      const dataClaim = row[COL.DATA_CLAIM]||'';
+      document.getElementById('content').innerHTML = `
+        <div class="item-hero">
+          <div class="hero-img">${img?`<img src="${img}" alt="${nome}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}</div>
+          <div class="hero-body">
+            <div class="hero-name">${nome}</div>
+            <div class="hero-meta">${[row[COL.COMUNIDADE],row[COL.GOM]].filter(Boolean).join(' · ')||'—'}</div>
+            <span class="badge badge-${cls}"><i class="ti ${statusIcon(row[COL.STATUS])}"></i>${statusLabel(row[COL.STATUS])}</span>
+          </div>
+        </div>
+        <div class="info-grid">
+          <div class="info-card"><div class="info-label">Tipo</div><div class="info-value">${row[COL.TIPO]||'—'}</div></div>
+          <div class="info-card"><div class="info-label">Comeback</div><div class="info-value">${row[COL.COMEBACK]||'—'}</div></div>
+          <div class="info-card"><div class="info-label">Set / POB</div><div class="info-value">${row[COL.SET_POB]||'—'} ${row[COL.NUM_SET]?'· Nº '+row[COL.NUM_SET]:''}</div></div>
+          <div class="info-card"><div class="info-label">Tipo de claim</div><div class="info-value">${row[COL.CLAIM_TYPE]||'—'}</div></div>
+          <div class="info-card"><div class="info-label">Membro / Nº</div><div class="info-value">${row[COL.MEMBRO]||row[COL.NUM_CLAIM]||'—'}</div></div>
+          <div class="info-card"><div class="info-label">Data do claim</div><div class="info-value">${dataClaim||'—'}</div></div>
+          <div class="info-card"><div class="info-label">Data de recebimento</div><div class="info-value">${dataRec||'—'}</div></div>
+          ${linkCeg?`<div class="info-card"><div class="info-label">Planilha da CEG</div><div class="info-value"><a href="${linkCeg}" target="_blank">Abrir <i class="ti ti-external-link" style="font-size:11px;"></i></a></div></div>`:''}
+        </div>
+        <div class="section-title">Pagamentos</div>
+        ${stepsHtml}
+        <div class="totals-card">
+          <div class="total-item"><div class="total-label">Total pago</div><div class="total-value" style="color:var(--status-done-color);">${formatBRL(pago)}</div></div>
+          <div style="width:1px;background:var(--border);"></div>
+          <div class="total-item"><div class="total-label">Pendente</div><div class="total-value" style="color:${pendente>0?'var(--status-pending-color)':'var(--text-muted)'};">${formatBRL(pendente)}</div></div>
+        </div>`;
+    }
+    function onStatusChange(el) { hasChanges = true; document.getElementById('save-bar').classList.add('visible'); }
+    function discardChanges() { hasChanges = false; document.getElementById('save-bar').classList.remove('visible'); render(); }
+    async function saveChanges() {
+      const btn = document.getElementById('save-btn');
+      btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
+      btn.disabled = true;
+      const selects = document.querySelectorAll('[data-col]');
+      const updates = [];
+      selects.forEach(sel => {
+        const colIdx = parseInt(sel.dataset.col);
+        const colLetter = indexToCol(colIdx);
+        updates.push({ range: `📦 Itens!${colLetter}${sheetRow}`, value: sel.value });
+      });
+      try {
+        await Promise.all(updates.map(u => Sheets.setCell(u.range, u.value)));
+        await loadItem();
+        hasChanges = false;
+        document.getElementById('save-bar').classList.remove('visible');
+      } catch(e) { alert('Erro ao salvar. Tente novamente.'); }
+      btn.innerHTML = '<i class="ti ti-check"></i> Salvar alterações';
+      btn.disabled = false;
+    }
+    function indexToCol(idx) {
+      if (idx < 26) return String.fromCharCode(65 + idx);
+      return String.fromCharCode(64 + Math.floor(idx/26)) + String.fromCharCode(65 + (idx%26));
+    }
+  </script>
+</body>
+</html>
