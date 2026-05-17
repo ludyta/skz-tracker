@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfólio — SKZ Tracker</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <style>
+    .top-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+    .top-tab { padding: 10px 14px; font-size: 13px; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; display: flex; align-items: center; gap: 6px; transition: all var(--transition); }
+    .top-tab.on { color: var(--text-primary); border-bottom-color: var(--accent-deep); font-weight: 500; }
+    .panel { display: none; }
+    .panel.on { display: block; }
+    .view-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+    .view-tab { padding: 5px 12px; font-size: 12px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all var(--transition); background: var(--bg-surface); }
+    .view-tab.on { background: var(--accent-muted); color: var(--accent-deep); border-color: var(--accent-border); }
+    .filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; overflow-x: auto; padding-bottom: 4px; }
+    .filter-pill { font-size: 11px; padding: 4px 11px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; background: var(--bg-surface); white-space: nowrap; transition: all var(--transition); flex-shrink: 0; }
+    .filter-pill.on { background: var(--accent-muted); color: var(--accent-deep); border-color: var(--accent-border); }
+    .share-bar { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 14px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .share-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--status-done-color); flex-shrink: 0; }
+    .share-text { flex: 1; font-size: 11px; color: var(--text-muted); }
+    .share-btn { font-size: 11px; padding: 4px 10px; border-radius: var(--radius-md); border: 1px solid var(--accent-border); color: var(--accent-deep); background: var(--accent-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+    .section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; margin-top: 16px; display: flex; align-items: center; gap: 8px; }
+    .section-label span { flex: 1; height: 1px; background: var(--border); }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .pc-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; cursor: pointer; transition: border-color var(--transition); }
+    .pc-card:hover { border-color: var(--border-hover); }
+    .pc-card.wish { border: 1.5px dashed var(--accent-deep); }
+    .pc-img { width: 100%; aspect-ratio: 2/3; background: var(--bg-elevated); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--text-faint); font-size: 20px; }
+    .pc-img img { width: 100%; height: 100%; object-fit: cover; }
+    .wish-badge { position: absolute; top: 4px; left: 4px; background: var(--accent); color: #72243E; font-size: 8px; font-weight: 600; padding: 2px 5px; border-radius: 100px; }
+    .pc-info { padding: 6px 7px; }
+    .pc-name { font-size: 10px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 1px; }
+    .pc-meta { font-size: 9px; color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .list-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 6px; cursor: pointer; transition: border-color var(--transition); text-decoration: none; }
+    .list-card:hover { border-color: var(--border-hover); }
+    .list-card.wish { border-left: 2.5px solid var(--accent-deep); }
+    .list-thumb { width: 34px; height: 51px; border-radius: 4px; background: var(--bg-elevated); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--text-faint); font-size: 14px; }
+    .list-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .list-body { flex: 1; min-width: 0; }
+    .list-name { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .list-meta { font-size: 11px; color: var(--text-muted); }
+    .list-wish-tag { font-size: 10px; color: var(--accent-deep); font-weight: 500; }
+    .binder-wrap { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px; }
+    .binder-page { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px; margin-bottom: 10px; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .page-label { font-size: 10px; color: var(--text-faint); letter-spacing: 0.06em; text-transform: uppercase; }
+    .page-del { font-size: 11px; color: var(--text-faint); cursor: pointer; display: flex; align-items: center; gap: 3px; padding: 3px 6px; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+    .pocket-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .pocket { aspect-ratio: 2/3; border-radius: 6px; overflow: hidden; position: relative; border: 1px solid var(--border); background: var(--bg-base); cursor: grab; }
+    .pocket.wish-pocket { border: 1.5px dashed var(--accent-deep); }
+    .pocket.empty-pocket { border: 1px dashed var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .pocket.empty-pocket:hover { border-color: var(--accent-border); }
+    .pocket.drag-over { border-color: var(--accent); border-style: solid; opacity: 0.7; }
+    .pocket-fill { width: 100%; height: 100%; object-fit: cover; }
+    .pocket-bg { width: 100%; height: 100%; background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-muted); text-align: center; padding: 4px; }
+    .pocket-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.5); padding: 3px 5px; }
+    .pocket-name { font-size: 8px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pocket-wish-tag { position: absolute; top: 3px; left: 3px; background: var(--accent); color: #72243E; font-size: 7px; font-weight: 600; padding: 1px 4px; border-radius: 100px; }
+    .drag-hint { font-size: 9px; color: var(--text-faint); text-align: center; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+    .new-page-btn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: var(--radius-md); border: 1px dashed var(--border); color: var(--text-muted); font-size: 12px; cursor: pointer; margin-top: 4px; transition: all var(--transition); }
+    .new-page-btn:hover { border-color: var(--accent-border); color: var(--accent-deep); }
+    .empty-state { text-align: center; padding: 48px 16px; color: var(--text-muted); }
+    .empty-state i { font-size: 32px; display: block; margin-bottom: 12px; color: var(--text-faint); }
+    .empty-state p { font-size: 13px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { animation: spin 1s linear infinite; display: inline-block; }
+    .fab { position: fixed; bottom: 24px; right: 24px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent-deep); color: var(--bg-base); border: none; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; box-shadow: 0 4px 20px rgba(196,122,144,0.35); transition: all var(--transition); text-decoration: none; z-index: 50; }
+    .fab:hover { background: var(--accent); transform: scale(1.05); }
+    .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 16px; font-size: 12px; color: var(--text-primary); display: none; z-index: 100; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="../index.html" class="navbar-brand"><div class="brand-dot"></div>SKZ Tracker</a>
+    <div class="navbar-nav">
+      <a href="../index.html" class="nav-link"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a>
+      <a href="items.html" class="nav-link"><i class="ti ti-package"></i><span>Itens</span></a>
+      <a href="portfolio.html" class="nav-link active"><i class="ti ti-grid-dots"></i><span>Portfólio</span></a>
+      <a href="communities.html" class="nav-link"><i class="ti ti-building-community"></i><span>Comunidades</span></a>
+    </div>
+    <div style="margin-left:16px;">
+      <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()"><i class="ti ti-logout" style="font-size:15px;"></i></button>
+    </div>
+  </nav>
+  <main class="container" style="padding-top:24px; padding-bottom:100px;">
+    <div style="margin-bottom:20px;"><h1 style="margin:0;">Portfólio</h1></div>
+    <div class="top-tabs">
+      <div class="top-tab on" data-p="portfolio" onclick="swTop(this)"><i class="ti ti-layout-grid"></i> Coleção</div>
+      <div class="top-tab" data-p="wishlist" onclick="swTop(this)"><i class="ti ti-heart"></i> Wishlist <span id="wish-count" style="font-size:10px; background:var(--accent-muted); color:var(--accent-deep); padding:1px 6px; border-radius:100px; margin-left:2px;"></span></div>
+    </div>
+    <div class="panel on" id="panel-portfolio">
+      <div class="view-tabs">
+        <div class="view-tab on" data-v="grade" onclick="swView(this)"><i class="ti ti-grid-dots"></i> Grade</div>
+        <div class="view-tab" data-v="lista" onclick="swView(this)"><i class="ti ti-list"></i> Lista</div>
+        <div class="view-tab" data-v="binder" onclick="swView(this)"><i class="ti ti-book"></i> Binder</div>
+      </div>
+      <div class="filter-row" id="filter-row"><div class="filter-pill on" data-filter="" onclick="setFilter(this)">Todos</div></div>
+      <div class="share-bar">
+        <div class="share-dot"></div>
+        <div class="share-text">Modo público · comeback, set e membro visíveis</div>
+        <div class="share-btn" onclick="copyPublicLink()"><i class="ti ti-copy" style="font-size:11px;"></i> Copiar link</div>
+      </div>
+      <div id="view-grade"><div class="empty-state"><i class="ti ti-loader spinner"></i><p>Carregando...</p></div></div>
+      <div id="view-lista" style="display:none;"></div>
+      <div id="view-binder" style="display:none;"></div>
+    </div>
+    <div class="panel" id="panel-wishlist">
+      <div class="filter-row" id="wish-filter-row"><div class="filter-pill on" data-filter="" onclick="setWishFilter(this)">Todos</div></div>
+      <div id="wish-list"><div class="empty-state"><i class="ti ti-loader spinner"></i><p>Carregando...</p></div></div>
+    </div>
+  </main>
+  <a href="wishlist-form.html" class="fab" title="Adicionar à wishlist" id="fab-wish" style="display:none;"><i class="ti ti-heart-plus"></i></a>
+  <div class="toast" id="toast"></div>
+  <script src="../js/auth.js"></script>
+  <script>
+    let allItems = [], allWish = [], activeFilter = '', activeWishFilter = '';
+    const WISH_RANGE = 'Wishlist!A2:P';
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.init();
+      const restored = await Auth.tryRestore();
+      if (!restored) { window.location.href = '../index.html'; return; }
+      await ensureWishlistSheet();
+      await loadAll();
+    });
+    async function ensureWishlistSheet() {
+      try {
+        const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}`, { headers: { 'Authorization': `Bearer ${Auth.accessToken}` } });
+        const data = await res.json();
+        const exists = (data.sheets||[]).some(s => s.properties.title === 'Wishlist');
+        if (exists) return;
+        await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}:batchUpdate`, { method: 'POST', headers: { 'Authorization': `Bearer ${Auth.accessToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ requests: [{ addSheet: { properties: { title: 'Wishlist' } } }] }) });
+        await Sheets.set('Wishlist!A1:P1', [['Tipo','Comeback','Set POB','Num Set','Link Imagem','Claim Type','Membro','Num Claim','Comunidade','GOM','Link CEG','Vl Item','St Item','Status','Etapa','Notas']]);
+      } catch(e) { console.warn('ensureWishlistSheet:', e); }
+    }
+    async function loadAll() {
+      const [itemRows, wishRows] = await Promise.all([Sheets.get(CONFIG.RANGES.ITEMS), Sheets.get(WISH_RANGE)]);
+      allItems = (itemRows||[]).filter(r => r[COL.TIPO]).map((row,idx) => ({ row, sheetRow: idx+4, isWish: false }));
+      allWish  = (wishRows||[]).filter(r => r[0]).map((row,idx) => ({ row, sheetRow: idx+2, isWish: true }));
+      buildFilters(); buildWishFilters(); updateWishCount(); renderAll();
+      document.getElementById('fab-wish').style.display = 'flex';
+    }
+    function buildFilters() {
+      const comebacks = [...new Set([...allItems.map(i => i.row[COL.COMEBACK]),...allWish.map(i => i.row[1])].filter(Boolean))].sort();
+      const members   = [...new Set([...allItems.map(i => i.row[COL.MEMBRO]),...allWish.map(i => i.row[6])].filter(Boolean))].sort();
+      const row = document.getElementById('filter-row');
+      row.innerHTML = `<div class="filter-pill on" data-filter="" onclick="setFilter(this)">Todos</div>`;
+      comebacks.forEach(c => row.innerHTML += `<div class="filter-pill" data-filter="comeback:${c}" onclick="setFilter(this)">${c}</div>`);
+      members.forEach(m => row.innerHTML += `<div class="filter-pill" data-filter="member:${m}" onclick="setFilter(this)">${m}</div>`);
+    }
+    function buildWishFilters() {
+      const comebacks = [...new Set(allWish.map(i => i.row[1]).filter(Boolean))].sort();
+      const members   = [...new Set(allWish.map(i => i.row[6]).filter(Boolean))].sort();
+      const row = document.getElementById('wish-filter-row');
+      row.innerHTML = `<div class="filter-pill on" data-filter="" onclick="setWishFilter(this)">Todos</div>`;
+      comebacks.forEach(c => row.innerHTML += `<div class="filter-pill" data-filter="comeback:${c}" onclick="setWishFilter(this)">${c}</div>`);
+      members.forEach(m => row.innerHTML += `<div class="filter-pill" data-filter="member:${m}" onclick="setWishFilter(this)">${m}</div>`);
+    }
+    function updateWishCount() { document.getElementById('wish-count').textContent = allWish.length > 0 ? allWish.length : ''; }
+    function matchFilter(item, filter) {
+      if (!filter) return true;
+      const [type, val] = filter.split(':');
+      if (type === 'comeback') return (item.isWish ? item.row[1] : item.row[COL.COMEBACK]) === val;
+      if (type === 'member')   return (item.isWish ? item.row[6] : item.row[COL.MEMBRO]) === val;
+      return true;
+    }
+    function setFilter(el) { document.querySelectorAll('#filter-row .filter-pill').forEach(p => p.classList.remove('on')); el.classList.add('on'); activeFilter = el.dataset.filter; renderAll(); }
+    function setWishFilter(el) { document.querySelectorAll('#wish-filter-row .filter-pill').forEach(p => p.classList.remove('on')); el.classList.add('on'); activeWishFilter = el.dataset.filter; renderWishList(); }
+    function renderAll() {
+      const combined = [...allItems, ...allWish].filter(i => matchFilter(i, activeFilter));
+      const byComeback = groupBy(combined, i => i.isWish ? i.row[1] : i.row[COL.COMEBACK]);
+      renderGrade(byComeback); renderLista(byComeback); renderBinder(byComeback); renderWishList();
+    }
+    function groupBy(arr, keyFn) { const map = {}; arr.forEach(item => { const k = keyFn(item)||'—'; if (!map[k]) map[k] = []; map[k].push(item); }); return map; }
+    function itemImg(item) { return item.isWish ? item.row[4] : item.row[COL.IMG_LINK]; }
+    function itemMembro(item) { return item.isWish ? item.row[6] : item.row[COL.MEMBRO]; }
+    function itemSet(item) { return item.isWish ? item.row[2] : item.row[COL.SET_POB]; }
+    function renderGrade(byComeback) {
+      const el = document.getElementById('view-grade');
+      if (!Object.keys(byComeback).length) { el.innerHTML = emptyState('ti-grid-dots','Nenhum item na coleção ainda.'); return; }
+      el.innerHTML = Object.entries(byComeback).map(([cb, items]) => `
+        <div class="section-label">${cb} <span></span></div>
+        <div class="grid-3" style="margin-bottom:8px;">
+          ${items.map(item => { const img = itemImg(item); const wish = item.isWish; return `<div class="pc-card ${wish?'wish':''}" onclick="openDetail(${item.isWish?1:0},${item.sheetRow})"><div class="pc-img">${img?`<img src="${img}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}${wish?'<div class="wish-badge">wish</div>':''}</div><div class="pc-info"><div class="pc-name">${itemMembro(item)||'—'}</div><div class="pc-meta">${itemSet(item)||'—'}</div></div></div>`; }).join('')}
+        </div>`).join('');
+    }
+    function renderLista(byComeback) {
+      const el = document.getElementById('view-lista');
+      if (!Object.keys(byComeback).length) { el.innerHTML = emptyState('ti-list','Nenhum item na coleção ainda.'); return; }
+      el.innerHTML = Object.entries(byComeback).map(([cb, items]) => `
+        <div class="section-label">${cb} <span></span></div>
+        ${items.map(item => { const img = itemImg(item); const wish = item.isWish; return `<div class="list-card ${wish?'wish':''}" onclick="openDetail(${item.isWish?1:0},${item.sheetRow})"><div class="list-thumb">${img?`<img src="${img}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}</div><div class="list-body"><div class="list-name">${itemMembro(item)||'—'} · ${cb}</div><div class="list-meta">${itemSet(item)||'—'}${wish?' · <span class="list-wish-tag">wish</span>':''}</div></div><i class="ti ti-chevron-right" style="font-size:14px; color:var(--text-faint);"></i></div>`; }).join('')}`).join('');
+    }
+    function renderBinder(byComeback) {
+      const el = document.getElementById('view-binder');
+      if (!Object.keys(byComeback).length) { el.innerHTML = emptyState('ti-book','Nenhum item na coleção ainda.'); return; }
+      const saved = JSON.parse(localStorage.getItem('binder_pages')||'{}');
+      el.innerHTML = `<div class="binder-wrap" id="binder-inner"></div>`;
+      const inner = document.getElementById('binder-inner');
+      Object.entries(byComeback).forEach(([cb, items]) => {
+        if (!saved[cb]) { saved[cb] = chunkPages(items.map(i => i.sheetRow+'|'+(i.isWish?'1':'0')), 4); }
+        renderBinderComeback(inner, cb, items, saved[cb]);
+      });
+      inner.innerHTML += `<div class="new-page-btn" onclick="addPage()"><i class="ti ti-plus"></i> Nova página</div>`;
+      saveBinder(saved);
+    }
+    function chunkPages(arr, size) { const pages = []; for (let i = 0; i < arr.length; i += size) pages.push(arr.slice(i, i+size)); if (!pages.length) pages.push([]); return pages; }
+    function renderBinderComeback(container, cb, items, pages) {
+      const section = document.createElement('div');
+      section.innerHTML = `<div class="section-label" style="margin-top:0;">${cb} <span></span></div>`;
+      pages.forEach((page, pi) => {
+        const pageEl = document.createElement('div');
+        pageEl.className = 'binder-page';
+        pageEl.innerHTML = `<div class="page-header"><div class="page-label">Página ${pi+1} · ${page.filter(Boolean).length}/4 bolsos</div><div class="page-del" onclick="deletePage('${cb}',${pi})"><i class="ti ti-trash" style="font-size:11px;"></i> remover</div></div>
+          <div class="pocket-grid">${[0,1,2,3].map(si => { const slot = page[si]; if (slot) { const [rowStr, wishStr] = slot.split('|'); const isWish = wishStr==='1'; const item = isWish ? allWish.find(i => i.sheetRow==rowStr) : allItems.find(i => i.sheetRow==rowStr); const img = item ? itemImg(item) : ''; const nome = item ? (itemMembro(item)||'—') : '—'; return `<div class="pocket ${isWish?'wish-pocket':''}" draggable="true" data-slot="${si}" data-key="${slot}" data-cb="${cb}" data-pi="${pi}" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="dropPocket(event)" ondragleave="dragLeave(event)">${img?`<img class="pocket-fill" src="${img}" onerror="this.parentNode.innerHTML='<div class=\\'pocket-bg\\'>${nome}</div>'">`:`<div class="pocket-bg">${nome}</div>`}${isWish?'<div class="pocket-wish-tag">wish</div>':''}<div class="pocket-overlay"><div class="pocket-name">${nome}</div></div></div>`; } return `<div class="pocket empty-pocket" data-slot="${si}" data-cb="${cb}" data-pi="${pi}" ondragover="dragOver(event)" ondrop="dropPocket(event)" ondragleave="dragLeave(event)"><i class="ti ti-plus" style="font-size:16px; color:var(--text-faint);"></i></div>`; }).join('')}</div>
+          <div class="drag-hint"><i class="ti ti-arrows-move" style="font-size:11px;"></i> arraste para reordenar</div>`;
+        section.appendChild(pageEl);
+      });
+      container.appendChild(section);
+    }
+    let dragKey=null, dragCb=null, dragPi=null, dragSlot=null;
+    function dragStart(e) { dragKey=e.currentTarget.dataset.key; dragCb=e.currentTarget.dataset.cb; dragPi=parseInt(e.currentTarget.dataset.pi); dragSlot=parseInt(e.currentTarget.dataset.slot); e.dataTransfer.effectAllowed='move'; }
+    function dragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+    function dragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+    function dropPocket(e) {
+      e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+      const tSlot=parseInt(e.currentTarget.dataset.slot), tCb=e.currentTarget.dataset.cb, tPi=parseInt(e.currentTarget.dataset.pi);
+      if (!dragKey) return;
+      const saved=JSON.parse(localStorage.getItem('binder_pages')||'{}');
+      const src=saved[dragCb][dragPi], tgt=saved[tCb][tPi];
+      const sv=src[dragSlot], tv=tgt[tSlot];
+      src[dragSlot]=tv||null; tgt[tSlot]=sv;
+      saved[dragCb][dragPi]=src; saved[tCb][tPi]=tgt;
+      saveBinder(saved); reRenderBinder(); dragKey=null;
+    }
+    function addPage() {
+      const cbs=[...new Set([...allItems.map(i=>i.row[COL.COMEBACK]),...allWish.map(i=>i.row[1])].filter(Boolean))];
+      if (!cbs.length) return;
+      const saved=JSON.parse(localStorage.getItem('binder_pages')||'{}');
+      if (!saved[cbs[0]]) saved[cbs[0]]=[];
+      saved[cbs[0]].push([null,null,null,null]);
+      saveBinder(saved); reRenderBinder();
+    }
+    function deletePage(cb, pi) { const saved=JSON.parse(localStorage.getItem('binder_pages')||'{}'); saved[cb].splice(pi,1); if (!saved[cb].length) delete saved[cb]; saveBinder(saved); reRenderBinder(); }
+    function saveBinder(data) { localStorage.setItem('binder_pages', JSON.stringify(data)); }
+    function reRenderBinder() { const combined=[...allItems,...allWish].filter(i=>matchFilter(i,activeFilter)); const byComeback=groupBy(combined,i=>i.isWish?i.row[1]:i.row[COL.COMEBACK]); renderBinder(byComeback); }
+    function renderWishList() {
+      const el=document.getElementById('wish-list');
+      const filtered=allWish.filter(i=>matchFilter(i,activeWishFilter));
+      if (!filtered.length) { el.innerHTML=emptyState('ti-heart','Nenhum item na wishlist ainda.'); return; }
+      const byComeback=groupBy(filtered,i=>i.row[1]);
+      el.innerHTML=Object.entries(byComeback).map(([cb,items])=>`<div class="section-label">${cb} <span></span></div>${items.map(item=>`<div class="list-card wish"><div class="list-thumb">${item.row[4]?`<img src="${item.row[4]}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}</div><div class="list-body"><div class="list-name">${item.row[6]||'—'} · ${cb}</div><div class="list-meta">${item.row[2]||'—'}</div></div><button class="btn btn-ghost" style="font-size:11px;padding:4px 8px;color:var(--status-done-color);border-color:var(--status-done-border);white-space:nowrap;" onclick="markBought(${item.sheetRow},this)"><i class="ti ti-check" style="font-size:11px;"></i> Comprei!</button></div>`).join('')}`).join('');
+    }
+    async function markBought(sheetRow, btn) {
+      btn.disabled=true; btn.innerHTML='<i class="ti ti-loader spinner" style="font-size:11px;"></i>';
+      try {
+        const rows=await Sheets.get(`Wishlist!A${sheetRow}:P${sheetRow}`);
+        if (!rows||!rows[0]) return;
+        const row=rows[0];
+        await Sheets.append(CONFIG.RANGES.ITEMS,[[row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],'Cobrado — pendente','','Aguardando cobrança','','Aguardando cobrança','','',new Date().toLocaleDateString('pt-BR'),'','','Aguardando cobrança','','Aguardando cobrança']]);
+        await Sheets.set(`Wishlist!A${sheetRow}:P${sheetRow}`,[Array(16).fill('')]);
+        showToast('Item movido para Itens!'); await loadAll();
+      } catch(e) { btn.disabled=false; btn.innerHTML='<i class="ti ti-check"></i> Comprei!'; }
+    }
+    function openDetail(isWish, sheetRow) { if (!isWish) window.location.href=`item-detail.html?row=${sheetRow}`; }
+    function copyPublicLink() { navigator.clipboard.writeText(window.location.href+'?public=1').then(()=>showToast('Link copiado!')); }
+    function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2500); }
+    function emptyState(icon,msg) { return `<div class="empty-state"><i class="ti ${icon}"></i><p>${msg}</p></div>`; }
+    function swTop(el) { document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('on')); document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on')); el.classList.add('on'); document.getElementById('panel-'+el.dataset.p).classList.add('on'); const fab=document.getElementById('fab-wish'); if(fab) fab.style.display=el.dataset.p==='wishlist'?'flex':'none'; }
+    function swView(el) { document.querySelectorAll('.view-tab').forEach(t=>t.classList.remove('on')); ['grade','lista','binder'].forEach(v=>{const e=document.getElementById('view-'+v);if(e)e.style.display='none';}); el.classList.add('on'); document.getElementById('view-'+el.dataset.v).style.display='block'; }
+  </script>
+</body>
+</html>
