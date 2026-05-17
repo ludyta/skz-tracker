@@ -13,7 +13,7 @@
     .top-tab.on { color: var(--text-primary); border-bottom-color: var(--accent-deep); font-weight: 500; }
     .panel { display: none; }
     .panel.on { display: block; }
-    .comm-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 12px; transition: border-color var(--transition); cursor: pointer; text-decoration: none; display: block; }
+    .comm-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 12px; transition: border-color var(--transition); cursor: pointer; }
     .comm-card:hover { border-color: var(--accent-border); }
     .comm-card:hover .comm-name { color: var(--accent); }
     .pending-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; padding: 2px 8px; border-radius: var(--radius-pill); background: var(--status-pending-bg); color: var(--status-pending-color); border: 1px solid var(--status-pending-border); margin-bottom: 10px; }
@@ -103,7 +103,7 @@
         const itemsDaCom = allItems.filter(r => r[COL.COMUNIDADE] === nome);
         const ativos = itemsDaCom.filter(r => !r[COL.STATUS]?.includes('Recebido') && !r[COL.STATUS]?.includes('Cancelado')).length;
         const pendentes = itemsDaCom.filter(r => r[COL.STATUS]?.includes('pendente')).length;
-        return `<a class="comm-card" href="community-detail.html?row=${sheetRow}">
+        return `<div class="comm-card" onclick="window.location.href='community-detail.html?row=${sheetRow}'">
           ${pendentes > 0 ? `<div class="pending-tag"><i class="ti ti-alert-triangle" style="font-size:10px;"></i> ${pendentes} pgto${pendentes>1?'s':''} pendente${pendentes>1?'s':''}</div>` : ''}
           <div class="comm-header">
             <div class="comm-avatar">${inicial}</div>
@@ -114,12 +114,12 @@
             <div class="stat"><div class="stat-val" style="color:var(--accent);">${ativos}</div><div class="stat-lab">itens ativos</div></div>
             <div class="stat"><div class="stat-val" style="color:${pendentes>0?'var(--status-pending-color)':'var(--status-done-color)'};">${pendentes}</div><div class="stat-lab">pgto pendente</div></div>
           </div>
-          <div class="comm-links" onclick="event.preventDefault(); event.stopPropagation();">
+          <div class="comm-links">
             ${whats?`<a class="link-btn whats" href="${whats}" target="_blank" onclick="event.stopPropagation()"><i class="ti ti-brand-whatsapp" style="font-size:13px;"></i> WhatsApp</a>`:`<div class="link-btn" style="opacity:0.4;cursor:default;"><i class="ti ti-brand-whatsapp" style="font-size:13px;"></i> WhatsApp</div>`}
             ${sheet?`<a class="link-btn sheet" href="${sheet}" target="_blank" onclick="event.stopPropagation()"><i class="ti ti-table" style="font-size:13px;"></i> Planilha</a>`:`<div class="link-btn" style="opacity:0.4;cursor:default;"><i class="ti ti-table" style="font-size:13px;"></i> Planilha</div>`}
             <a class="link-btn items" href="items.html?community=${encodeURIComponent(nome)}" onclick="event.stopPropagation()"><i class="ti ti-package" style="font-size:13px;"></i> Itens</a>
           </div>
-        </a>`;
+        </div>`;
       }).join('');
     }
     async function saveCommunity() {
