@@ -44,6 +44,7 @@
       <a href="portfolio.html" class="nav-link"><i class="ti ti-grid-dots"></i><span>Portfólio</span></a>
     </div>
     <div style="margin-left:16px;">
+      <a href="settings.html" class="btn btn-ghost" style="padding:6px 10px;" title="Configurações"><i class="ti ti-settings" style="font-size:15px;"></i></a>
       <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()"><i class="ti ti-logout" style="font-size:15px;"></i></button>
     </div>
   </nav>
@@ -58,20 +59,8 @@
     <div class="form-step active" id="step-1">
       <div class="step-title">Identificação</div>
       <div class="step-sub">Sobre o item que você está comprando.</div>
-      <div class="field">
-        <label>Tipo de item</label>
-        <select id="f-tipo">
-          <option value="">Selecione...</option>
-          <option>Photocard</option><option>Álbum</option><option>Merch</option><option>Incluso de Álbum</option><option>Outro</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Comeback</label>
-        <select id="f-comeback">
-          <option value="">Selecione...</option>
-          <option>DO IT</option><option>Karma</option><option>Malestar</option><option>5-STAR</option><option>MAXIDENT</option><option>ODDINARY</option><option>NOEASY</option><option>Outro</option>
-        </select>
-      </div>
+      <div class="field"><label>Tipo de item</label><select id="f-tipo"><option value="">Selecione...</option></select></div>
+      <div class="field"><label>Comeback</label><select id="f-comeback"><option value="">Selecione...</option></select></div>
       <div class="field-row">
         <div class="field"><label>Set / POB</label><input type="text" id="f-set" placeholder="ex: Malestar POB"></div>
         <div class="field"><label>Nº do set</label><input type="number" id="f-numset" placeholder="ex: 3"></div>
@@ -79,7 +68,7 @@
       <div class="field">
         <label>Link da imagem</label>
         <input type="url" id="f-img" placeholder="https://...">
-        <div class="field-hint">Link direto da foto do item (Google Drive, etc.)</div>
+        <div class="field-hint">Link direto da foto do item</div>
       </div>
       <div class="nav-btns">
         <button class="btn btn-primary" style="flex:1;" onclick="goStep(2)">Próximo <i class="ti ti-arrow-right"></i></button>
@@ -92,27 +81,18 @@
         <label>Tipo de claim</label>
         <select id="f-claim-type" onchange="onClaimType()">
           <option value="">Selecione...</option>
-          <option>Por membro (OT8)</option><option>Set genérico</option><option>Sem claim</option>
+          <option>Por membro (OT8)</option>
+          <option>Set genérico</option>
+          <option>Sem claim</option>
         </select>
       </div>
       <div class="conditional" id="cond-membro">
-        <div class="field">
-          <label>Membro</label>
-          <select id="f-membro">
-            <option value="">Selecione...</option>
-            <option>Bang Chan</option><option>Lee Know</option><option>Changbin</option>
-            <option>Hyunjin</option><option>Han</option><option>Felix</option>
-            <option>Seungmin</option><option>I.N</option><option>OT8</option>
-          </select>
-        </div>
+        <div class="field"><label>Membro</label><select id="f-membro"><option value="">Selecione...</option></select></div>
       </div>
       <div class="conditional" id="cond-numclaim">
-        <div class="field">
-          <label>Nº do item no set</label>
-          <input type="number" id="f-numclaim" placeholder="ex: 7">
-        </div>
+        <div class="field"><label>Nº do item no set</label><input type="number" id="f-numclaim" placeholder="ex: 7"></div>
       </div>
-      <div class="field"><label>Comunidade</label><input type="text" id="f-comunidade" placeholder="Nome do grupo no WhatsApp"></div>
+      <div class="field"><label>Comunidade</label><select id="f-comunidade"><option value="">Selecione...</option></select></div>
       <div class="field"><label>GOM / CEG</label><input type="text" id="f-gom" placeholder="Nome da organizadora"></div>
       <div class="field"><label>Link da planilha da CEG</label><input type="url" id="f-link-ceg" placeholder="https://docs.google.com/..."></div>
       <div class="field"><label>Data do claim</label><input type="date" id="f-data-claim"></div>
@@ -133,7 +113,7 @@
           <option>Pago</option>
         </select>
       </div>
-      <div class="field-hint" style="margin-top:-8px; margin-bottom:16px;">Os fretes você atualiza depois, na tela de detalhe do item.</div>
+      <div class="field-hint" style="margin-top:-8px;margin-bottom:16px;">Os fretes você atualiza depois, na tela de detalhe do item.</div>
       <div class="nav-btns">
         <button class="btn btn-ghost" style="flex:1;" onclick="goStep(2)"><i class="ti ti-arrow-left"></i> Voltar</button>
         <button class="btn btn-primary" style="flex:2;" onclick="submit()" id="submit-btn"><i class="ti ti-check"></i> Salvar item</button>
@@ -142,8 +122,8 @@
     <div class="success-screen" id="success-screen">
       <i class="ti ti-circle-check success-icon"></i>
       <h2 style="margin-bottom:8px;">Item salvo!</h2>
-      <p style="color:var(--text-muted); font-size:13px; margin-bottom:28px;">O item foi adicionado à sua planilha.</p>
-      <div style="display:flex; flex-direction:column; gap:10px;">
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:28px;">O item foi adicionado à sua planilha.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
         <a href="items.html" class="btn btn-primary" style="justify-content:center;"><i class="ti ti-list"></i> Ver todos os itens</a>
         <button class="btn btn-ghost" onclick="resetForm()" style="justify-content:center;"><i class="ti ti-plus"></i> Adicionar outro item</button>
       </div>
@@ -152,11 +132,35 @@
   <script src="../js/auth.js"></script>
   <script>
     let currentStep = 1;
+
     document.addEventListener('DOMContentLoaded', async () => {
       await Auth.init();
       const restored = await Auth.tryRestore();
       if (!restored) { window.location.href = '../index.html'; return; }
+      await loadDropdowns();
     });
+
+    async function loadDropdowns() {
+      const [listRows, commRows] = await Promise.all([
+        Sheets.get('Listas!A2:C100'),
+        Sheets.get(CONFIG.RANGES.COMMUNITIES),
+      ]);
+      const tipos     = [...new Set((listRows||[]).map(r=>r[0]).filter(Boolean))];
+      const comebacks = [...new Set((listRows||[]).map(r=>r[1]).filter(Boolean))];
+      const membros   = [...new Set((listRows||[]).map(r=>r[2]).filter(Boolean))];
+      const comms     = (commRows||[]).filter(r=>r[0]).map(r=>r[0]);
+      fillSelect('f-tipo',      tipos,     'Selecione...');
+      fillSelect('f-comeback',  comebacks, 'Selecione...');
+      fillSelect('f-membro',    membros,   'Selecione...');
+      fillSelect('f-comunidade',comms,     'Selecione...');
+    }
+
+    function fillSelect(id, values, placeholder) {
+      const sel = document.getElementById(id);
+      sel.innerHTML = `<option value="">${placeholder}</option>`;
+      values.forEach(v => { const o = document.createElement('option'); o.value = o.textContent = v; sel.appendChild(o); });
+    }
+
     function goStep(n) {
       if (n > currentStep && !validateStep(currentStep)) return;
       document.getElementById('step-' + currentStep).classList.remove('active');
@@ -165,6 +169,7 @@
       updateIndicator();
       window.scrollTo(0, 0);
     }
+
     function updateIndicator() {
       document.querySelectorAll('.step-dot').forEach((dot, i) => {
         dot.classList.remove('active','done');
@@ -172,6 +177,7 @@
         if (i + 1 < currentStep)  dot.classList.add('done');
       });
     }
+
     function validateStep(n) {
       if (n === 1) {
         if (!document.getElementById('f-tipo').value)     { alert('Selecione o tipo de item.'); return false; }
@@ -179,16 +185,18 @@
       }
       if (n === 2) {
         if (!document.getElementById('f-claim-type').value) { alert('Selecione o tipo de claim.'); return false; }
-        if (!document.getElementById('f-comunidade').value) { alert('Informe a comunidade.'); return false; }
+        if (!document.getElementById('f-comunidade').value) { alert('Selecione a comunidade.'); return false; }
         if (!document.getElementById('f-gom').value)        { alert('Informe a GOM/CEG.'); return false; }
       }
       return true;
     }
+
     function onClaimType() {
       const val = document.getElementById('f-claim-type').value;
       document.getElementById('cond-membro').classList.toggle('show', val === 'Por membro (OT8)');
       document.getElementById('cond-numclaim').classList.toggle('show', val === 'Set genérico');
     }
+
     async function submit() {
       if (!validateStep(3)) return;
       const btn = document.getElementById('submit-btn');
@@ -196,16 +204,16 @@
       btn.disabled = true;
       const g = id => document.getElementById(id).value;
       const row = [
-        g('f-tipo'), g('f-comeback'), g('f-set'), g('f-numset'), g('f-img'),
-        g('f-claim-type'), g('f-membro'), g('f-numclaim'),
-        g('f-comunidade'), g('f-gom'), g('f-link-ceg'),
-        g('f-vl-item'), g('f-st-item'),
-        '', 'Aguardando cobrança',
-        '', 'Aguardando cobrança',
-        '', '',
-        g('f-data-claim'), '',
-        '', 'Aguardando cobrança',
-        '', 'Aguardando cobrança',
+        g('f-tipo'),g('f-comeback'),g('f-set'),g('f-numset'),g('f-img'),
+        g('f-claim-type'),g('f-membro'),g('f-numclaim'),
+        g('f-comunidade'),g('f-gom'),g('f-link-ceg'),
+        g('f-vl-item'),g('f-st-item'),
+        '','Aguardando cobrança',
+        '','Aguardando cobrança',
+        '','',
+        g('f-data-claim'),'',
+        '','Aguardando cobrança',
+        '','Aguardando cobrança',
       ];
       try {
         await Sheets.append(CONFIG.RANGES.ITEMS, [row]);
@@ -218,6 +226,7 @@
         btn.disabled = false;
       }
     }
+
     function resetForm() {
       document.querySelectorAll('input, select').forEach(el => el.value = '');
       document.getElementById('success-screen').classList.remove('show');
@@ -228,6 +237,7 @@
       updateIndicator();
       document.getElementById('submit-btn').innerHTML = '<i class="ti ti-check"></i> Salvar item';
       document.getElementById('submit-btn').disabled = false;
+      loadDropdowns();
     }
   </script>
 </body>
