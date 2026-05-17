@@ -90,7 +90,7 @@
     <div style="margin-bottom:20px;"><h1 style="margin:0;">Portfólio</h1></div>
     <div class="top-tabs">
       <div class="top-tab on" data-p="portfolio" onclick="swTop(this)"><i class="ti ti-layout-grid"></i> Coleção</div>
-      <div class="top-tab" data-p="wishlist" onclick="swTop(this)"><i class="ti ti-heart"></i> Wishlist <span id="wish-count" style="font-size:10px; background:var(--accent-muted); color:var(--accent-deep); padding:1px 6px; border-radius:100px; margin-left:2px;"></span></div>
+      <div class="top-tab" data-p="wishlist" onclick="swTop(this)"><i class="ti ti-heart"></i> Wishlist <span id="wish-count" style="font-size:10px;background:var(--accent-muted);color:var(--accent-deep);padding:1px 6px;border-radius:100px;margin-left:2px;"></span></div>
     </div>
     <div class="panel on" id="panel-portfolio">
       <div class="view-tabs">
@@ -119,6 +119,7 @@
   <script>
     let allItems = [], allWish = [], activeFilter = '', activeWishFilter = '';
     const WISH_RANGE = 'Wishlist!A2:P';
+
     document.addEventListener('DOMContentLoaded', async () => {
       await Auth.init();
       const restored = await Auth.tryRestore();
@@ -126,6 +127,7 @@
       await ensureWishlistSheet();
       await loadAll();
     });
+
     async function ensureWishlistSheet() {
       try {
         const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}`, { headers: { 'Authorization': `Bearer ${Auth.accessToken}` } });
@@ -136,6 +138,7 @@
         await Sheets.set('Wishlist!A1:P1', [['Tipo','Comeback','Set POB','Num Set','Link Imagem','Claim Type','Membro','Num Claim','Comunidade','GOM','Link CEG','Vl Item','St Item','Status','Etapa','Notas']]);
       } catch(e) { console.warn('ensureWishlistSheet:', e); }
     }
+
     async function loadAll() {
       const [itemRows, wishRows] = await Promise.all([Sheets.get(CONFIG.RANGES.ITEMS), Sheets.get(WISH_RANGE)]);
       allItems = (itemRows||[]).filter(r => r[COL.TIPO]).map((row,idx) => ({ row, sheetRow: idx+4, isWish: false }));
@@ -143,23 +146,27 @@
       buildFilters(); buildWishFilters(); updateWishCount(); renderAll();
       document.getElementById('fab-wish').style.display = 'flex';
     }
+
     function buildFilters() {
-      const comebacks = [...new Set([...allItems.map(i => i.row[COL.COMEBACK]),...allWish.map(i => i.row[1])].filter(Boolean))].sort();
-      const members   = [...new Set([...allItems.map(i => i.row[COL.MEMBRO]),...allWish.map(i => i.row[6])].filter(Boolean))].sort();
+      const comebacks = [...new Set([...allItems.map(i=>i.row[COL.COMEBACK]),...allWish.map(i=>i.row[1])].filter(Boolean))].sort();
+      const members   = [...new Set([...allItems.map(i=>i.row[COL.MEMBRO]),...allWish.map(i=>i.row[6])].filter(Boolean))].sort();
       const row = document.getElementById('filter-row');
       row.innerHTML = `<div class="filter-pill on" data-filter="" onclick="setFilter(this)">Todos</div>`;
       comebacks.forEach(c => row.innerHTML += `<div class="filter-pill" data-filter="comeback:${c}" onclick="setFilter(this)">${c}</div>`);
       members.forEach(m => row.innerHTML += `<div class="filter-pill" data-filter="member:${m}" onclick="setFilter(this)">${m}</div>`);
     }
+
     function buildWishFilters() {
-      const comebacks = [...new Set(allWish.map(i => i.row[1]).filter(Boolean))].sort();
-      const members   = [...new Set(allWish.map(i => i.row[6]).filter(Boolean))].sort();
+      const comebacks = [...new Set(allWish.map(i=>i.row[1]).filter(Boolean))].sort();
+      const members   = [...new Set(allWish.map(i=>i.row[6]).filter(Boolean))].sort();
       const row = document.getElementById('wish-filter-row');
       row.innerHTML = `<div class="filter-pill on" data-filter="" onclick="setWishFilter(this)">Todos</div>`;
       comebacks.forEach(c => row.innerHTML += `<div class="filter-pill" data-filter="comeback:${c}" onclick="setWishFilter(this)">${c}</div>`);
       members.forEach(m => row.innerHTML += `<div class="filter-pill" data-filter="member:${m}" onclick="setWishFilter(this)">${m}</div>`);
     }
+
     function updateWishCount() { document.getElementById('wish-count').textContent = allWish.length > 0 ? allWish.length : ''; }
+
     function matchFilter(item, filter) {
       if (!filter) return true;
       const [type, val] = filter.split(':');
@@ -167,109 +174,137 @@
       if (type === 'member')   return (item.isWish ? item.row[6] : item.row[COL.MEMBRO]) === val;
       return true;
     }
-    function setFilter(el) { document.querySelectorAll('#filter-row .filter-pill').forEach(p => p.classList.remove('on')); el.classList.add('on'); activeFilter = el.dataset.filter; renderAll(); }
-    function setWishFilter(el) { document.querySelectorAll('#wish-filter-row .filter-pill').forEach(p => p.classList.remove('on')); el.classList.add('on'); activeWishFilter = el.dataset.filter; renderWishList(); }
+
+    function setFilter(el) { document.querySelectorAll('#filter-row .filter-pill').forEach(p=>p.classList.remove('on')); el.classList.add('on'); activeFilter=el.dataset.filter; renderAll(); }
+    function setWishFilter(el) { document.querySelectorAll('#wish-filter-row .filter-pill').forEach(p=>p.classList.remove('on')); el.classList.add('on'); activeWishFilter=el.dataset.filter; renderWishList(); }
+
     function renderAll() {
-      const combined = [...allItems, ...allWish].filter(i => matchFilter(i, activeFilter));
-      const byComeback = groupBy(combined, i => i.isWish ? i.row[1] : i.row[COL.COMEBACK]);
+      const combined = [...allItems,...allWish].filter(i=>matchFilter(i,activeFilter));
+      const byComeback = groupBy(combined, i=>i.isWish?i.row[1]:i.row[COL.COMEBACK]);
       renderGrade(byComeback); renderLista(byComeback); renderBinder(byComeback); renderWishList();
     }
-    function groupBy(arr, keyFn) { const map = {}; arr.forEach(item => { const k = keyFn(item)||'—'; if (!map[k]) map[k] = []; map[k].push(item); }); return map; }
+
+    function groupBy(arr, keyFn) { const map={}; arr.forEach(item=>{ const k=keyFn(item)||'—'; if(!map[k])map[k]=[]; map[k].push(item); }); return map; }
     function itemImg(item) { return item.isWish ? item.row[4] : item.row[COL.IMG_LINK]; }
     function itemMembro(item) { return item.isWish ? item.row[6] : item.row[COL.MEMBRO]; }
     function itemSet(item) { return item.isWish ? item.row[2] : item.row[COL.SET_POB]; }
+
     function renderGrade(byComeback) {
       const el = document.getElementById('view-grade');
       if (!Object.keys(byComeback).length) { el.innerHTML = emptyState('ti-grid-dots','Nenhum item na coleção ainda.'); return; }
-      el.innerHTML = Object.entries(byComeback).map(([cb, items]) => `
+      el.innerHTML = Object.entries(byComeback).map(([cb,items]) => `
         <div class="section-label">${cb} <span></span></div>
         <div class="grid-3" style="margin-bottom:8px;">
-          ${items.map(item => { const img = itemImg(item); const wish = item.isWish; return `<div class="pc-card ${wish?'wish':''}" onclick="openDetail(${item.isWish?1:0},${item.sheetRow})"><div class="pc-img">${img?`<img src="${img}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}${wish?'<div class="wish-badge">wish</div>':''}</div><div class="pc-info"><div class="pc-name">${itemMembro(item)||'—'}</div><div class="pc-meta">${itemSet(item)||'—'}</div></div></div>`; }).join('')}
+          ${items.map(item => { const img=itemImg(item),wish=item.isWish; return `<div class="pc-card ${wish?'wish':''}" onclick="openDetail(${item.isWish?1:0},${item.sheetRow})"><div class="pc-img">${img?`<img src="${img}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}${wish?'<div class="wish-badge">wish</div>':''}</div><div class="pc-info"><div class="pc-name">${itemMembro(item)||'—'}</div><div class="pc-meta">${itemSet(item)||'—'}</div></div></div>`; }).join('')}
         </div>`).join('');
     }
+
     function renderLista(byComeback) {
       const el = document.getElementById('view-lista');
       if (!Object.keys(byComeback).length) { el.innerHTML = emptyState('ti-list','Nenhum item na coleção ainda.'); return; }
-      el.innerHTML = Object.entries(byComeback).map(([cb, items]) => `
+      el.innerHTML = Object.entries(byComeback).map(([cb,items]) => `
         <div class="section-label">${cb} <span></span></div>
-        ${items.map(item => { const img = itemImg(item); const wish = item.isWish; return `<div class="list-card ${wish?'wish':''}" onclick="openDetail(${item.isWish?1:0},${item.sheetRow})"><div class="list-thumb">${img?`<img src="${img}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}</div><div class="list-body"><div class="list-name">${itemMembro(item)||'—'} · ${cb}</div><div class="list-meta">${itemSet(item)||'—'}${wish?' · <span class="list-wish-tag">wish</span>':''}</div></div><i class="ti ti-chevron-right" style="font-size:14px; color:var(--text-faint);"></i></div>`; }).join('')}`).join('');
+        ${items.map(item => { const img=itemImg(item),wish=item.isWish; return `<div class="list-card ${wish?'wish':''}" onclick="openDetail(${item.isWish?1:0},${item.sheetRow})"><div class="list-thumb">${img?`<img src="${img}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}</div><div class="list-body"><div class="list-name">${itemMembro(item)||'—'} · ${cb}</div><div class="list-meta">${itemSet(item)||'—'}${wish?' · <span class="list-wish-tag">wish</span>':''}</div></div><i class="ti ti-chevron-right" style="font-size:14px;color:var(--text-faint);"></i></div>`; }).join('')}`).join('');
     }
+
     function renderBinder(byComeback) {
       const el = document.getElementById('view-binder');
       if (!Object.keys(byComeback).length) { el.innerHTML = emptyState('ti-book','Nenhum item na coleção ainda.'); return; }
       const saved = JSON.parse(localStorage.getItem('binder_pages')||'{}');
       el.innerHTML = `<div class="binder-wrap" id="binder-inner"></div>`;
       const inner = document.getElementById('binder-inner');
-      Object.entries(byComeback).forEach(([cb, items]) => {
-        if (!saved[cb]) { saved[cb] = chunkPages(items.map(i => i.sheetRow+'|'+(i.isWish?'1':'0')), 4); }
-        renderBinderComeback(inner, cb, items, saved[cb]);
+      Object.entries(byComeback).forEach(([cb,items]) => {
+        if (!saved[cb]) saved[cb] = chunkPages(items.map(i=>i.sheetRow+'|'+(i.isWish?'1':'0')),4);
+        renderBinderComeback(inner,cb,items,saved[cb]);
       });
       inner.innerHTML += `<div class="new-page-btn" onclick="addPage()"><i class="ti ti-plus"></i> Nova página</div>`;
       saveBinder(saved);
     }
-    function chunkPages(arr, size) { const pages = []; for (let i = 0; i < arr.length; i += size) pages.push(arr.slice(i, i+size)); if (!pages.length) pages.push([]); return pages; }
-    function renderBinderComeback(container, cb, items, pages) {
+
+    function chunkPages(arr,size) { const pages=[]; for(let i=0;i<arr.length;i+=size)pages.push(arr.slice(i,i+size)); if(!pages.length)pages.push([]); return pages; }
+
+    function renderBinderComeback(container,cb,items,pages) {
       const section = document.createElement('div');
       section.innerHTML = `<div class="section-label" style="margin-top:0;">${cb} <span></span></div>`;
-      pages.forEach((page, pi) => {
+      pages.forEach((page,pi) => {
         const pageEl = document.createElement('div');
         pageEl.className = 'binder-page';
         pageEl.innerHTML = `<div class="page-header"><div class="page-label">Página ${pi+1} · ${page.filter(Boolean).length}/4 bolsos</div><div class="page-del" onclick="deletePage('${cb}',${pi})"><i class="ti ti-trash" style="font-size:11px;"></i> remover</div></div>
-          <div class="pocket-grid">${[0,1,2,3].map(si => { const slot = page[si]; if (slot) { const [rowStr, wishStr] = slot.split('|'); const isWish = wishStr==='1'; const item = isWish ? allWish.find(i => i.sheetRow==rowStr) : allItems.find(i => i.sheetRow==rowStr); const img = item ? itemImg(item) : ''; const nome = item ? (itemMembro(item)||'—') : '—'; return `<div class="pocket ${isWish?'wish-pocket':''}" draggable="true" data-slot="${si}" data-key="${slot}" data-cb="${cb}" data-pi="${pi}" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="dropPocket(event)" ondragleave="dragLeave(event)">${img?`<img class="pocket-fill" src="${img}" onerror="this.parentNode.innerHTML='<div class=\\'pocket-bg\\'>${nome}</div>'">`:`<div class="pocket-bg">${nome}</div>`}${isWish?'<div class="pocket-wish-tag">wish</div>':''}<div class="pocket-overlay"><div class="pocket-name">${nome}</div></div></div>`; } return `<div class="pocket empty-pocket" data-slot="${si}" data-cb="${cb}" data-pi="${pi}" ondragover="dragOver(event)" ondrop="dropPocket(event)" ondragleave="dragLeave(event)"><i class="ti ti-plus" style="font-size:16px; color:var(--text-faint);"></i></div>`; }).join('')}</div>
+          <div class="pocket-grid">${[0,1,2,3].map(si => { const slot=page[si]; if(slot){ const [rowStr,wishStr]=slot.split('|'),isWish=wishStr==='1'; const item=isWish?allWish.find(i=>i.sheetRow==rowStr):allItems.find(i=>i.sheetRow==rowStr); const img=item?itemImg(item):'',nome=item?(itemMembro(item)||'—'):'—'; return `<div class="pocket ${isWish?'wish-pocket':''}" draggable="true" data-slot="${si}" data-key="${slot}" data-cb="${cb}" data-pi="${pi}" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="dropPocket(event)" ondragleave="dragLeave(event)">${img?`<img class="pocket-fill" src="${img}" onerror="this.parentNode.innerHTML='<div class=\\'pocket-bg\\'>${nome}</div>'">`:`<div class="pocket-bg">${nome}</div>`}${isWish?'<div class="pocket-wish-tag">wish</div>':''}<div class="pocket-overlay"><div class="pocket-name">${nome}</div></div></div>`; } return `<div class="pocket empty-pocket" data-slot="${si}" data-cb="${cb}" data-pi="${pi}" ondragover="dragOver(event)" ondrop="dropPocket(event)" ondragleave="dragLeave(event)"><i class="ti ti-plus" style="font-size:16px;color:var(--text-faint);"></i></div>`; }).join('')}</div>
           <div class="drag-hint"><i class="ti ti-arrows-move" style="font-size:11px;"></i> arraste para reordenar</div>`;
         section.appendChild(pageEl);
       });
       container.appendChild(section);
     }
-    let dragKey=null, dragCb=null, dragPi=null, dragSlot=null;
+
+    let dragKey=null,dragCb=null,dragPi=null,dragSlot=null;
     function dragStart(e) { dragKey=e.currentTarget.dataset.key; dragCb=e.currentTarget.dataset.cb; dragPi=parseInt(e.currentTarget.dataset.pi); dragSlot=parseInt(e.currentTarget.dataset.slot); e.dataTransfer.effectAllowed='move'; }
     function dragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
     function dragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
     function dropPocket(e) {
       e.preventDefault(); e.currentTarget.classList.remove('drag-over');
-      const tSlot=parseInt(e.currentTarget.dataset.slot), tCb=e.currentTarget.dataset.cb, tPi=parseInt(e.currentTarget.dataset.pi);
-      if (!dragKey) return;
+      const tSlot=parseInt(e.currentTarget.dataset.slot),tCb=e.currentTarget.dataset.cb,tPi=parseInt(e.currentTarget.dataset.pi);
+      if(!dragKey)return;
       const saved=JSON.parse(localStorage.getItem('binder_pages')||'{}');
-      const src=saved[dragCb][dragPi], tgt=saved[tCb][tPi];
-      const sv=src[dragSlot], tv=tgt[tSlot];
+      const src=saved[dragCb][dragPi],tgt=saved[tCb][tPi],sv=src[dragSlot],tv=tgt[tSlot];
       src[dragSlot]=tv||null; tgt[tSlot]=sv;
       saved[dragCb][dragPi]=src; saved[tCb][tPi]=tgt;
       saveBinder(saved); reRenderBinder(); dragKey=null;
     }
+
     function addPage() {
       const cbs=[...new Set([...allItems.map(i=>i.row[COL.COMEBACK]),...allWish.map(i=>i.row[1])].filter(Boolean))];
-      if (!cbs.length) return;
+      if(!cbs.length)return;
       const saved=JSON.parse(localStorage.getItem('binder_pages')||'{}');
-      if (!saved[cbs[0]]) saved[cbs[0]]=[];
+      if(!saved[cbs[0]])saved[cbs[0]]=[];
       saved[cbs[0]].push([null,null,null,null]);
       saveBinder(saved); reRenderBinder();
     }
-    function deletePage(cb, pi) { const saved=JSON.parse(localStorage.getItem('binder_pages')||'{}'); saved[cb].splice(pi,1); if (!saved[cb].length) delete saved[cb]; saveBinder(saved); reRenderBinder(); }
-    function saveBinder(data) { localStorage.setItem('binder_pages', JSON.stringify(data)); }
+
+    function deletePage(cb,pi) { const saved=JSON.parse(localStorage.getItem('binder_pages')||'{}'); saved[cb].splice(pi,1); if(!saved[cb].length)delete saved[cb]; saveBinder(saved); reRenderBinder(); }
+    function saveBinder(data) { localStorage.setItem('binder_pages',JSON.stringify(data)); }
     function reRenderBinder() { const combined=[...allItems,...allWish].filter(i=>matchFilter(i,activeFilter)); const byComeback=groupBy(combined,i=>i.isWish?i.row[1]:i.row[COL.COMEBACK]); renderBinder(byComeback); }
+
     function renderWishList() {
       const el=document.getElementById('wish-list');
       const filtered=allWish.filter(i=>matchFilter(i,activeWishFilter));
-      if (!filtered.length) { el.innerHTML=emptyState('ti-heart','Nenhum item na wishlist ainda.'); return; }
+      if(!filtered.length){el.innerHTML=emptyState('ti-heart','Nenhum item na wishlist ainda.');return;}
       const byComeback=groupBy(filtered,i=>i.row[1]);
-      el.innerHTML=Object.entries(byComeback).map(([cb,items])=>`<div class="section-label">${cb} <span></span></div>${items.map(item=>`<div class="list-card wish"><div class="list-thumb">${item.row[4]?`<img src="${item.row[4]}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}</div><div class="list-body"><div class="list-name">${item.row[6]||'—'} · ${cb}</div><div class="list-meta">${item.row[2]||'—'}</div></div><button class="btn btn-ghost" style="font-size:11px;padding:4px 8px;color:var(--status-done-color);border-color:var(--status-done-border);white-space:nowrap;" onclick="markBought(${item.sheetRow},this)"><i class="ti ti-check" style="font-size:11px;"></i> Comprei!</button></div>`).join('')}`).join('');
+      el.innerHTML=Object.entries(byComeback).map(([cb,items])=>`
+        <div class="section-label">${cb} <span></span></div>
+        ${items.map(item=>`<div class="list-card wish"><div class="list-thumb">${item.row[4]?`<img src="${item.row[4]}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}</div><div class="list-body"><div class="list-name">${item.row[6]||'—'} · ${cb}</div><div class="list-meta">${item.row[2]||'—'}</div></div><button class="btn btn-ghost" style="font-size:11px;padding:4px 8px;color:var(--status-done-color);border-color:var(--status-done-border);white-space:nowrap;" onclick="markBought(${item.sheetRow},this)"><i class="ti ti-check" style="font-size:11px;"></i> Comprei!</button></div>`).join('')}`).join('');
     }
+
     async function markBought(sheetRow, btn) {
-      btn.disabled=true; btn.innerHTML='<i class="ti ti-loader spinner" style="font-size:11px;"></i>';
+      if (!confirm('Mover este item para Itens? Ele sairá da wishlist.')) return;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="ti ti-loader spinner" style="font-size:11px;"></i>';
       try {
-        const rows=await Sheets.get(`Wishlist!A${sheetRow}:P${sheetRow}`);
-        if (!rows||!rows[0]) return;
-        const row=rows[0];
-        await Sheets.append(CONFIG.RANGES.ITEMS,[[row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],'Cobrado — pendente','','Aguardando cobrança','','Aguardando cobrança','','',new Date().toLocaleDateString('pt-BR'),'','','Aguardando cobrança','','Aguardando cobrança']]);
-        await Sheets.set(`Wishlist!A${sheetRow}:P${sheetRow}`,[Array(16).fill('')]);
-        showToast('Item movido para Itens!'); await loadAll();
-      } catch(e) { btn.disabled=false; btn.innerHTML='<i class="ti ti-check"></i> Comprei!'; }
+        const rows = await Sheets.get(`Wishlist!A${sheetRow}:P${sheetRow}`);
+        if (!rows || !rows[0]) return;
+        const row = rows[0];
+        await Sheets.append(CONFIG.RANGES.ITEMS, [[
+          row[0],row[1],row[2],row[3],row[4],
+          row[5],row[6],row[7],row[8],row[9],row[10],
+          row[11],'Aguardando cobrança',
+          '','Aguardando cobrança',
+          '','Aguardando cobrança',
+          '','',new Date().toLocaleDateString('pt-BR'),'',
+          '','Aguardando cobrança',
+          '','Aguardando cobrança'
+        ]]);
+        await Sheets.set(`Wishlist!A${sheetRow}:P${sheetRow}`, [Array(16).fill('')]);
+        showToast('Item movido para Itens! Para desfazer, abra o item em Itens e remova-o.');
+        await loadAll();
+      } catch(e) { btn.disabled = false; btn.innerHTML = '<i class="ti ti-check"></i> Comprei!'; }
     }
-    function openDetail(isWish, sheetRow) { if (!isWish) window.location.href=`item-detail.html?row=${sheetRow}`; }
+
+    function openDetail(isWish,sheetRow) { if(!isWish) window.location.href=`item-detail.html?row=${sheetRow}`; }
     function copyPublicLink() { navigator.clipboard.writeText(window.location.href+'?public=1').then(()=>showToast('Link copiado!')); }
-    function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2500); }
+    function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',3500); }
     function emptyState(icon,msg) { return `<div class="empty-state"><i class="ti ${icon}"></i><p>${msg}</p></div>`; }
-    function swTop(el) { document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('on')); document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on')); el.classList.add('on'); document.getElementById('panel-'+el.dataset.p).classList.add('on'); const fab=document.getElementById('fab-wish'); if(fab) fab.style.display=el.dataset.p==='wishlist'?'flex':'none'; }
+
+    function swTop(el) { document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('on')); document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on')); el.classList.add('on'); document.getElementById('panel-'+el.dataset.p).classList.add('on'); const fab=document.getElementById('fab-wish'); if(fab)fab.style.display=el.dataset.p==='wishlist'?'flex':'none'; }
     function swView(el) { document.querySelectorAll('.view-tab').forEach(t=>t.classList.remove('on')); ['grade','lista','binder'].forEach(v=>{const e=document.getElementById('view-'+v);if(e)e.style.display='none';}); el.classList.add('on'); document.getElementById('view-'+el.dataset.v).style.display='block'; }
   </script>
 </body>
