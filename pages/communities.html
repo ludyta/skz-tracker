@@ -13,6 +13,7 @@
     .top-tab.on { color: var(--text-primary); border-bottom-color: var(--accent-deep); font-weight: 500; }
     .panel { display: none; }
     .panel.on { display: block; }
+
     .comm-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 12px; transition: border-color var(--transition); cursor: pointer; }
     .comm-card:hover { border-color: var(--accent-border); }
     .comm-card:hover .comm-name { color: var(--accent); }
@@ -32,41 +33,36 @@
     .link-btn.whats { border-color: rgba(37,211,102,0.25); color: #1a9e6a; background: rgba(37,211,102,0.05); }
     .link-btn.sheet { border-color: rgba(56,168,96,0.25); color: #1a6b3a; background: rgba(56,168,96,0.05); }
     .link-btn.items { border-color: var(--accent-border); color: var(--accent-deep); background: var(--accent-muted); }
+
     .field { margin-bottom: var(--space-4); }
     .field label { display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
     .field input, .field textarea { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; font-family: var(--font-body); font-size: 14px; color: var(--text-primary); outline: none; transition: border-color var(--transition); }
     .field input:focus, .field textarea:focus { border-color: var(--accent-border); }
     .field input::placeholder, .field textarea::placeholder { color: var(--text-faint); }
     .field textarea { resize: vertical; min-height: 80px; }
+
     .empty-state { text-align: center; padding: 48px 16px; color: var(--text-muted); }
     .empty-state i { font-size: 32px; display: block; margin-bottom: 12px; color: var(--text-faint); }
     .empty-state p { font-size: 13px; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .spinner { animation: spin 1s linear infinite; display: inline-block; }
   </style>
+  <script src="../js/app.js"></script>
+  <script src="../js/nav.js"></script>
 </head>
 <body>
-  <nav class="navbar">
-    <a href="../index.html" class="navbar-brand"><div class="brand-dot"></div>SKZ Tracker</a>
-    <div class="navbar-nav">
-      <a href="../index.html" class="nav-link"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a>
-      <a href="items.html" class="nav-link"><i class="ti ti-package"></i><span>Itens</span></a>
-      <a href="portfolio.html" class="nav-link"><i class="ti ti-grid-dots"></i><span>Portfólio</span></a>
-      <a href="communities.html" class="nav-link active"><i class="ti ti-building-community"></i><span>Comunidades</span></a>
-    </div>
-    <div style="margin-left:16px;">
-      <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()"><i class="ti ti-logout" style="font-size:15px;"></i></button>
-    </div>
-  </nav>
+
   <main class="container" style="padding-top:24px; padding-bottom:100px;">
     <div style="margin-bottom:20px;"><h1 style="margin:0;">Comunidades</h1></div>
     <div class="top-tabs">
       <div class="top-tab on" data-p="lista" onclick="swTab(this)"><i class="ti ti-building-community"></i> Minhas comunidades</div>
       <div class="top-tab" data-p="form" onclick="swTab(this)"><i class="ti ti-plus"></i> Nova</div>
     </div>
+
     <div class="panel on" id="panel-lista">
       <div id="comm-list"><div class="empty-state"><i class="ti ti-loader spinner"></i><p>Carregando...</p></div></div>
     </div>
+
     <div class="panel" id="panel-form">
       <div class="field"><label>Nome da comunidade</label><input type="text" id="fn-nome" placeholder="ex: SKZ Brasil OT8"></div>
       <div class="field"><label>Nome da GOM / CEG</label><input type="text" id="fn-gom" placeholder="ex: Fulana"></div>
@@ -79,42 +75,58 @@
       </button>
     </div>
   </main>
-  <script src="../js/auth.js"></script>
   <script>
     let allItems = [], allComms = [];
+
     document.addEventListener('DOMContentLoaded', async () => {
       await Auth.init();
       const restored = await Auth.tryRestore();
       if (!restored) { window.location.href = '../index.html'; return; }
       await loadAll();
     });
+
     async function loadAll() {
-      const [commRows, itemRows] = await Promise.all([Sheets.get(CONFIG.RANGES.COMMUNITIES), Sheets.get(CONFIG.RANGES.ITEMS)]);
+      const [commRows, itemRows] = await Promise.all([
+        Sheets.get(CONFIG.RANGES.COMMUNITIES),
+        Sheets.get(CONFIG.RANGES.ITEMS),
+      ]);
       allComms = (commRows||[]).filter(r => r[0]).map((row, idx) => ({ row, sheetRow: idx + 3 }));
       allItems = (itemRows||[]).filter(r => r[COL.TIPO]);
       renderList();
     }
+
     function renderList() {
       const el = document.getElementById('comm-list');
-      if (!allComms.length) { el.innerHTML = `<div class="empty-state"><i class="ti ti-building-community"></i><p>Nenhuma comunidade cadastrada ainda.<br>Adicione sua primeira comunidade!</p></div>`; return; }
+      if (!allComms.length) {
+        el.innerHTML = `<div class="empty-state"><i class="ti ti-building-community"></i><p>Nenhuma comunidade cadastrada ainda.<br>Adicione sua primeira comunidade!</p></div>`;
+        return;
+      }
       el.innerHTML = allComms.map(({ row, sheetRow }) => {
-        const nome = row[0]||'—', gom = row[1]||'—', whats = row[2]||'', sheet = row[3]||'', tipos = row[4]||'—';
-        const inicial = nome.charAt(0).toUpperCase();
+        const nome     = row[0]||'—';
+        const gom      = row[1]||'—';
+        const whats    = row[2]||'';
+        const sheet    = row[3]||'';
+        const tipos    = row[4]||'—';
+        const inicial  = nome.charAt(0).toUpperCase();
         const itemsDaCom = allItems.filter(r => r[COL.COMUNIDADE] === nome);
-        const ativos = itemsDaCom.filter(r => !r[COL.STATUS]?.includes('Recebido') && !r[COL.STATUS]?.includes('Cancelado')).length;
+        const ativos   = itemsDaCom.filter(r => !r[COL.STATUS]?.includes('Recebido') && !r[COL.STATUS]?.includes('Cancelado')).length;
         const pendentes = itemsDaCom.filter(r => r[COL.STATUS]?.includes('pendente')).length;
+
         return `<div class="comm-card" onclick="window.location.href='community-detail.html?row=${sheetRow}'">
           ${pendentes > 0 ? `<div class="pending-tag"><i class="ti ti-alert-triangle" style="font-size:10px;"></i> ${pendentes} pgto${pendentes>1?'s':''} pendente${pendentes>1?'s':''}</div>` : ''}
           <div class="comm-header">
             <div class="comm-avatar">${inicial}</div>
-            <div class="comm-info"><div class="comm-name">${nome}</div><div class="comm-gom">GOM: ${gom} · ${tipos}</div></div>
+            <div class="comm-info">
+              <div class="comm-name">${nome}</div>
+              <div class="comm-gom">GOM: ${gom} · ${tipos}</div>
+            </div>
             <i class="ti ti-chevron-right" style="font-size:16px; color:var(--text-faint);"></i>
           </div>
           <div class="comm-stats">
             <div class="stat"><div class="stat-val" style="color:var(--accent);">${ativos}</div><div class="stat-lab">itens ativos</div></div>
             <div class="stat"><div class="stat-val" style="color:${pendentes>0?'var(--status-pending-color)':'var(--status-done-color)'};">${pendentes}</div><div class="stat-lab">pgto pendente</div></div>
           </div>
-          <div class="comm-links">
+          <div class="comm-links" >
             ${whats?`<a class="link-btn whats" href="${whats}" target="_blank" onclick="event.stopPropagation()"><i class="ti ti-brand-whatsapp" style="font-size:13px;"></i> WhatsApp</a>`:`<div class="link-btn" style="opacity:0.4;cursor:default;"><i class="ti ti-brand-whatsapp" style="font-size:13px;"></i> WhatsApp</div>`}
             ${sheet?`<a class="link-btn sheet" href="${sheet}" target="_blank" onclick="event.stopPropagation()"><i class="ti ti-table" style="font-size:13px;"></i> Planilha</a>`:`<div class="link-btn" style="opacity:0.4;cursor:default;"><i class="ti ti-table" style="font-size:13px;"></i> Planilha</div>`}
             <a class="link-btn items" href="items.html?community=${encodeURIComponent(nome)}" onclick="event.stopPropagation()"><i class="ti ti-package" style="font-size:13px;"></i> Itens</a>
@@ -122,6 +134,7 @@
         </div>`;
       }).join('');
     }
+
     async function saveCommunity() {
       const nome = document.getElementById('fn-nome').value.trim();
       if (!nome) { alert('Informe o nome da comunidade.'); return; }
@@ -129,7 +142,14 @@
       btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
       btn.disabled = true;
       try {
-        await Sheets.append(CONFIG.RANGES.COMMUNITIES, [[nome, document.getElementById('fn-gom').value, document.getElementById('fn-whats').value, document.getElementById('fn-sheet').value, document.getElementById('fn-tipos').value, document.getElementById('fn-obs').value]]);
+        await Sheets.append(CONFIG.RANGES.COMMUNITIES, [[
+          nome,
+          document.getElementById('fn-gom').value,
+          document.getElementById('fn-whats').value,
+          document.getElementById('fn-sheet').value,
+          document.getElementById('fn-tipos').value,
+          document.getElementById('fn-obs').value,
+        ]]);
         document.querySelectorAll('#panel-form input, #panel-form textarea').forEach(i => i.value = '');
         await loadAll();
         swTabByName('lista');
@@ -137,8 +157,18 @@
       btn.innerHTML = '<i class="ti ti-check"></i> Salvar comunidade';
       btn.disabled = false;
     }
-    function swTab(el) { document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('on')); document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on')); el.classList.add('on'); document.getElementById('panel-'+el.dataset.p).classList.add('on'); }
-    function swTabByName(name) { const tab=document.querySelector(`.top-tab[data-p="${name}"]`); if(tab) swTab(tab); }
+
+    function swTab(el) {
+      document.querySelectorAll('.top-tab').forEach(t => t.classList.remove('on'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+      el.classList.add('on');
+      document.getElementById('panel-' + el.dataset.p).classList.add('on');
+    }
+
+    function swTabByName(name) {
+      const tab = document.querySelector(`.top-tab[data-p="${name}"]`);
+      if (tab) swTab(tab);
+    }
   </script>
 </body>
 </html>
