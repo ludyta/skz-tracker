@@ -62,7 +62,9 @@ const Auth = {
     Auth.isSignedIn = false;
     Auth.user = null;
     localStorage.removeItem('skz_token');
-    Auth._onSignOut();
+    // Redirect to login
+    const isPages = window.location.pathname.includes('/pages/');
+    window.location.href = isPages ? '../index.html' : 'index.html';
   },
 
   async tryRestore() {
