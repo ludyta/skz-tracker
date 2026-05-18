@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setup — Collection Tracker</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <script src="../js/app.js"></script>
+  <style>
+    body { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; }
+    .setup-card { background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px 24px; max-width:480px; width:100%; }
+    .step { display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
+    .step:last-child { border-bottom:none; }
+    .step-num { width:24px; height:24px; border-radius:50%; background:var(--bg-elevated); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:500; color:var(--text-muted); flex-shrink:0; margin-top:2px; }
+    .step-num.done { background:var(--status-done-bg); color:var(--status-done-color); }
+    .step-num.error { background:var(--status-cancelled-bg); color:var(--status-cancelled-color); }
+    .step-num.running { background:var(--accent-muted); color:var(--accent-deep); }
+    .step-text { font-size:13px; color:var(--text-primary); }
+    .step-sub { font-size:11px; color:var(--text-muted); margin-top:3px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .spinner { animation:spin 1s linear infinite; display:inline-block; }
+  </style>
+</head>
+<body>
+  <div class="setup-card">
+    <div style="text-align:center; margin-bottom:28px;">
+      <i class="ti ti-database" style="font-size:36px; color:var(--accent-deep); display:block; margin-bottom:12px;"></i>
+      <h2 style="font-size:20px; margin-bottom:6px;">Configurando planilha</h2>
+      <p style="font-size:13px; color:var(--text-muted);">Recriando a aba Itens do zero. Aguarde...</p>
+    </div>
+
+    <div id="steps">
+      <div class="step"><div class="step-num" id="s1">1</div><div><div class="step-text">Conectando ao Google Sheets</div><div class="step-sub" id="s1-sub">Aguardando...</div></div></div>
+      <div class="step"><div class="step-num" id="s2">2</div><div><div class="step-text">Apagando aba Itens atual</div><div class="step-sub" id="s2-sub">Aguardando...</div></div></div>
+      <div class="step"><div class="step-num" id="s3">3</div><div><div class="step-text">Criando aba Itens nova</div><div class="step-sub" id="s3-sub">Aguardando...</div></div></div>
+      <div class="step"><div class="step-num" id="s4">4</div><div><div class="step-text">Adicionando cabeçalhos</div><div class="step-sub" id="s4-sub">Aguardando...</div></div></div>
+    </div>
+
+    <div id="result" style="display:none; text-align:center; margin-top:24px;"></div>
+  </div>
+
+  <script>
+    function setStep(n, status, sub) {
+      const el = document.getElementById('s' + n);
+      el.className = 'step-num ' + status;
+      el.innerHTML = status === 'running' ? '<i class="ti ti-loader spinner" style="font-size:11px;"></i>' :
+                     status === 'done'    ? '<i class="ti ti-check" style="font-size:11px;"></i>' :
+                     status === 'error'   ? '<i class="ti ti-x" style="font-size:11px;"></i>' : n;
+      if (sub) document.getElementById('s' + n + '-sub').textContent = sub;
+    }
+
+    async function runSetup() {
+      const token = localStorage.getItem('skz_token');
+      if (!token) { window.location.href = '../index.html'; return; }
+
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      };
+      const SHEET_ID = CONFIG.SHEET_ID;
+      const BASE = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}`;
+
+      try {
+        // Step 1 — get sheet info
+        setStep(1, 'running', 'Buscando informações...');
+        const infoRes = await fetch(BASE, { headers });
+        const info = await infoRes.json();
+        setStep(1, 'done', 'Conectado!');
+
+        // Step 2 — delete Itens sheet
+        setStep(2, 'running', 'Removendo aba antiga...');
+        const itensSheet = info.sheets.find(s => s.properties.title === 'Itens');
+        if (itensSheet) {
+          await fetch(`${BASE}:batchUpdate`, {
+            method: 'POST', headers,
+            body: JSON.stringify({ requests: [{ deleteSheet: { sheetId: itensSheet.properties.sheetId } }] })
+          });
+        }
+        setStep(2, 'done', 'Aba removida!');
+
+        // Step 3 — create new Itens sheet
+        setStep(3, 'running', 'Criando aba limpa...');
+        await fetch(`${BASE}:batchUpdate`, {
+          method: 'POST', headers,
+          body: JSON.stringify({ requests: [{ addSheet: { properties: { title: 'Itens', index: 0 } } }] })
+        });
+        setStep(3, 'done', 'Aba criada!');
+
+        // Step 4 — add headers
+        setStep(4, 'running', 'Inserindo cabeçalhos...');
+        const headerValues = [[
+          'Tipo','Comeback','Set POB','Num Set','Link Imagem',
+          'Claim Type','Membro','Num Claim',
+          'Comunidade','GOM','Link CEG',
+          'Vl Item','St Item','Vl FI1','St FI1','Vl FI2','St FI2',
+          'Status','Etapa','Data Claim','Notas','Data Rec',
+          'Vl Alf','St Alf','Vl Fnac','St Fnac','Total Pago','Pendente'
+        ]];
+        await fetch(`${BASE}/values/Itens!A1:AB1?valueInputOption=USER_ENTERED`, {
+          method: 'PUT', headers,
+          body: JSON.stringify({ range: 'Itens!A1:AB1', majorDimension: 'ROWS', values: headerValues })
+        });
+        setStep(4, 'done', 'Cabeçalhos adicionados!');
+
+        // Done!
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('result').innerHTML = `
+          <div style="background:var(--status-done-bg);border:1px solid var(--status-done-border);border-radius:var(--radius-md);padding:16px;margin-bottom:16px;">
+            <i class="ti ti-circle-check" style="font-size:24px;color:var(--status-done-color);display:block;margin-bottom:8px;"></i>
+            <div style="font-size:13px;font-weight:500;color:var(--status-done-color);">Planilha configurada com sucesso!</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">A aba Itens foi recriada limpa e pronta para uso.</div>
+          </div>
+          <a href="dashboard.html" class="btn btn-primary" style="justify-content:center;width:100%;">
+            <i class="ti ti-arrow-right"></i> Ir para o Dashboard
+          </a>`;
+
+      } catch(e) {
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('result').innerHTML = `
+          <div style="background:var(--status-cancelled-bg);border:1px solid var(--status-cancelled-border);border-radius:var(--radius-md);padding:16px;">
+            <div style="font-size:13px;color:var(--status-cancelled-color);">Erro: ${e.message}</div>
+          </div>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      runSetup();
+    });
+  </script>
+</body>
+</html>
