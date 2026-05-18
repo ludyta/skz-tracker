@@ -13,6 +13,8 @@
     .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--space-3); margin-top: var(--space-5); display: flex; align-items: center; gap: var(--space-2); }
     .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
     .list-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 12px; }
+    .list-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .list-title { font-size: 14px; font-weight: 500; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
     .list-items { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
     .list-item { display: flex; align-items: center; gap: 8px; background: var(--bg-elevated); border-radius: var(--radius-md); padding: 8px 12px; }
     .list-item-text { flex: 1; font-size: 13px; color: var(--text-primary); }
@@ -34,36 +36,31 @@
     .spinner { animation: spin 1s linear infinite; display: inline-block; }
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 16px; font-size: 12px; color: var(--text-primary); display: none; z-index: 100; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
   </style>
+  <script src="../js/app.js"></script>
+  <script src="../js/nav.js"></script>
 </head>
 <body>
-  <nav class="navbar">
-    <a href="../index.html" class="navbar-brand"><div class="brand-dot"></div>SKZ Tracker</a>
-    <div class="navbar-nav">
-      <a href="../index.html" class="nav-link"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a>
-      <a href="items.html" class="nav-link"><i class="ti ti-package"></i><span>Itens</span></a>
-      <a href="portfolio.html" class="nav-link"><i class="ti ti-grid-dots"></i><span>Portfólio</span></a>
-      <a href="communities.html" class="nav-link"><i class="ti ti-building-community"></i><span>Comunidades</span></a>
-    </div>
-    <div style="margin-left:16px;">
-      <a href="settings.html" class="btn btn-ghost" style="padding:6px 10px;" title="Configurações"><i class="ti ti-settings" style="font-size:15px;"></i></a>
-      <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()"><i class="ti ti-logout" style="font-size:15px;"></i></button>
-    </div>
-  </nav>
+
   <main class="container" style="padding-top:24px; padding-bottom:80px;">
     <a href="../index.html" class="back-btn"><i class="ti ti-arrow-left"></i> Voltar</a>
     <h1 style="margin-bottom:4px;">Configurações</h1>
     <p style="color:var(--text-muted); font-size:13px; margin-bottom:0;">Gerencie as opções dos dropdowns do app.</p>
-    <div id="content"><div class="empty-state"><i class="ti ti-loader spinner"></i><p>Carregando...</p></div></div>
+
+    <div id="content">
+      <div class="empty-state"><i class="ti ti-loader spinner"></i><p>Carregando...</p></div>
+    </div>
   </main>
+
   <div class="toast" id="toast"></div>
-  <script src="../js/auth.js"></script>
   <script>
+    // Colunas da aba Listas: A=Tipo, B=Comeback, C=Membro, D=Tipo Claim, E=Status Pgto
     const LISTS = [
-      { key: 'tipo',     title: 'Tipos de item', placeholder: 'ex: Photocard' },
-      { key: 'comeback', title: 'Comebacks',      placeholder: 'ex: MIROH' },
-      { key: 'membro',   title: 'Membros',        placeholder: 'ex: Han' },
+      { key: 'tipo',     col: 'A', title: 'Tipos de item',    icon: 'ti-tag',        placeholder: 'ex: Photocard' },
+      { key: 'comeback', col: 'B', title: 'Comebacks',        icon: 'ti-music',      placeholder: 'ex: MIROH' },
+      { key: 'membro',   col: 'C', title: 'Membros',          icon: 'ti-user',       placeholder: 'ex: Han' },
     ];
-    let data = {};
+
+    let data = {}; // { tipo: ['Photocard',...], comeback: [...], membro: [...] }
 
     document.addEventListener('DOMContentLoaded', async () => {
       await Auth.init();
@@ -73,24 +70,32 @@
     });
 
     async function loadLists() {
-      const rows = await Sheets.get('Listas!A2:E100');
+      const rows = await Sheets.get('Listas!A3:E100');
       LISTS.forEach(list => { data[list.key] = []; });
       (rows||[]).forEach(row => {
-        LISTS.forEach((list, i) => { if (row[i] && row[i].trim()) data[list.key].push(row[i].trim()); });
+        LISTS.forEach((list, i) => {
+          if (row[i] && row[i].trim()) data[list.key].push(row[i].trim());
+        });
       });
       render();
     }
 
     function render() {
-      document.getElementById('content').innerHTML = LISTS.map(list => `
+      const el = document.getElementById('content');
+      el.innerHTML = LISTS.map(list => `
         <div class="section-title">${list.title} <span></span></div>
         <div class="list-card">
-          <div class="list-items" id="items-${list.key}">${renderItems(list)}</div>
+          <div class="list-items" id="items-${list.key}">
+            ${renderItems(list)}
+          </div>
           <div class="add-row">
             <input type="text" id="new-${list.key}" placeholder="${list.placeholder}" onkeydown="if(event.key==='Enter')addItem('${list.key}')">
-            <button class="btn btn-primary" style="padding:8px 14px;font-size:12px;" onclick="addItem('${list.key}')"><i class="ti ti-plus"></i></button>
+            <button class="btn btn-primary" style="padding:8px 14px; font-size:12px;" onclick="addItem('${list.key}')">
+              <i class="ti ti-plus"></i>
+            </button>
           </div>
-        </div>`).join('');
+        </div>
+      `).join('');
     }
 
     function renderItems(list) {
@@ -98,11 +103,14 @@
       return data[list.key].map((item, idx) => `
         <div class="list-item" id="${list.key}-${idx}">
           <div class="list-item-text">${item}</div>
-          <div class="list-item-edit"><input type="text" value="${item}" onkeydown="if(event.key==='Enter')saveItem('${list.key}',${idx})"></div>
-          <button class="icon-btn" onclick="editItem('${list.key}',${idx})"><i class="ti ti-pencil" style="font-size:12px;"></i></button>
-          <button class="icon-btn save" onclick="saveItem('${list.key}',${idx})" style="display:none;" id="save-${list.key}-${idx}"><i class="ti ti-check" style="font-size:12px;"></i></button>
-          <button class="icon-btn danger" onclick="removeItem('${list.key}',${idx})"><i class="ti ti-trash" style="font-size:12px;"></i></button>
-        </div>`).join('');
+          <div class="list-item-edit">
+            <input type="text" value="${item}" onkeydown="if(event.key==='Enter')saveItem('${list.key}',${idx})">
+          </div>
+          <button class="icon-btn" onclick="editItem('${list.key}',${idx})" title="Editar"><i class="ti ti-pencil" style="font-size:12px;"></i></button>
+          <button class="icon-btn save" onclick="saveItem('${list.key}',${idx})" title="Salvar" style="display:none;" id="save-${list.key}-${idx}"><i class="ti ti-check" style="font-size:12px;"></i></button>
+          <button class="icon-btn danger" onclick="removeItem('${list.key}',${idx})" title="Remover"><i class="ti ti-trash" style="font-size:12px;"></i></button>
+        </div>
+      `).join('');
     }
 
     function editItem(key, idx) {
@@ -117,14 +125,14 @@
       const newVal = el.querySelector('.list-item-edit input').value.trim();
       if (!newVal) return;
       data[key][idx] = newVal;
-      await saveList();
+      await saveList(key);
       reRenderList(key);
     }
 
     async function removeItem(key, idx) {
       if (!confirm(`Remover "${data[key][idx]}"?`)) return;
       data[key].splice(idx, 1);
-      await saveList();
+      await saveList(key);
       reRenderList(key);
     }
 
@@ -134,16 +142,20 @@
       if (!val) return;
       if (data[key].includes(val)) { showToast('Este item já existe!'); return; }
       data[key].push(val);
-      await saveList();
+      await saveList(key);
       input.value = '';
       reRenderList(key);
     }
 
-    async function saveList() {
+    async function saveList(key) {
+      const list = LISTS.find(l => l.key === key);
+      // Salva a coluna inteira — primeiro limpa, depois escreve
       const maxRows = Math.max(...LISTS.map(l => data[l.key].length), 1);
-      const rows = Array.from({ length: maxRows }, (_, i) => LISTS.map(l => data[l.key][i] || ''));
+      const rows = Array.from({ length: maxRows }, (_, i) => {
+        return LISTS.map(l => data[l.key][i] || '');
+      });
       try {
-        await Sheets.set(`Listas!A2:C${maxRows + 1}`, rows);
+        await Sheets.set(`Listas!A3:C${maxRows + 2}`, rows);
         showToast('Salvo!');
       } catch(e) { showToast('Erro ao salvar.'); }
     }
@@ -155,7 +167,8 @@
 
     function showToast(msg) {
       const t = document.getElementById('toast');
-      t.textContent = msg; t.style.display = 'block';
+      t.textContent = msg;
+      t.style.display = 'block';
       setTimeout(() => t.style.display = 'none', 2000);
     }
   </script>
