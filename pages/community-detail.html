@@ -10,6 +10,7 @@
   <style>
     .back-btn { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 13px; text-decoration: none; margin-bottom: 20px; transition: color var(--transition); }
     .back-btn:hover { color: var(--text-primary); }
+
     .comm-hero { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); margin-bottom: var(--space-4); }
     .comm-hero-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-4); }
     .comm-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--accent-muted); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 500; color: var(--accent-deep); flex-shrink: 0; }
@@ -17,22 +18,27 @@
     .comm-name { font-family: var(--font-display); font-size: 22px; font-weight: 500; color: var(--text-primary); margin-bottom: 3px; }
     .comm-gom { font-size: 13px; color: var(--text-muted); }
     .pending-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 3px 10px; border-radius: var(--radius-pill); background: var(--status-pending-bg); color: var(--status-pending-color); border: 1px solid var(--status-pending-border); margin-bottom: var(--space-4); }
+
     .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-4); }
     .stat { background: var(--bg-elevated); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); }
     .stat-val { font-size: 24px; font-weight: 400; font-family: var(--font-mono); line-height: 1; margin-bottom: 3px; }
     .stat-lab { font-size: 9px; color: var(--text-faint); letter-spacing: 0.07em; text-transform: uppercase; }
+
     .action-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-2); }
     .action-btn { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 9px 6px; border-radius: var(--radius-md); border: 1px solid var(--border); font-size: 11px; color: var(--text-muted); cursor: pointer; transition: all var(--transition); text-decoration: none; background: transparent; }
     .action-btn.whats { border-color: rgba(37,211,102,0.25); color: #1a9e6a; background: rgba(37,211,102,0.05); }
     .action-btn.sheet { border-color: rgba(56,168,96,0.25); color: #1a6b3a; background: rgba(56,168,96,0.05); }
     .action-btn.items { border-color: var(--accent-border); color: var(--accent-deep); background: var(--accent-muted); }
+
     .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2); }
     .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
     .info-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-2); }
     .info-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px; }
     .info-value { font-size: 13px; color: var(--text-primary); }
     .info-value a { color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
     .info-obs { font-size: 13px; color: var(--text-secondary); font-style: italic; line-height: 1.6; }
+
     .edit-section { background: var(--bg-surface); border: 1px solid var(--accent-border); border-radius: var(--radius-lg); padding: var(--space-5); margin-top: var(--space-5); display: none; }
     .edit-section.open { display: block; }
     .field { margin-bottom: var(--space-4); }
@@ -41,28 +47,21 @@
     .field input:focus, .field textarea:focus { border-color: var(--accent-border); }
     .field input::placeholder, .field textarea::placeholder { color: var(--text-faint); }
     .field textarea { resize: vertical; min-height: 80px; }
+
     .danger-zone { background: var(--status-cancelled-bg); border: 1px solid var(--status-cancelled-border); border-radius: var(--radius-lg); padding: var(--space-4); margin-top: var(--space-5); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
     .danger-text p { font-size: 13px; font-weight: 500; color: var(--status-cancelled-color); margin-bottom: 2px; }
     .danger-text span { font-size: 11px; color: var(--text-muted); }
+
     @keyframes spin { to { transform: rotate(360deg); } }
     .spinner { animation: spin 1s linear infinite; display: inline-block; }
     .edit-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); cursor: pointer; padding: 6px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); transition: all var(--transition); background: transparent; margin-top: var(--space-4); }
     .edit-toggle:hover { border-color: var(--accent-border); color: var(--accent-deep); }
   </style>
+  <script src="../js/app.js"></script>
+  <script src="../js/nav.js"></script>
 </head>
 <body>
-  <nav class="navbar">
-    <a href="../index.html" class="navbar-brand"><div class="brand-dot"></div>SKZ Tracker</a>
-    <div class="navbar-nav">
-      <a href="../index.html" class="nav-link"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a>
-      <a href="items.html" class="nav-link"><i class="ti ti-package"></i><span>Itens</span></a>
-      <a href="portfolio.html" class="nav-link"><i class="ti ti-grid-dots"></i><span>Portfólio</span></a>
-      <a href="communities.html" class="nav-link active"><i class="ti ti-building-community"></i><span>Comunidades</span></a>
-    </div>
-    <div style="margin-left:16px;">
-      <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()"><i class="ti ti-logout" style="font-size:15px;"></i></button>
-    </div>
-  </nav>
+
   <main class="container" style="padding-top:24px; padding-bottom:80px;">
     <a href="communities.html" class="back-btn"><i class="ti ti-arrow-left"></i> Voltar para comunidades</a>
     <div id="content">
@@ -72,9 +71,9 @@
       </div>
     </div>
   </main>
-  <script src="../js/auth.js"></script>
   <script>
     let commData = [], sheetRow = 0, allItems = [];
+
     document.addEventListener('DOMContentLoaded', async () => {
       await Auth.init();
       const restored = await Auth.tryRestore();
@@ -84,6 +83,7 @@
       if (!sheetRow) { window.location.href = 'communities.html'; return; }
       await loadData();
     });
+
     async function loadData() {
       const [commRows, itemRows] = await Promise.all([
         Sheets.get(`Comunidades!A${sheetRow}:F${sheetRow}`),
@@ -93,41 +93,88 @@
       allItems = (itemRows||[]).filter(r => r[COL.TIPO]);
       render();
     }
+
     function render() {
-      const nome = commData[0]||'—', gom = commData[1]||'—', whats = commData[2]||'', sheet = commData[3]||'', tipos = commData[4]||'—', obs = commData[5]||'';
+      const nome  = commData[0]||'—';
+      const gom   = commData[1]||'—';
+      const whats = commData[2]||'';
+      const sheet = commData[3]||'';
+      const tipos = commData[4]||'—';
+      const obs   = commData[5]||'';
       const inicial = nome.charAt(0).toUpperCase();
+
       const itemsDaCom = allItems.filter(r => r[COL.COMUNIDADE] === nome);
       const ativos    = itemsDaCom.filter(r => !r[COL.STATUS]?.includes('Recebido') && !r[COL.STATUS]?.includes('Cancelado')).length;
       const pendentes = itemsDaCom.filter(r => r[COL.STATUS]?.includes('pendente')).length;
       const recebidos = itemsDaCom.filter(r => r[COL.STATUS]?.includes('Recebido')).length;
       const total     = itemsDaCom.length;
+
       document.getElementById('content').innerHTML = `
         <div class="comm-hero">
           <div class="comm-hero-header">
             <div class="comm-avatar">${inicial}</div>
-            <div class="comm-hero-info"><div class="comm-name">${nome}</div><div class="comm-gom">GOM: ${gom}</div></div>
-          </div>
-          ${pendentes > 0 ? `<div class="pending-tag"><i class="ti ti-alert-triangle" style="font-size:11px;"></i> ${pendentes} pagamento${pendentes>1?'s':''} pendente${pendentes>1?'s':''}</div>` : ''}
-          <div class="stats-row">
-            <div class="stat"><div class="stat-val" style="color:var(--accent);">${ativos}</div><div class="stat-lab">itens ativos</div></div>
-            <div class="stat"><div class="stat-val" style="color:${pendentes>0?'var(--status-pending-color)':'var(--status-done-color)'};">${pendentes}</div><div class="stat-lab">pgto pendente</div></div>
-            <div class="stat" style="grid-column:1/-1; display:flex; justify-content:space-between; align-items:center;">
-              <div><div class="stat-val" style="color:var(--status-done-color); font-size:18px;">${recebidos}</div><div class="stat-lab">recebidos</div></div>
-              <div style="text-align:right;"><div class="stat-val" style="font-size:18px;">${total}</div><div class="stat-lab">total de itens</div></div>
+            <div class="comm-hero-info">
+              <div class="comm-name">${nome}</div>
+              <div class="comm-gom">GOM: ${gom}</div>
             </div>
           </div>
+
+          ${pendentes > 0 ? `<div class="pending-tag"><i class="ti ti-alert-triangle" style="font-size:11px;"></i> ${pendentes} pagamento${pendentes>1?'s':''} pendente${pendentes>1?'s':''}</div>` : ''}
+
+          <div class="stats-row">
+            <div class="stat">
+              <div class="stat-val" style="color:var(--accent);">${ativos}</div>
+              <div class="stat-lab">itens ativos</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val" style="color:${pendentes>0?'var(--status-pending-color)':'var(--status-done-color)'};">${pendentes}</div>
+              <div class="stat-lab">pgto pendente</div>
+            </div>
+            <div class="stat" style="grid-column:1/-1; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div class="stat-val" style="color:var(--status-done-color); font-size:18px;">${recebidos}</div>
+                <div class="stat-lab">recebidos</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="stat-val" style="font-size:18px;">${total}</div>
+                <div class="stat-lab">total de itens</div>
+              </div>
+            </div>
+          </div>
+
           <div class="action-row">
-            ${whats?`<a class="action-btn whats" href="${whats}" target="_blank"><i class="ti ti-brand-whatsapp" style="font-size:14px;"></i> WhatsApp</a>`:`<div class="action-btn" style="opacity:0.35;cursor:default;"><i class="ti ti-brand-whatsapp" style="font-size:14px;"></i> WhatsApp</div>`}
-            ${sheet?`<a class="action-btn sheet" href="${sheet}" target="_blank"><i class="ti ti-table" style="font-size:14px;"></i> Planilha</a>`:`<div class="action-btn" style="opacity:0.35;cursor:default;"><i class="ti ti-table" style="font-size:14px;"></i> Planilha</div>`}
+            ${whats ? `<a class="action-btn whats" href="${whats}" target="_blank"><i class="ti ti-brand-whatsapp" style="font-size:14px;"></i> WhatsApp</a>` : `<div class="action-btn" style="opacity:0.35;cursor:default;"><i class="ti ti-brand-whatsapp" style="font-size:14px;"></i> WhatsApp</div>`}
+            ${sheet ? `<a class="action-btn sheet" href="${sheet}" target="_blank"><i class="ti ti-table" style="font-size:14px;"></i> Planilha</a>` : `<div class="action-btn" style="opacity:0.35;cursor:default;"><i class="ti ti-table" style="font-size:14px;"></i> Planilha</div>`}
             <a class="action-btn items" href="items.html?community=${encodeURIComponent(nome)}"><i class="ti ti-package" style="font-size:14px;"></i> Ver itens</a>
           </div>
         </div>
+
         <div class="section-title">Informações</div>
-        <div class="info-card"><div class="info-label">Tipos de item</div><div class="info-value">${tipos}</div></div>
-        ${whats?`<div class="info-card"><div class="info-label">Link do WhatsApp</div><div class="info-value"><a href="${whats}" target="_blank">${whats} <i class="ti ti-external-link" style="font-size:11px;"></i></a></div></div>`:''}
-        ${sheet?`<div class="info-card"><div class="info-label">Planilha da CEG</div><div class="info-value"><a href="${sheet}" target="_blank">Abrir planilha <i class="ti ti-external-link" style="font-size:11px;"></i></a></div></div>`:''}
-        ${obs?`<div class="info-card"><div class="info-label">Observações</div><div class="info-obs">${obs}</div></div>`:''}
-        <button class="edit-toggle" onclick="toggleEdit()"><i class="ti ti-pencil" style="font-size:13px;"></i> Editar informações</button>
+
+        <div class="info-card">
+          <div class="info-label">Tipos de item</div>
+          <div class="info-value">${tipos}</div>
+        </div>
+
+        ${whats ? `<div class="info-card">
+          <div class="info-label">Link do WhatsApp</div>
+          <div class="info-value"><a href="${whats}" target="_blank">${whats} <i class="ti ti-external-link" style="font-size:11px;"></i></a></div>
+        </div>` : ''}
+
+        ${sheet ? `<div class="info-card">
+          <div class="info-label">Planilha da CEG</div>
+          <div class="info-value"><a href="${sheet}" target="_blank">Abrir planilha <i class="ti ti-external-link" style="font-size:11px;"></i></a></div>
+        </div>` : ''}
+
+        ${obs ? `<div class="info-card">
+          <div class="info-label">Observações</div>
+          <div class="info-obs">${obs}</div>
+        </div>` : ''}
+
+        <button class="edit-toggle" onclick="toggleEdit()">
+          <i class="ti ti-pencil" style="font-size:13px;"></i> Editar informações
+        </button>
+
         <div class="edit-section" id="edit-section">
           <div class="section-title" style="margin-bottom:16px;">Editar comunidade</div>
           <div class="field"><label>Nome da comunidade</label><input type="text" id="e-nome" value="${nome}"></div>
@@ -138,28 +185,43 @@
           <div class="field"><label>Observações</label><textarea id="e-obs" placeholder="Notas sobre essa comunidade...">${obs}</textarea></div>
           <div style="display:flex; gap:10px;">
             <button class="btn btn-ghost" style="flex:1;" onclick="toggleEdit()">Cancelar</button>
-            <button class="btn btn-primary" style="flex:2; justify-content:center;" onclick="saveEdit()" id="save-btn"><i class="ti ti-check"></i> Salvar</button>
+            <button class="btn btn-primary" style="flex:2; justify-content:center;" onclick="saveEdit()" id="save-btn">
+              <i class="ti ti-check"></i> Salvar
+            </button>
           </div>
         </div>
+
         <div class="danger-zone">
-          <div class="danger-text"><p>Remover comunidade</p><span>Os itens cadastrados não serão afetados.</span></div>
-          <button class="btn btn-danger" onclick="deleteCommunity()"><i class="ti ti-trash"></i> Remover</button>
+          <div class="danger-text">
+            <p>Remover comunidade</p>
+            <span>Os itens cadastrados não serão afetados.</span>
+          </div>
+          <button class="btn btn-danger" onclick="deleteCommunity()">
+            <i class="ti ti-trash"></i> Remover
+          </button>
         </div>`;
     }
-    function toggleEdit() { document.getElementById('edit-section').classList.toggle('open'); }
+
+    function toggleEdit() {
+      document.getElementById('edit-section').classList.toggle('open');
+    }
+
     async function saveEdit() {
       const btn = document.getElementById('save-btn');
       btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
       btn.disabled = true;
       const g = id => document.getElementById(id).value;
       try {
-        await Sheets.set(`Comunidades!A${sheetRow}:F${sheetRow}`, [[g('e-nome'),g('e-gom'),g('e-whats'),g('e-sheet'),g('e-tipos'),g('e-obs')]]);
+        await Sheets.set(`Comunidades!A${sheetRow}:F${sheetRow}`, [[
+          g('e-nome'), g('e-gom'), g('e-whats'), g('e-sheet'), g('e-tipos'), g('e-obs')
+        ]]);
         await loadData();
         document.getElementById('edit-section').classList.remove('open');
       } catch(e) { alert('Erro ao salvar. Tente novamente.'); }
       btn.innerHTML = '<i class="ti ti-check"></i> Salvar';
       btn.disabled = false;
     }
+
     async function deleteCommunity() {
       const nome = commData[0]||'esta comunidade';
       if (!confirm(`Remover "${nome}"? Os itens cadastrados não serão afetados.`)) return;
