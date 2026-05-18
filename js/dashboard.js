@@ -1,10 +1,21 @@
+/* ═══════════════════════════════════════════════
+   SKZ TRACKER — Dashboard
+   ═══════════════════════════════════════════════ */
+
+// ── Init ───────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   await Auth.init();
 
+  // Auth check - redirect to login if not logged in
+  const restored = await Auth.tryRestore();
+  if (!restored) { window.location.href = '../index.html'; return; }
+
+  // Data de hoje no header
   const now = new Date();
   document.getElementById('dash-date').textContent =
     now.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
+  // Tenta restaurar sessão
   const restored = await Auth.tryRestore();
   if (restored) showApp();
   else           showAuth();
@@ -14,25 +25,26 @@ document.addEventListener('auth:signin',  showApp);
 document.addEventListener('auth:signout', showAuth);
 
 function showAuth() {
-  document.getElementById('screen-auth').style.display = 'flex';
-  document.getElementById('screen-app').style.display  = 'none';
 }
 
 async function showApp() {
-  document.getElementById('screen-auth').style.display = 'none';
-  document.getElementById('screen-app').style.display  = 'block';
   await loadDashboard();
 }
 
+// ── Carrega dados e renderiza dashboard ─────────
 async function loadDashboard() {
   const rows = await Sheets.get(CONFIG.RANGES.ITEMS);
   if (!rows) return;
 
+  // Filtra linhas vazias
   const items = rows.filter(row => row[COL.TIPO]);
+
+  // Contagens por status
   const counts = { pending: 0, transit: 0, done: 0, waiting: 0 };
   let totalPendingValue = 0;
-  const pendingItems = [];
-  const transitItems = [];
+
+  const pendingItems  = [];
+  const transitItems  = [];
 
   items.forEach((row, idx) => {
     const status = row[COL.STATUS] || '';
@@ -46,12 +58,14 @@ async function loadDashboard() {
     if (cls === 'transit') transitItems.push({ row, idx: idx + 4 });
   });
 
+  // Métricas
   document.getElementById('metric-pending').textContent = counts.pending || 0;
   document.getElementById('metric-transit').textContent = counts.transit || 0;
   document.getElementById('metric-done').textContent    = counts.done    || 0;
   document.getElementById('metric-total').textContent   = items.length;
   document.getElementById('metric-pending-value').textContent = formatBRL(totalPendingValue);
 
+  // Banner de alerta
   if (counts.pending > 0) {
     const banner = document.getElementById('alert-banner');
     banner.style.display = 'flex';
@@ -61,12 +75,16 @@ async function loadDashboard() {
       `Total: ${formatBRL(totalPendingValue)} — verifique antes de atrasar!`;
   }
 
+  // Lista de pendentes
   renderItemList('list-pending', pendingItems, 'pending',
     'Nenhum pagamento pendente', 'ti-circle-check');
+
+  // Lista em trânsito
   renderItemList('list-transit', transitItems, 'transit',
     'Nenhum item em trânsito no momento', 'ti-truck');
 }
 
+// ── Renderiza lista de itens ─────────────────────
 function renderItemList(containerId, items, statusCls, emptyMsg, emptyIcon) {
   const el = document.getElementById(containerId);
 
@@ -80,9 +98,9 @@ function renderItemList(containerId, items, statusCls, emptyMsg, emptyIcon) {
   }
 
   el.innerHTML = items.map(({ row, idx }) => {
-    const nome     = itemDisplayName(row);
-    const meta     = itemMeta(row);
-    const etapa    = statusLabel(row[COL.ETAPA]);
+    const nome    = itemDisplayName(row);
+    const meta    = itemMeta(row);
+    const etapa   = statusLabel(row[COL.ETAPA]);
     const pendente = parseFloat(row[COL.PENDENTE]) || 0;
     const imgLink  = row[COL.IMG_LINK] || '';
 
@@ -112,6 +130,7 @@ function renderItemList(containerId, items, statusCls, emptyMsg, emptyIcon) {
   }).join('');
 }
 
+// ── Helpers de display ──────────────────────────
 function itemDisplayName(row) {
   const parts = [];
   if (row[COL.TIPO])     parts.push(row[COL.TIPO]);
