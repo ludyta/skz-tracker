@@ -1,21 +1,11 @@
 (function() {
   function initNav() {
-    // Don't show navbar on login screen (index.html before auth)
-    const appScreen = document.getElementById('screen-app');
-    if (appScreen && appScreen.style.display === 'none') {
-      // Wait for signin event then inject navbar
-      document.addEventListener('auth:signin', () => {
-        if (!document.querySelector('.skz-navbar')) initNav();
-      });
-      return;
-    }
     const path = window.location.pathname;
-    const isRoot = !path.includes('/pages/');
-    const base = isRoot ? 'pages/' : '';
-    const rootBase = isRoot ? '' : '../';
+    const base = '';
+    const rootBase = '../';
 
     const PAGES = [
-      { id: 'dashboard',   href: rootBase + 'index.html',         icon: 'ti-layout-dashboard',  label: 'Dashboard' },
+      { id: 'dashboard',   href: 'dashboard.html',                icon: 'ti-layout-dashboard',  label: 'Dashboard' },
       { id: 'items',       href: base + 'items.html',              icon: 'ti-package',           label: 'Itens' },
       { id: 'portfolio',   href: base + 'portfolio.html',          icon: 'ti-grid-dots',         label: 'Portfólio' },
       { id: 'communities', href: base + 'communities.html',        icon: 'ti-building-community', label: 'Comunidades' },
@@ -33,9 +23,9 @@
     const active = PAGES.find(p => p.id === activePage) || PAGES[0];
 
     // Inject styles
-    if (!document.getElementById('skz-nav-style-v5')) {
+    if (!document.getElementById('skz-nav-style-v7')) {
       const style = document.createElement('style');
-      style.id = 'skz-nav-style-v5';
+      style.id = 'skz-nav-style-v7';
       style.textContent = `
         .skz-navbar{position:sticky;top:0;z-index:200;background:var(--bg-base);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px;}
         .skz-brand{font-size:9px;font-weight:500;color:var(--text-faint);text-decoration:none;display:flex;align-items:center;flex-shrink:0;letter-spacing:0.08em;text-transform:uppercase;line-height:1.3;}
@@ -75,7 +65,7 @@
     const navbar = document.createElement('nav');
     navbar.className = 'skz-navbar';
     navbar.innerHTML = `
-      <a href="${rootBase}index.html" class="skz-brand">
+      <a href="dashboard.html" class="skz-brand">
         <span class="skz-brand-label">Collection<br>Tracker</span>
       </a>
       <div class="skz-desktop-nav">
