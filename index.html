@@ -8,17 +8,25 @@
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/dashboard.css">
+  <script src="js/app.js"></script>
+  <script src="js/nav.js"></script>
 </head>
 <body>
+
+  <!-- ══ TELA DE LOGIN ══════════════════════════ -->
   <div id="screen-auth" class="auth-screen">
     <div class="auth-logo">SKZ <span>Tracker</span></div>
     <p class="auth-tagline">Sua coleção Stray Kids, organizada.</p>
+
     <div class="auth-card">
       <div class="auth-card-header">
         <i class="ti ti-lock" style="font-size:28px; color:var(--accent); display:block; margin-bottom:12px;"></i>
         <h2 style="font-size:18px; margin-bottom:6px;">Entrar</h2>
-        <p style="font-size:13px; color:var(--text-muted); margin-bottom:24px;">Use sua conta Google para acessar sua coleção com segurança.</p>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:24px;">
+          Use sua conta Google para acessar sua coleção com segurança.
+        </p>
       </div>
+
       <button class="btn btn-google" id="btn-signin" onclick="Auth.signIn()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -28,67 +36,75 @@
         </svg>
         Continuar com Google
       </button>
+
       <div class="divider"></div>
+
       <p style="font-size:11px; color:var(--text-faint); text-align:center; line-height:1.6;">
-        Seus dados ficam na sua planilha Google Sheets.<br>O app não armazena nenhuma informação.
+        Seus dados ficam na sua planilha Google Sheets.<br>
+        O app não armazena nenhuma informação.
       </p>
     </div>
   </div>
 
+  <!-- ══ APP (visível após login) ═══════════════ -->
   <div id="screen-app" style="display:none;">
-    <nav class="navbar">
-      <a href="index.html" class="navbar-brand"><div class="brand-dot"></div>SKZ Tracker</a>
-      <div class="navbar-nav">
-        <a href="index.html" class="nav-link active" id="nav-dashboard"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a>
-        <a href="pages/items.html" class="nav-link" id="nav-items"><i class="ti ti-package"></i><span>Itens</span></a>
-        <a href="pages/portfolio.html" class="nav-link" id="nav-portfolio"><i class="ti ti-grid-dots"></i><span>Portfólio</span></a>
-        <a href="pages/communities.html" class="nav-link" id="nav-communities"><i class="ti ti-building-community"></i><span>Comunidades</span></a>
-      </div>
-      <div style="display:flex; align-items:center; gap:8px; margin-left:16px;">
-        <a href="pages/settings.html" class="btn btn-ghost" style="padding:6px 10px;" title="Configurações">
-          <i class="ti ti-settings" style="font-size:15px;"></i>
-        </a>
-        <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()" title="Sair">
-          <i class="ti ti-logout" style="font-size:15px;"></i>
-        </button>
-      </div>
-    </nav>
 
+    <!-- Navbar -->
+
+    <!-- Dashboard content -->
     <main class="container" style="padding-top:32px; padding-bottom:64px;">
+
+      <!-- Page header -->
       <div style="margin-bottom:32px;">
         <h1 id="dash-greeting" style="margin-bottom:4px;">Minha coleção</h1>
         <p id="dash-date" style="color:var(--text-muted); font-size:13px;"></p>
       </div>
+
+      <!-- Alertas de pagamento pendente -->
       <div id="alert-banner" style="display:none; background:var(--status-pending-bg); border:1px solid var(--status-pending-border); border-radius:var(--radius-lg); padding:14px 18px; margin-bottom:24px; display:flex; align-items:center; gap:12px;">
         <i class="ti ti-alert-triangle" style="font-size:18px; color:var(--status-pending-color); flex-shrink:0;"></i>
         <div>
           <div style="font-size:13px; font-weight:500; color:var(--status-pending-color);" id="alert-title">Pagamentos pendentes</div>
           <div style="font-size:12px; color:var(--text-muted);" id="alert-sub"></div>
         </div>
-        <a href="pages/items.html?filter=pending" class="btn btn-ghost" style="margin-left:auto; padding:5px 12px; font-size:12px;">Ver todos <i class="ti ti-arrow-right"></i></a>
+        <a href="pages/items.html?filter=pending" class="btn btn-ghost" style="margin-left:auto; padding:5px 12px; font-size:12px;">
+          Ver todos <i class="ti ti-arrow-right"></i>
+        </a>
       </div>
+
+      <!-- Metric cards -->
       <div class="grid-4 mb-6" id="metric-cards">
         <div class="metric-card">
-          <div class="metric-icon" style="background:var(--status-pending-bg);"><i class="ti ti-alert-triangle" style="color:var(--status-pending-color);"></i></div>
+          <div class="metric-icon" style="background:var(--status-pending-bg);">
+            <i class="ti ti-alert-triangle" style="color:var(--status-pending-color);"></i>
+          </div>
           <div class="metric-label">Pgto pendente</div>
           <div class="metric-value" id="metric-pending" style="color:var(--status-pending-color);">—</div>
         </div>
         <div class="metric-card">
-          <div class="metric-icon" style="background:var(--status-transit-bg);"><i class="ti ti-truck" style="color:var(--status-transit-color);"></i></div>
+          <div class="metric-icon" style="background:var(--status-transit-bg);">
+            <i class="ti ti-truck" style="color:var(--status-transit-color);"></i>
+          </div>
           <div class="metric-label">Em trânsito</div>
           <div class="metric-value" id="metric-transit" style="color:var(--status-transit-color);">—</div>
         </div>
         <div class="metric-card">
-          <div class="metric-icon" style="background:var(--status-done-bg);"><i class="ti ti-circle-check" style="color:var(--status-done-color);"></i></div>
+          <div class="metric-icon" style="background:var(--status-done-bg);">
+            <i class="ti ti-circle-check" style="color:var(--status-done-color);"></i>
+          </div>
           <div class="metric-label">Recebidos</div>
           <div class="metric-value" id="metric-done" style="color:var(--status-done-color);">—</div>
         </div>
         <div class="metric-card">
-          <div class="metric-icon" style="background:var(--accent-muted);"><i class="ti ti-package" style="color:var(--accent);"></i></div>
+          <div class="metric-icon" style="background:var(--accent-muted);">
+            <i class="ti ti-package" style="color:var(--accent);"></i>
+          </div>
           <div class="metric-label">Total de itens</div>
           <div class="metric-value" id="metric-total" style="color:var(--accent);">—</div>
         </div>
       </div>
+
+      <!-- Valor total pendente -->
       <div id="pending-value-card" class="card mb-6" style="display:flex; align-items:center; gap:16px; padding:16px 20px;">
         <i class="ti ti-coin" style="font-size:20px; color:var(--status-pending-color);"></i>
         <div>
@@ -96,6 +112,8 @@
           <div id="metric-pending-value" style="font-family:var(--font-mono); font-size:22px; color:var(--status-pending-color);">R$ —</div>
         </div>
       </div>
+
+      <!-- Pendentes -->
       <div id="section-pending">
         <div class="section-header">
           <h2>Atenção imediata</h2>
@@ -109,6 +127,8 @@
           </div>
         </div>
       </div>
+
+      <!-- Em trânsito -->
       <div id="section-transit" class="mt-6">
         <div class="section-header">
           <h2>Em trânsito</h2>
@@ -117,10 +137,11 @@
         </div>
         <div id="list-transit"></div>
       </div>
+
     </main>
   </div>
 
-  <script src="js/auth.js"></script>
+  <!-- Scripts -->
   <script src="js/dashboard.js"></script>
 </body>
 </html>
