@@ -15,6 +15,7 @@ body {
   min-height: 100vh;
 }
 
+/* Grain texture sutil */
 body::before {
   content: '';
   position: fixed;
@@ -25,6 +26,7 @@ body::before {
   opacity: 0.5;
 }
 
+/* ── Tipografia ── */
 h1, h2, h3 {
   font-family: var(--font-display);
   font-weight: 500;
@@ -37,11 +39,13 @@ h3 { font-size: 16px; }
 
 .display { font-family: var(--font-display); }
 .mono { font-family: var(--font-mono); }
+
 .text-primary   { color: var(--text-primary); }
 .text-secondary { color: var(--text-secondary); }
 .text-muted     { color: var(--text-muted); }
 .text-accent    { color: var(--accent); }
 
+/* ── Layout ── */
 .container {
   max-width: 960px;
   margin: 0 auto;
@@ -50,6 +54,7 @@ h3 { font-size: 16px; }
   z-index: 1;
 }
 
+/* ── Navbar ── */
 .navbar {
   height: 56px;
   background: var(--bg-surface);
@@ -104,6 +109,7 @@ h3 { font-size: 16px; }
 .nav-link.active { color: var(--text-primary); background: var(--bg-elevated); }
 .nav-link i { font-size: 16px; }
 
+/* ── Cards ── */
 .card {
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -113,6 +119,7 @@ h3 { font-size: 16px; }
 
 .card-sm { padding: var(--space-4); border-radius: var(--radius-md); }
 
+/* ── Metric cards ── */
 .metric-card {
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -150,6 +157,7 @@ h3 { font-size: 16px; }
   line-height: 1;
 }
 
+/* ── Status badges ── */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -194,6 +202,7 @@ h3 { font-size: 16px; }
   border-color: var(--status-cancelled-border);
 }
 
+/* ── Buttons ── */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -230,6 +239,7 @@ h3 { font-size: 16px; }
   border-color: var(--status-cancelled-border);
 }
 
+/* ── Inputs ── */
 .input, .select {
   width: 100%;
   background: var(--bg-elevated);
@@ -247,6 +257,7 @@ h3 { font-size: 16px; }
 .input:focus, .select:focus { border-color: var(--accent-border); }
 .select { background-image: none; cursor: pointer; }
 
+/* ── Item cards ── */
 .item-card {
   background: var(--bg-surface);
   border: 1px solid var(--border);
@@ -299,6 +310,7 @@ h3 { font-size: 16px; }
   flex-shrink: 0;
 }
 
+/* ── Section headers ── */
 .section-header {
   display: flex;
   align-items: center;
@@ -308,6 +320,7 @@ h3 { font-size: 16px; }
 .section-header h2 { font-size: 13px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
 .section-header .section-line { flex: 1; height: 1px; background: var(--border); }
 
+/* ── Auth screen ── */
 .auth-screen {
   min-height: 100vh;
   display: flex;
@@ -346,8 +359,10 @@ h3 { font-size: 16px; }
   width: 100%;
 }
 
+/* ── Divider ── */
 .divider { height: 1px; background: var(--border); margin: var(--space-5) 0; }
 
+/* ── Utility ── */
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-3); }
 .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); }
@@ -367,4 +382,62 @@ h3 { font-size: 16px; }
   .grid-2 { grid-template-columns: 1fr; }
   h1 { font-size: 22px; }
   .navbar-nav .nav-link span { display: none; }
+}
+
+/* ══ BOTTOM NAV (mobile only) ══════════════════ */
+@media (max-width: 768px) {
+  .navbar-nav { display: none !important; }
+  .navbar { padding: 10px 16px; }
+  body { padding-bottom: 64px; }
+}
+
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border);
+  z-index: 100;
+  padding: 6px 0 10px;
+}
+
+@media (max-width: 768px) {
+  .bottom-nav { display: flex; }
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 0;
+  text-decoration: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  transition: color var(--transition);
+  position: relative;
+}
+
+.bottom-nav-item.active {
+  color: var(--accent-deep);
+}
+
+.bottom-nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 24px; height: 2px;
+  background: var(--accent-deep);
+  border-radius: 0 0 2px 2px;
+}
+
+.bottom-nav-item i {
+  font-size: 20px;
+}
+
+.bottom-nav-item span {
+  font-size: 9px;
+  letter-spacing: 0.02em;
 }
