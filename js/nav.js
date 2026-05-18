@@ -1,5 +1,18 @@
 (function() {
   function initNav() {
+    // Don't show navbar on login screen
+    const authScreen = document.getElementById('screen-auth');
+    const appScreen = document.getElementById('screen-app');
+    if (authScreen && appScreen) {
+      // index.html with auth screen - wait for signin
+      document.addEventListener('auth:signin', () => { initNav(); });
+      document.addEventListener('auth:signout', () => {
+        document.querySelector('.skz-navbar')?.remove();
+        document.querySelector('.skz-dropdown')?.remove();
+        document.querySelector('.skz-overlay')?.remove();
+      });
+      if (appScreen.style.display === 'none') return;
+    }
     const path = window.location.pathname;
     const isRoot = !path.includes('/pages/');
     const base = isRoot ? 'pages/' : '';
@@ -24,9 +37,9 @@
     const active = PAGES.find(p => p.id === activePage) || PAGES[0];
 
     // Inject styles
-    if (!document.getElementById('skz-nav-style')) {
+    if (!document.getElementById('skz-nav-style-v4')) {
       const style = document.createElement('style');
-      style.id = 'skz-nav-style';
+      style.id = 'skz-nav-style-v4';
       style.textContent = `
         .skz-navbar{position:sticky;top:0;z-index:200;background:var(--bg-base);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px;}
         .skz-brand{font-size:9px;font-weight:500;color:var(--text-faint);text-decoration:none;display:flex;align-items:center;flex-shrink:0;letter-spacing:0.08em;text-transform:uppercase;line-height:1.3;}
