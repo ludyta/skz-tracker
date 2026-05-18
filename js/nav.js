@@ -29,14 +29,14 @@
       style.id = 'skz-nav-style';
       style.textContent = `
         .skz-navbar{position:sticky;top:0;z-index:200;background:var(--bg-base);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px;}
-        .skz-brand{font-family:var(--font-display);font-size:14px;font-weight:500;color:var(--text-primary);text-decoration:none;display:flex;align-items:center;gap:7px;flex-shrink:0;}
-        .skz-brand-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+        .skz-brand{font-size:9px;font-weight:500;color:var(--text-faint);text-decoration:none;display:flex;align-items:center;flex-shrink:0;letter-spacing:0.08em;text-transform:uppercase;line-height:1.3;}
+        
         .skz-desktop-nav{display:flex;align-items:center;gap:2px;margin-left:8px;}
         .skz-desktop-nav a{display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:var(--radius-md);font-size:12px;color:var(--text-muted);text-decoration:none;transition:all var(--transition);}
         .skz-desktop-nav a:hover{color:var(--text-primary);background:var(--bg-elevated);}
         .skz-desktop-nav a.active{color:var(--accent-deep);background:var(--accent-muted);}
         .skz-desktop-nav a i{font-size:15px;}
-        .skz-pill-wrap{display:none;flex:1;justify-content:center;}
+        .skz-pill-wrap{display:none;position:absolute;left:50%;transform:translateX(-50%);}
         .skz-pill{display:flex;align-items:center;gap:7px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:13px;color:var(--text-primary);cursor:pointer;transition:all var(--transition);user-select:none;}
         .skz-pill:hover{border-color:var(--accent-border);}
         .skz-pill i.icon{font-size:15px;color:var(--accent-deep);}
@@ -67,8 +67,7 @@
     navbar.className = 'skz-navbar';
     navbar.innerHTML = `
       <a href="${rootBase}index.html" class="skz-brand">
-        <div class="skz-brand-dot"></div>
-        <span class="skz-brand-label">SKZ Tracker</span>
+        <span class="skz-brand-label">Collection<br>Tracker</span>
       </a>
       <div class="skz-desktop-nav">
         ${PAGES.map(p => `<a href="${p.href}" class="${p.id===activePage?'active':''}"><i class="ti ${p.icon}"></i>${p.label}</a>`).join('')}
