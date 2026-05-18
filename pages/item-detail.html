@@ -17,23 +17,29 @@
     .hero-name { font-family: var(--font-display); font-size: 18px; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; line-height: 1.3; }
     .hero-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
     .hero-actions { display: flex; gap: 6px; margin-top: 10px; }
+
     .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2); }
     .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
     .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin-bottom: var(--space-4); }
     .info-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); }
     .info-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px; }
     .info-value { font-size: 13px; color: var(--text-primary); }
     .info-value a { color: var(--accent); text-decoration: none; }
+
     .payment-step { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-2); display: flex; align-items: center; gap: var(--space-3); }
     .step-icon { width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
     .step-body { flex: 1; min-width: 0; }
     .step-name { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; }
     .step-value { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); }
     .step-action select { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 5px 10px; font-family: var(--font-body); font-size: 11px; color: var(--text-secondary); outline: none; cursor: pointer; -webkit-appearance: none; }
+
     .totals-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); margin-top: var(--space-4); display: flex; gap: var(--space-5); }
     .total-item { flex: 1; text-align: center; }
     .total-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px; }
     .total-value { font-family: var(--font-mono); font-size: 20px; }
+
+    /* Edit form */
     .edit-section { background: var(--bg-surface); border: 1px solid var(--accent-border); border-radius: var(--radius-lg); padding: var(--space-5); margin-top: var(--space-4); display: none; }
     .edit-section.open { display: block; }
     .field { margin-bottom: var(--space-3); }
@@ -43,30 +49,23 @@
     .field input::placeholder { color: var(--text-faint); }
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
     .edit-section-subtitle { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-deep); margin: var(--space-4) 0 var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border); }
+
+    /* Danger zone */
     .danger-zone { background: var(--status-cancelled-bg); border: 1px solid var(--status-cancelled-border); border-radius: var(--radius-lg); padding: var(--space-4); margin-top: var(--space-5); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
     .danger-text p { font-size: 13px; font-weight: 500; color: var(--status-cancelled-color); margin-bottom: 2px; }
     .danger-text span { font-size: 11px; color: var(--text-muted); }
+
     .save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-surface); border-top: 1px solid var(--border); padding: 12px 20px; display: flex; gap: 10px; z-index: 50; transform: translateY(100%); transition: transform 0.25s ease; }
     .save-bar.visible { transform: translateY(0); }
     @keyframes spin { to { transform: rotate(360deg); } }
     .spinner { animation: spin 1s linear infinite; display: inline-block; }
     @media (max-width:640px) { .item-hero { flex-direction: column; } .info-grid { grid-template-columns: 1fr; } .field-row { grid-template-columns: 1fr; } }
   </style>
+  <script src="../js/app.js"></script>
+  <script src="../js/nav.js"></script>
 </head>
 <body>
-  <nav class="navbar">
-    <a href="../index.html" class="navbar-brand"><div class="brand-dot"></div>SKZ Tracker</a>
-    <div class="navbar-nav">
-      <a href="../index.html" class="nav-link"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a>
-      <a href="items.html" class="nav-link active"><i class="ti ti-package"></i><span>Itens</span></a>
-      <a href="portfolio.html" class="nav-link"><i class="ti ti-grid-dots"></i><span>Portfólio</span></a>
-      <a href="communities.html" class="nav-link"><i class="ti ti-building-community"></i><span>Comunidades</span></a>
-    </div>
-    <div style="margin-left:16px;">
-      <a href="settings.html" class="btn btn-ghost" style="padding:6px 10px;" title="Configurações"><i class="ti ti-settings" style="font-size:15px;"></i></a>
-      <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()"><i class="ti ti-logout" style="font-size:15px;"></i></button>
-    </div>
-  </nav>
+
   <main class="container" style="padding-top:24px; padding-bottom:100px;">
     <a href="items.html" class="back-btn"><i class="ti ti-arrow-left"></i> Voltar para itens</a>
     <div id="content">
@@ -76,13 +75,14 @@
       </div>
     </div>
   </main>
+
   <div class="save-bar" id="save-bar">
     <button class="btn btn-ghost" style="flex:1;" onclick="discardChanges()"><i class="ti ti-x"></i> Descartar</button>
     <button class="btn btn-primary" style="flex:2;" onclick="saveChanges()" id="save-btn"><i class="ti ti-check"></i> Salvar alterações</button>
   </div>
-  <script src="../js/auth.js"></script>
   <script>
     let rowData = [], sheetRow = 0, hasChanges = false, communities = [];
+
     const STATUS_OPTIONS = ['Aguardando cobrança','Cobrado — pendente','Pago'];
     const STEPS = [
       { name:'Item',           val: COL.VL_ITEM, st: COL.ST_ITEM },
@@ -115,20 +115,37 @@
 
     function render() {
       const row = rowData;
-      const img=row[COL.IMG_LINK]||'', nome=[row[COL.TIPO],row[COL.MEMBRO],row[COL.COMEBACK],row[COL.SET_POB]].filter(Boolean).join(' · ')||'Item sem nome';
-      const cls=statusClass(row[COL.STATUS]), pendente=parseFloat(row[COL.PENDENTE])||0, pago=parseFloat(row[COL.TOTAL_PAGO])||0;
-      const comunidade=row[COL.COMUNIDADE]||'', gom=row[COL.GOM]||'';
+      const img  = row[COL.IMG_LINK]||'';
+      const nome = [row[COL.TIPO],row[COL.MEMBRO],row[COL.COMEBACK],row[COL.SET_POB]].filter(Boolean).join(' · ')||'Item sem nome';
+      const cls  = statusClass(row[COL.STATUS]);
+      const pendente = parseFloat(row[COL.PENDENTE])||0;
+      const pago     = parseFloat(row[COL.TOTAL_PAGO])||0;
+      const comunidade = row[COL.COMUNIDADE]||'';
+      const gom = row[COL.GOM]||'';
+
       const stepsHtml = STEPS.map(step => {
-        const val=row[step.val]||'', st=row[step.st]||'Aguardando cobrança';
-        const stCls=STEP_CLS[st]||'waiting', stIcon=STEP_ICONS[st]||'ti-clock';
-        const opts=STATUS_OPTIONS.map(o=>`<option value="${o}" ${o===st?'selected':''}>${o}</option>`).join('');
-        return `<div class="payment-step"><div class="step-icon" style="background:var(--status-${stCls}-bg);"><i class="ti ${stIcon}" style="color:var(--status-${stCls}-color);"></i></div><div class="step-body"><div class="step-name">${step.name}</div><div class="step-value">${val?formatBRL(val):'—'}</div></div><div class="step-action"><select data-col="${step.st}" onchange="onStatusChange(this)">${opts}</select></div></div>`;
+        const val   = row[step.val]||'';
+        const st    = row[step.st]||'Aguardando cobrança';
+        const stCls = STEP_CLS[st]||'waiting';
+        const stIcon= STEP_ICONS[st]||'ti-clock';
+        const opts  = STATUS_OPTIONS.map(o => `<option value="${o}" ${o===st?'selected':''}>${o}</option>`).join('');
+        return `<div class="payment-step">
+          <div class="step-icon" style="background:var(--status-${stCls}-bg);"><i class="ti ${stIcon}" style="color:var(--status-${stCls}-color);"></i></div>
+          <div class="step-body"><div class="step-name">${step.name}</div><div class="step-value">${val?formatBRL(val):'—'}</div></div>
+          <div class="step-action"><select data-col="${step.st}" onchange="onStatusChange(this)">${opts}</select></div>
+        </div>`;
       }).join('');
-      const commOpts=communities.map(c=>`<option value="${c.nome}" ${c.nome===comunidade?'selected':''}>${c.nome}</option>`).join('');
-      const linkCeg=row[COL.LINK_CEG]||'', dataClaim=row[COL.DATA_CLAIM]||'', dataRec=row[COL.DATA_REC]||'';
-      const tipoOpts=['Photocard','Álbum','Merch','Incluso de Álbum','Outro'].map(t=>`<option ${t===row[COL.TIPO]?'selected':''}>${t}</option>`).join('');
-      const membroOpts=['Bang Chan','Lee Know','Changbin','Hyunjin','Han','Felix','Seungmin','I.N','OT8'].map(m=>`<option ${m===row[COL.MEMBRO]?'selected':''}>${m}</option>`).join('');
-      const claimOpts=['Por membro (OT8)','Set genérico','Sem claim'].map(c=>`<option ${c===row[COL.CLAIM_TYPE]?'selected':''}>${c}</option>`).join('');
+
+      const commOpts = communities.map(c => `<option value="${c.nome}" ${c.nome===comunidade?'selected':''}>${c.nome}</option>`).join('');
+      const linkCeg  = row[COL.LINK_CEG]||'';
+      const dataClaim= row[COL.DATA_CLAIM]||'';
+      const dataRec  = row[COL.DATA_REC]||'';
+
+      // Edit form options
+      const tipoOpts = ['Photocard','Álbum','Merch','Incluso de Álbum','Outro'].map(t => `<option ${t===row[COL.TIPO]?'selected':''}>${t}</option>`).join('');
+      const membroOpts = ['Bang Chan','Lee Know','Changbin','Hyunjin','Han','Felix','Seungmin','I.N','OT8'].map(m => `<option ${m===row[COL.MEMBRO]?'selected':''}>${m}</option>`).join('');
+      const claimOpts = ['Por membro (OT8)','Set genérico','Sem claim'].map(c => `<option ${c===row[COL.CLAIM_TYPE]?'selected':''}>${c}</option>`).join('');
+
       document.getElementById('content').innerHTML = `
         <div class="item-hero">
           <div class="hero-img">${img?`<img src="${img}" alt="${nome}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}</div>
@@ -136,9 +153,14 @@
             <div class="hero-name">${nome}</div>
             <div class="hero-meta">${[comunidade,gom].filter(Boolean).join(' · ')||'—'}</div>
             <span class="badge badge-${cls}"><i class="ti ${statusIcon(row[COL.STATUS])}"></i>${statusLabel(row[COL.STATUS])}</span>
-            <div class="hero-actions"><button class="btn btn-ghost" style="font-size:12px;padding:5px 10px;" onclick="toggleEdit()"><i class="ti ti-pencil" style="font-size:13px;"></i> Editar</button></div>
+            <div class="hero-actions">
+              <button class="btn btn-ghost" style="font-size:12px; padding:5px 10px;" onclick="toggleEdit()">
+                <i class="ti ti-pencil" style="font-size:13px;"></i> Editar
+              </button>
+            </div>
           </div>
         </div>
+
         <div class="section-title">Informações</div>
         <div class="info-grid">
           <div class="info-card"><div class="info-label">Tipo</div><div class="info-value">${row[COL.TIPO]||'—'}</div></div>
@@ -151,15 +173,22 @@
           <div class="info-card"><div class="info-label">Data de recebimento</div><div class="info-value">${dataRec||'—'}</div></div>
           ${linkCeg?`<div class="info-card" style="grid-column:1/-1;"><div class="info-label">Planilha da CEG</div><div class="info-value"><a href="${linkCeg}" target="_blank">Abrir <i class="ti ti-external-link" style="font-size:11px;"></i></a></div></div>`:''}
         </div>
+
         <div class="section-title">Pagamentos</div>
         ${stepsHtml}
+
         <div class="totals-card">
           <div class="total-item"><div class="total-label">Total pago</div><div class="total-value" style="color:var(--status-done-color);">${formatBRL(pago)}</div></div>
           <div style="width:1px;background:var(--border);"></div>
           <div class="total-item"><div class="total-label">Pendente</div><div class="total-value" style="color:${pendente>0?'var(--status-pending-color)':'var(--text-muted)'};">${formatBRL(pendente)}</div></div>
         </div>
+
+        <!-- Formulário de edição completa -->
         <div class="edit-section" id="edit-section">
-          <div class="section-title" style="margin-bottom:16px;">Editar item</div>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+            <div class="section-title" style="margin:0; flex:1;">Editar item</div>
+          </div>
+
           <div class="edit-section-subtitle">Identificação</div>
           <div class="field-row">
             <div class="field"><label>Tipo</label><select id="e-tipo">${tipoOpts}</select></div>
@@ -170,13 +199,19 @@
             <div class="field"><label>Nº do set</label><input type="number" id="e-numset" value="${row[COL.NUM_SET]||''}"></div>
           </div>
           <div class="field"><label>Link da imagem</label><input type="url" id="e-img" value="${row[COL.IMG_LINK]||''}" placeholder="https://..."></div>
+
           <div class="edit-section-subtitle">Claim & Origem</div>
           <div class="field-row">
             <div class="field"><label>Tipo de claim</label><select id="e-claim">${claimOpts}</select></div>
             <div class="field"><label>Membro</label><select id="e-membro">${membroOpts}</select></div>
           </div>
           <div class="field-row">
-            <div class="field"><label>Comunidade</label><select id="e-comunidade"><option value="">Selecione...</option>${commOpts}</select></div>
+            <div class="field"><label>Comunidade</label>
+              <select id="e-comunidade">
+                <option value="">Selecione...</option>
+                ${commOpts}
+              </select>
+            </div>
             <div class="field"><label>GOM</label><input type="text" id="e-gom" value="${gom}"></div>
           </div>
           <div class="field-row">
@@ -184,6 +219,7 @@
             <div class="field"><label>Data do claim</label><input type="date" id="e-data-claim" value="${dataClaim}"></div>
           </div>
           <div class="field"><label>Data de recebimento</label><input type="date" id="e-data-rec" value="${dataRec}"></div>
+
           <div class="edit-section-subtitle">Pagamentos (valores em R$)</div>
           <div class="field-row">
             <div class="field"><label>Valor item</label><input type="number" id="e-vl-item" value="${row[COL.VL_ITEM]||''}" step="0.01" placeholder="0,00"></div>
@@ -205,14 +241,24 @@
             <div class="field"><label>Frete nacional</label><input type="number" id="e-vl-fnac" value="${row[COL.VL_FNAC]||''}" step="0.01" placeholder="0,00"></div>
             <div class="field"><label>Status fnac.</label><select id="e-st-fnac">${STATUS_OPTIONS.map(o=>`<option ${o===row[COL.ST_FNAC]?'selected':''}>${o}</option>`).join('')}</select></div>
           </div>
-          <div style="display:flex;gap:10px;margin-top:20px;">
+
+          <div style="display:flex; gap:10px; margin-top:20px;">
             <button class="btn btn-ghost" style="flex:1;" onclick="toggleEdit()">Cancelar</button>
-            <button class="btn btn-primary" style="flex:2;justify-content:center;" onclick="saveFullEdit()" id="edit-save-btn"><i class="ti ti-check"></i> Salvar tudo</button>
+            <button class="btn btn-primary" style="flex:2; justify-content:center;" onclick="saveFullEdit()" id="edit-save-btn">
+              <i class="ti ti-check"></i> Salvar tudo
+            </button>
           </div>
         </div>
+
+        <!-- Danger zone -->
         <div class="danger-zone">
-          <div class="danger-text"><p>Remover item</p><span>Esta ação não pode ser desfeita.</span></div>
-          <button class="btn btn-danger" onclick="deleteItem()"><i class="ti ti-trash"></i> Remover</button>
+          <div class="danger-text">
+            <p>Remover item</p>
+            <span>Esta ação não pode ser desfeita.</span>
+          </div>
+          <button class="btn btn-danger" onclick="deleteItem()">
+            <i class="ti ti-trash"></i> Remover
+          </button>
         </div>`;
     }
 
@@ -227,26 +273,31 @@
       const btn = document.getElementById('edit-save-btn');
       btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
       btn.disabled = true;
+
       const g = id => document.getElementById(id)?.value || '';
+
+      // Monta linha completa
       const newRow = [
-        g('e-tipo'),g('e-comeback'),g('e-set'),g('e-numset'),g('e-img'),
-        g('e-claim'),g('e-membro'),rowData[COL.NUM_CLAIM]||'',
-        g('e-comunidade'),g('e-gom'),g('e-link-ceg'),
-        g('e-vl-item'),g('e-st-item'),
-        g('e-vl-fi1'),g('e-st-fi1'),
-        g('e-vl-fi2'),g('e-st-fi2'),
-        rowData[COL.STATUS]||'',rowData[COL.ETAPA]||'',
-        g('e-data-claim'),rowData[COL.NOTAS]||'',g('e-data-rec'),
-        g('e-vl-alf'),g('e-st-alf'),
-        g('e-vl-fnac'),g('e-st-fnac'),
-        '','',
+        g('e-tipo'), g('e-comeback'), g('e-set'), g('e-numset'), g('e-img'),
+        g('e-claim'), g('e-membro'), rowData[COL.NUM_CLAIM]||'',
+        g('e-comunidade'), g('e-gom'), g('e-link-ceg'),
+        g('e-vl-item'), g('e-st-item'),
+        g('e-vl-fi1'), g('e-st-fi1'),
+        g('e-vl-fi2'), g('e-st-fi2'),
+        rowData[COL.STATUS]||'', rowData[COL.ETAPA]||'',
+        g('e-data-claim'), rowData[COL.NOTAS]||'', g('e-data-rec'),
+        g('e-vl-alf'), g('e-st-alf'),
+        g('e-vl-fnac'), g('e-st-fnac'),
+        '', '', // total pago e pendente (calculados)
       ];
+
       try {
         await Sheets.set(`Itens!A${sheetRow}:AB${sheetRow}`, [newRow]);
         await loadItem();
         document.getElementById('edit-section').classList.remove('open');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch(e) { alert('Erro ao salvar. Tente novamente.'); }
+
       btn.innerHTML = '<i class="ti ti-check"></i> Salvar tudo';
       btn.disabled = false;
     }
@@ -259,8 +310,17 @@
       } catch(e) { alert('Erro ao remover.'); }
     }
 
-    function onStatusChange(el) { hasChanges = true; document.getElementById('save-bar').classList.add('visible'); }
-    function discardChanges() { hasChanges = false; document.getElementById('save-bar').classList.remove('visible'); render(); }
+    // ── Status de pagamento (save bar) ─────────────
+    function onStatusChange(el) {
+      hasChanges = true;
+      document.getElementById('save-bar').classList.add('visible');
+    }
+
+    function discardChanges() {
+      hasChanges = false;
+      document.getElementById('save-bar').classList.remove('visible');
+      render();
+    }
 
     async function saveChanges() {
       const btn = document.getElementById('save-btn');
@@ -268,7 +328,10 @@
       btn.disabled = true;
       const selects = document.querySelectorAll('[data-col]');
       const updates = [];
-      selects.forEach(sel => { updates.push({ range: `Itens!${indexToCol(parseInt(sel.dataset.col))}${sheetRow}`, value: sel.value }); });
+      selects.forEach(sel => {
+        const colIdx = parseInt(sel.dataset.col);
+        updates.push({ range: `Itens!${indexToCol(colIdx)}${sheetRow}`, value: sel.value });
+      });
       try {
         await Promise.all(updates.map(u => Sheets.setCell(u.range, u.value)));
         await loadItem();
