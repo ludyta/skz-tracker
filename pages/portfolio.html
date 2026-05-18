@@ -25,6 +25,8 @@
     .share-btn { font-size: 11px; padding: 4px 10px; border-radius: var(--radius-md); border: 1px solid var(--accent-border); color: var(--accent-deep); background: var(--accent-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
     .section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; margin-top: 16px; display: flex; align-items: center; gap: 8px; }
     .section-label span { flex: 1; height: 1px; background: var(--border); }
+
+    /* Grade 3 colunas */
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .pc-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; cursor: pointer; transition: border-color var(--transition); }
     .pc-card:hover { border-color: var(--border-hover); }
@@ -35,6 +37,8 @@
     .pc-info { padding: 6px 7px; }
     .pc-name { font-size: 10px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 1px; }
     .pc-meta { font-size: 9px; color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Lista */
     .list-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 6px; cursor: pointer; transition: border-color var(--transition); text-decoration: none; }
     .list-card:hover { border-color: var(--border-hover); }
     .list-card.wish { border-left: 2.5px solid var(--accent-deep); }
@@ -44,6 +48,8 @@
     .list-name { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .list-meta { font-size: 11px; color: var(--text-muted); }
     .list-wish-tag { font-size: 10px; color: var(--accent-deep); font-weight: 500; }
+
+    /* Binder */
     .binder-wrap { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px; }
     .binder-page { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px; margin-bottom: 10px; }
     .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
@@ -63,6 +69,7 @@
     .drag-hint { font-size: 9px; color: var(--text-faint); text-align: center; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 4px; }
     .new-page-btn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: var(--radius-md); border: 1px dashed var(--border); color: var(--text-muted); font-size: 12px; cursor: pointer; margin-top: 4px; transition: all var(--transition); }
     .new-page-btn:hover { border-color: var(--accent-border); color: var(--accent-deep); }
+
     .empty-state { text-align: center; padding: 48px 16px; color: var(--text-muted); }
     .empty-state i { font-size: 32px; display: block; margin-bottom: 12px; color: var(--text-faint); }
     .empty-state p { font-size: 13px; }
@@ -72,52 +79,68 @@
     .fab:hover { background: var(--accent); transform: scale(1.05); }
     .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 16px; font-size: 12px; color: var(--text-primary); display: none; z-index: 100; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
   </style>
+  <script src="../js/app.js"></script>
+  <script src="../js/nav.js"></script>
 </head>
 <body>
-  <nav class="navbar">
-    <a href="../index.html" class="navbar-brand"><div class="brand-dot"></div>SKZ Tracker</a>
-    <div class="navbar-nav">
-      <a href="../index.html" class="nav-link"><i class="ti ti-layout-dashboard"></i><span>Dashboard</span></a>
-      <a href="items.html" class="nav-link"><i class="ti ti-package"></i><span>Itens</span></a>
-      <a href="portfolio.html" class="nav-link active"><i class="ti ti-grid-dots"></i><span>Portfólio</span></a>
-      <a href="communities.html" class="nav-link"><i class="ti ti-building-community"></i><span>Comunidades</span></a>
-    </div>
-    <div style="margin-left:16px;">
-      <button class="btn btn-ghost" style="padding:6px 10px;" onclick="Auth.signOut()"><i class="ti ti-logout" style="font-size:15px;"></i></button>
-    </div>
-  </nav>
+
   <main class="container" style="padding-top:24px; padding-bottom:100px;">
-    <div style="margin-bottom:20px;"><h1 style="margin:0;">Portfólio</h1></div>
-    <div class="top-tabs">
-      <div class="top-tab on" data-p="portfolio" onclick="swTop(this)"><i class="ti ti-layout-grid"></i> Coleção</div>
-      <div class="top-tab" data-p="wishlist" onclick="swTop(this)"><i class="ti ti-heart"></i> Wishlist <span id="wish-count" style="font-size:10px;background:var(--accent-muted);color:var(--accent-deep);padding:1px 6px;border-radius:100px;margin-left:2px;"></span></div>
+    <div style="margin-bottom:20px; display:flex; align-items:center; justify-content:space-between;">
+      <h1 style="margin:0;">Portfólio</h1>
     </div>
+
+    <!-- Tabs portfólio / wishlist -->
+    <div class="top-tabs">
+      <div class="top-tab on" data-p="portfolio" onclick="swTop(this)">
+        <i class="ti ti-layout-grid"></i> Coleção
+      </div>
+      <div class="top-tab" data-p="wishlist" onclick="swTop(this)">
+        <i class="ti ti-heart"></i> Wishlist
+        <span id="wish-count" style="font-size:10px; background:var(--accent-muted); color:var(--accent-deep); padding:1px 6px; border-radius:100px; margin-left:2px;"></span>
+      </div>
+    </div>
+
+    <!-- COLEÇÃO -->
     <div class="panel on" id="panel-portfolio">
       <div class="view-tabs">
         <div class="view-tab on" data-v="grade" onclick="swView(this)"><i class="ti ti-grid-dots"></i> Grade</div>
         <div class="view-tab" data-v="lista" onclick="swView(this)"><i class="ti ti-list"></i> Lista</div>
         <div class="view-tab" data-v="binder" onclick="swView(this)"><i class="ti ti-book"></i> Binder</div>
       </div>
-      <div class="filter-row" id="filter-row"><div class="filter-pill on" data-filter="" onclick="setFilter(this)">Todos</div></div>
+
+      <div class="filter-row" id="filter-row">
+        <div class="filter-pill on" data-filter="" onclick="setFilter(this)">Todos</div>
+      </div>
+
       <div class="share-bar">
         <div class="share-dot"></div>
         <div class="share-text">Modo público · comeback, set e membro visíveis</div>
-        <div class="share-btn" onclick="copyPublicLink()"><i class="ti ti-copy" style="font-size:11px;"></i> Copiar link</div>
+        <div class="share-btn" onclick="copyPublicLink()">
+          <i class="ti ti-copy" style="font-size:11px;"></i> Copiar link
+        </div>
       </div>
+
       <div id="view-grade"><div class="empty-state"><i class="ti ti-loader spinner"></i><p>Carregando...</p></div></div>
       <div id="view-lista" style="display:none;"></div>
       <div id="view-binder" style="display:none;"></div>
     </div>
+
+    <!-- WISHLIST -->
     <div class="panel" id="panel-wishlist">
-      <div class="filter-row" id="wish-filter-row"><div class="filter-pill on" data-filter="" onclick="setWishFilter(this)">Todos</div></div>
+      <div class="filter-row" id="wish-filter-row">
+        <div class="filter-pill on" data-filter="" onclick="setWishFilter(this)">Todos</div>
+      </div>
       <div id="wish-list"><div class="empty-state"><i class="ti ti-loader spinner"></i><p>Carregando...</p></div></div>
     </div>
   </main>
-  <a href="wishlist-form.html" class="fab" title="Adicionar à wishlist" id="fab-wish" style="display:none;"><i class="ti ti-heart-plus"></i></a>
+
+  <a href="wishlist-form.html" class="fab" title="Adicionar à wishlist" id="fab-wish" style="display:none;">
+    <i class="ti ti-heart-plus"></i>
+  </a>
+
   <div class="toast" id="toast"></div>
-  <script src="../js/auth.js"></script>
   <script>
-    let allItems = [], allWish = [], activeFilter = '', activeWishFilter = '';
+    let allItems = [], allWish = [], binderPages = [], activeFilter = '', activeWishFilter = '';
     const WISH_RANGE = 'Wishlist!A2:P';
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -128,28 +151,58 @@
       await loadAll();
     });
 
+    // ── Garante que a aba Wishlist existe ──────────
     async function ensureWishlistSheet() {
       try {
-        const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}`, { headers: { 'Authorization': `Bearer ${Auth.accessToken}` } });
+        const res = await fetch(
+          `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}`,
+          { headers: { 'Authorization': `Bearer ${Auth.accessToken}` } }
+        );
         const data = await res.json();
-        const exists = (data.sheets||[]).some(s => s.properties.title === 'Wishlist');
+        const sheets = data.sheets || [];
+        const exists = sheets.some(s => s.properties.title === 'Wishlist');
         if (exists) return;
-        await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}:batchUpdate`, { method: 'POST', headers: { 'Authorization': `Bearer ${Auth.accessToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ requests: [{ addSheet: { properties: { title: 'Wishlist' } } }] }) });
+
+        await fetch(
+          `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}:batchUpdate`,
+          {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${Auth.accessToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ requests: [{ addSheet: { properties: { title: 'Wishlist' } } }] })
+          }
+        );
+        // Cabeçalho
         await Sheets.set('Wishlist!A1:P1', [['Tipo','Comeback','Set POB','Num Set','Link Imagem','Claim Type','Membro','Num Claim','Comunidade','GOM','Link CEG','Vl Item','St Item','Status','Etapa','Notas']]);
       } catch(e) { console.warn('ensureWishlistSheet:', e); }
     }
 
     async function loadAll() {
-      const [itemRows, wishRows] = await Promise.all([Sheets.get(CONFIG.RANGES.ITEMS), Sheets.get(WISH_RANGE)]);
+      const [itemRows, wishRows] = await Promise.all([
+        Sheets.get(CONFIG.RANGES.ITEMS),
+        Sheets.get(WISH_RANGE),
+      ]);
+
       allItems = (itemRows||[]).filter(r => r[COL.TIPO]).map((row,idx) => ({ row, sheetRow: idx+4, isWish: false }));
       allWish  = (wishRows||[]).filter(r => r[0]).map((row,idx) => ({ row, sheetRow: idx+2, isWish: true }));
-      buildFilters(); buildWishFilters(); updateWishCount(); renderAll();
+
+      buildFilters();
+      buildWishFilters();
+      updateWishCount();
+      renderAll();
+
       document.getElementById('fab-wish').style.display = 'flex';
     }
 
     function buildFilters() {
-      const comebacks = [...new Set([...allItems.map(i=>i.row[COL.COMEBACK]),...allWish.map(i=>i.row[1])].filter(Boolean))].sort();
-      const members   = [...new Set([...allItems.map(i=>i.row[COL.MEMBRO]),...allWish.map(i=>i.row[6])].filter(Boolean))].sort();
+      const comebacks = [...new Set([
+        ...allItems.map(i => i.row[COL.COMEBACK]),
+        ...allWish.map(i => i.row[1])
+      ].filter(Boolean))].sort();
+      const members = [...new Set([
+        ...allItems.map(i => i.row[COL.MEMBRO]),
+        ...allWish.map(i => i.row[6])
+      ].filter(Boolean))].sort();
+
       const row = document.getElementById('filter-row');
       row.innerHTML = `<div class="filter-pill on" data-filter="" onclick="setFilter(this)">Todos</div>`;
       comebacks.forEach(c => row.innerHTML += `<div class="filter-pill" data-filter="comeback:${c}" onclick="setFilter(this)">${c}</div>`);
@@ -157,15 +210,18 @@
     }
 
     function buildWishFilters() {
-      const comebacks = [...new Set(allWish.map(i=>i.row[1]).filter(Boolean))].sort();
-      const members   = [...new Set(allWish.map(i=>i.row[6]).filter(Boolean))].sort();
+      const comebacks = [...new Set(allWish.map(i => i.row[1]).filter(Boolean))].sort();
+      const members   = [...new Set(allWish.map(i => i.row[6]).filter(Boolean))].sort();
       const row = document.getElementById('wish-filter-row');
       row.innerHTML = `<div class="filter-pill on" data-filter="" onclick="setWishFilter(this)">Todos</div>`;
       comebacks.forEach(c => row.innerHTML += `<div class="filter-pill" data-filter="comeback:${c}" onclick="setWishFilter(this)">${c}</div>`);
       members.forEach(m => row.innerHTML += `<div class="filter-pill" data-filter="member:${m}" onclick="setWishFilter(this)">${m}</div>`);
     }
 
-    function updateWishCount() { document.getElementById('wish-count').textContent = allWish.length > 0 ? allWish.length : ''; }
+    function updateWishCount() {
+      const el = document.getElementById('wish-count');
+      el.textContent = allWish.length > 0 ? allWish.length : '';
+    }
 
     function matchFilter(item, filter) {
       if (!filter) return true;
@@ -175,104 +231,257 @@
       return true;
     }
 
-    function setFilter(el) { document.querySelectorAll('#filter-row .filter-pill').forEach(p=>p.classList.remove('on')); el.classList.add('on'); activeFilter=el.dataset.filter; renderAll(); }
-    function setWishFilter(el) { document.querySelectorAll('#wish-filter-row .filter-pill').forEach(p=>p.classList.remove('on')); el.classList.add('on'); activeWishFilter=el.dataset.filter; renderWishList(); }
-
-    function renderAll() {
-      const combined = [...allItems,...allWish].filter(i=>matchFilter(i,activeFilter));
-      const byComeback = groupBy(combined, i=>i.isWish?i.row[1]:i.row[COL.COMEBACK]);
-      renderGrade(byComeback); renderLista(byComeback); renderBinder(byComeback); renderWishList();
+    function setFilter(el) {
+      document.querySelectorAll('#filter-row .filter-pill').forEach(p => p.classList.remove('on'));
+      el.classList.add('on');
+      activeFilter = el.dataset.filter;
+      renderAll();
     }
 
-    function groupBy(arr, keyFn) { const map={}; arr.forEach(item=>{ const k=keyFn(item)||'—'; if(!map[k])map[k]=[]; map[k].push(item); }); return map; }
+    function setWishFilter(el) {
+      document.querySelectorAll('#wish-filter-row .filter-pill').forEach(p => p.classList.remove('on'));
+      el.classList.add('on');
+      activeWishFilter = el.dataset.filter;
+      renderWishList();
+    }
+
+    function renderAll() {
+      const combined = [...allItems, ...allWish].filter(i => matchFilter(i, activeFilter));
+      const byComeback = groupBy(combined, i => i.isWish ? i.row[1] : i.row[COL.COMEBACK]);
+      renderGrade(byComeback);
+      renderLista(byComeback);
+      renderBinder(byComeback);
+      renderWishList();
+    }
+
+    function groupBy(arr, keyFn) {
+      const map = {};
+      arr.forEach(item => {
+        const k = keyFn(item) || '—';
+        if (!map[k]) map[k] = [];
+        map[k].push(item);
+      });
+      return map;
+    }
+
+    function itemName(item) {
+      const r = item.row;
+      if (item.isWish) return [r[0],r[6],r[1],r[2]].filter(Boolean).join(' · ') || 'Item sem nome';
+      return [r[COL.TIPO],r[COL.MEMBRO],r[COL.COMEBACK],r[COL.SET_POB]].filter(Boolean).join(' · ') || 'Item sem nome';
+    }
+
     function itemImg(item) { return item.isWish ? item.row[4] : item.row[COL.IMG_LINK]; }
     function itemMembro(item) { return item.isWish ? item.row[6] : item.row[COL.MEMBRO]; }
     function itemSet(item) { return item.isWish ? item.row[2] : item.row[COL.SET_POB]; }
 
+    // ── Grade ──────────────────────────────────────
     function renderGrade(byComeback) {
       const el = document.getElementById('view-grade');
       if (!Object.keys(byComeback).length) { el.innerHTML = emptyState('ti-grid-dots','Nenhum item na coleção ainda.'); return; }
-      el.innerHTML = Object.entries(byComeback).map(([cb,items]) => `
+      el.innerHTML = Object.entries(byComeback).map(([cb, items]) => `
         <div class="section-label">${cb} <span></span></div>
         <div class="grid-3" style="margin-bottom:8px;">
-          ${items.map(item => { const img=itemImg(item),wish=item.isWish; return `<div class="pc-card ${wish?'wish':''}" onclick="openDetail(${item.isWish?1:0},${item.sheetRow})"><div class="pc-img">${img?`<img src="${img}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}${wish?'<div class="wish-badge">wish</div>':''}</div><div class="pc-info"><div class="pc-name">${itemMembro(item)||'—'}</div><div class="pc-meta">${itemSet(item)||'—'}</div></div></div>`; }).join('')}
+          ${items.map(item => {
+            const img = itemImg(item);
+            const wish = item.isWish;
+            return `<div class="pc-card ${wish?'wish':''}" onclick="openDetail(${item.isWish?1:0},${item.sheetRow})">
+              <div class="pc-img">
+                ${img?`<img src="${img}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}
+                ${wish?'<div class="wish-badge">wish</div>':''}
+              </div>
+              <div class="pc-info">
+                <div class="pc-name">${itemMembro(item)||'—'}</div>
+                <div class="pc-meta">${itemSet(item)||'—'}</div>
+              </div>
+            </div>`;
+          }).join('')}
         </div>`).join('');
     }
 
+    // ── Lista ──────────────────────────────────────
     function renderLista(byComeback) {
       const el = document.getElementById('view-lista');
       if (!Object.keys(byComeback).length) { el.innerHTML = emptyState('ti-list','Nenhum item na coleção ainda.'); return; }
-      el.innerHTML = Object.entries(byComeback).map(([cb,items]) => `
+      el.innerHTML = Object.entries(byComeback).map(([cb, items]) => `
         <div class="section-label">${cb} <span></span></div>
-        ${items.map(item => { const img=itemImg(item),wish=item.isWish; return `<div class="list-card ${wish?'wish':''}" onclick="openDetail(${item.isWish?1:0},${item.sheetRow})"><div class="list-thumb">${img?`<img src="${img}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}</div><div class="list-body"><div class="list-name">${itemMembro(item)||'—'} · ${cb}</div><div class="list-meta">${itemSet(item)||'—'}${wish?' · <span class="list-wish-tag">wish</span>':''}</div></div><i class="ti ti-chevron-right" style="font-size:14px;color:var(--text-faint);"></i></div>`; }).join('')}`).join('');
+        ${items.map(item => {
+          const img = itemImg(item);
+          const wish = item.isWish;
+          return `<div class="list-card ${wish?'wish':''}" onclick="openDetail(${item.isWish?1:0},${item.sheetRow})">
+            <div class="list-thumb">
+              ${img?`<img src="${img}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}
+            </div>
+            <div class="list-body">
+              <div class="list-name">${itemMembro(item)||'—'} · ${cb}</div>
+              <div class="list-meta">${itemSet(item)||'—'}${wish?' · <span class="list-wish-tag">wish</span>':''}</div>
+            </div>
+            <i class="ti ti-chevron-right" style="font-size:14px; color:var(--text-faint);"></i>
+          </div>`;
+        }).join('')}`).join('');
     }
 
+    // ── Binder ─────────────────────────────────────
     function renderBinder(byComeback) {
       const el = document.getElementById('view-binder');
       if (!Object.keys(byComeback).length) { el.innerHTML = emptyState('ti-book','Nenhum item na coleção ainda.'); return; }
+
+      // Init pages per comeback from localStorage
       const saved = JSON.parse(localStorage.getItem('binder_pages')||'{}');
+
       el.innerHTML = `<div class="binder-wrap" id="binder-inner"></div>`;
       const inner = document.getElementById('binder-inner');
-      Object.entries(byComeback).forEach(([cb,items]) => {
-        if (!saved[cb]) saved[cb] = chunkPages(items.map(i=>i.sheetRow+'|'+(i.isWish?'1':'0')),4);
-        renderBinderComeback(inner,cb,items,saved[cb]);
+
+      Object.entries(byComeback).forEach(([cb, items]) => {
+        if (!saved[cb]) { saved[cb] = chunkPages(items.map(i => i.sheetRow+'|'+(i.isWish?'1':'0')), 4); }
+        renderBinderComeback(inner, cb, items, saved[cb]);
       });
-      inner.innerHTML += `<div class="new-page-btn" onclick="addPage()"><i class="ti ti-plus"></i> Nova página</div>`;
+
+      // Add comeback selector for new page
+      inner.innerHTML += `<div class="new-page-btn" onclick="addPage()" style="margin-top:8px;">
+        <i class="ti ti-plus"></i> Nova página
+      </div>`;
+
       saveBinder(saved);
     }
 
-    function chunkPages(arr,size) { const pages=[]; for(let i=0;i<arr.length;i+=size)pages.push(arr.slice(i,i+size)); if(!pages.length)pages.push([]); return pages; }
+    function chunkPages(arr, size) {
+      const pages = [];
+      for (let i = 0; i < arr.length; i += size) pages.push(arr.slice(i, i+size));
+      if (!pages.length) pages.push([]);
+      return pages;
+    }
 
-    function renderBinderComeback(container,cb,items,pages) {
+    function renderBinderComeback(container, cb, items, pages) {
       const section = document.createElement('div');
       section.innerHTML = `<div class="section-label" style="margin-top:0;">${cb} <span></span></div>`;
-      pages.forEach((page,pi) => {
+
+      pages.forEach((page, pi) => {
         const pageEl = document.createElement('div');
         pageEl.className = 'binder-page';
-        pageEl.innerHTML = `<div class="page-header"><div class="page-label">Página ${pi+1} · ${page.filter(Boolean).length}/4 bolsos</div><div class="page-del" onclick="deletePage('${cb}',${pi})"><i class="ti ti-trash" style="font-size:11px;"></i> remover</div></div>
-          <div class="pocket-grid">${[0,1,2,3].map(si => { const slot=page[si]; if(slot){ const [rowStr,wishStr]=slot.split('|'),isWish=wishStr==='1'; const item=isWish?allWish.find(i=>i.sheetRow==rowStr):allItems.find(i=>i.sheetRow==rowStr); const img=item?itemImg(item):'',nome=item?(itemMembro(item)||'—'):'—'; return `<div class="pocket ${isWish?'wish-pocket':''}" draggable="true" data-slot="${si}" data-key="${slot}" data-cb="${cb}" data-pi="${pi}" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="dropPocket(event)" ondragleave="dragLeave(event)">${img?`<img class="pocket-fill" src="${img}" onerror="this.parentNode.innerHTML='<div class=\\'pocket-bg\\'>${nome}</div>'">`:`<div class="pocket-bg">${nome}</div>`}${isWish?'<div class="pocket-wish-tag">wish</div>':''}<div class="pocket-overlay"><div class="pocket-name">${nome}</div></div></div>`; } return `<div class="pocket empty-pocket" data-slot="${si}" data-cb="${cb}" data-pi="${pi}" ondragover="dragOver(event)" ondrop="dropPocket(event)" ondragleave="dragLeave(event)"><i class="ti ti-plus" style="font-size:16px;color:var(--text-faint);"></i></div>`; }).join('')}</div>
+        pageEl.dataset.cb = cb;
+        pageEl.dataset.pi = pi;
+        pageEl.innerHTML = `
+          <div class="page-header">
+            <div class="page-label">Página ${pi+1} · ${page.filter(Boolean).length}/4 bolsos</div>
+            <div class="page-del" onclick="deletePage('${cb}',${pi})"><i class="ti ti-trash" style="font-size:11px;"></i> remover</div>
+          </div>
+          <div class="pocket-grid" id="pockets-${cb}-${pi}">
+            ${[0,1,2,3].map(si => {
+              const slot = page[si];
+              if (slot) {
+                const [rowStr, wishStr] = slot.split('|');
+                const isWish = wishStr === '1';
+                const item = isWish
+                  ? allWish.find(i => i.sheetRow == rowStr)
+                  : allItems.find(i => i.sheetRow == rowStr);
+                const img = item ? itemImg(item) : '';
+                const nome = item ? (itemMembro(item)||'—') : '—';
+                return `<div class="pocket ${isWish?'wish-pocket':''}"
+                  draggable="true"
+                  data-slot="${si}" data-key="${slot}" data-cb="${cb}" data-pi="${pi}"
+                  ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="dropPocket(event)" ondragleave="dragLeave(event)">
+                  ${img?`<img class="pocket-fill" src="${img}" onerror="this.parentNode.innerHTML='<div class=\\'pocket-bg\\'>${nome}</div>'">`:`<div class="pocket-bg">${nome}</div>`}
+                  ${isWish?'<div class="pocket-wish-tag">wish</div>':''}
+                  <div class="pocket-overlay"><div class="pocket-name">${nome}</div></div>
+                </div>`;
+              }
+              return `<div class="pocket empty-pocket" data-slot="${si}" data-cb="${cb}" data-pi="${pi}"
+                ondragover="dragOver(event)" ondrop="dropPocket(event)" ondragleave="dragLeave(event)">
+                <i class="ti ti-plus" style="font-size:16px; color:var(--text-faint);"></i>
+              </div>`;
+            }).join('')}
+          </div>
           <div class="drag-hint"><i class="ti ti-arrows-move" style="font-size:11px;"></i> arraste para reordenar</div>`;
         section.appendChild(pageEl);
       });
       container.appendChild(section);
     }
 
-    let dragKey=null,dragCb=null,dragPi=null,dragSlot=null;
-    function dragStart(e) { dragKey=e.currentTarget.dataset.key; dragCb=e.currentTarget.dataset.cb; dragPi=parseInt(e.currentTarget.dataset.pi); dragSlot=parseInt(e.currentTarget.dataset.slot); e.dataTransfer.effectAllowed='move'; }
+    // ── Drag & Drop ────────────────────────────────
+    let dragKey = null, dragCb = null, dragPi = null, dragSlot = null;
+
+    function dragStart(e) {
+      dragKey  = e.currentTarget.dataset.key;
+      dragCb   = e.currentTarget.dataset.cb;
+      dragPi   = parseInt(e.currentTarget.dataset.pi);
+      dragSlot = parseInt(e.currentTarget.dataset.slot);
+      e.dataTransfer.effectAllowed = 'move';
+    }
     function dragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
     function dragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
     function dropPocket(e) {
-      e.preventDefault(); e.currentTarget.classList.remove('drag-over');
-      const tSlot=parseInt(e.currentTarget.dataset.slot),tCb=e.currentTarget.dataset.cb,tPi=parseInt(e.currentTarget.dataset.pi);
-      if(!dragKey)return;
-      const saved=JSON.parse(localStorage.getItem('binder_pages')||'{}');
-      const src=saved[dragCb][dragPi],tgt=saved[tCb][tPi],sv=src[dragSlot],tv=tgt[tSlot];
-      src[dragSlot]=tv||null; tgt[tSlot]=sv;
-      saved[dragCb][dragPi]=src; saved[tCb][tPi]=tgt;
-      saveBinder(saved); reRenderBinder(); dragKey=null;
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      const targetSlot = parseInt(e.currentTarget.dataset.slot);
+      const targetCb   = e.currentTarget.dataset.cb;
+      const targetPi   = parseInt(e.currentTarget.dataset.pi);
+      if (!dragKey) return;
+      const saved = JSON.parse(localStorage.getItem('binder_pages')||'{}');
+      const srcPage = saved[dragCb][dragPi];
+      const tgtPage = saved[targetCb][targetPi];
+      const srcVal = srcPage[dragSlot];
+      const tgtVal = tgtPage[targetSlot];
+      srcPage[dragSlot] = tgtVal || null;
+      tgtPage[targetSlot] = srcVal;
+      saved[dragCb][dragPi] = srcPage;
+      saved[targetCb][targetPi] = tgtPage;
+      saveBinder(saved);
+      reRenderBinder();
+      dragKey = null;
     }
 
     function addPage() {
-      const cbs=[...new Set([...allItems.map(i=>i.row[COL.COMEBACK]),...allWish.map(i=>i.row[1])].filter(Boolean))];
-      if(!cbs.length)return;
-      const saved=JSON.parse(localStorage.getItem('binder_pages')||'{}');
-      if(!saved[cbs[0]])saved[cbs[0]]=[];
-      saved[cbs[0]].push([null,null,null,null]);
-      saveBinder(saved); reRenderBinder();
+      const cbs = [...new Set([...allItems.map(i=>i.row[COL.COMEBACK]), ...allWish.map(i=>i.row[1])].filter(Boolean))];
+      if (!cbs.length) return;
+      const cb = cbs[0];
+      const saved = JSON.parse(localStorage.getItem('binder_pages')||'{}');
+      if (!saved[cb]) saved[cb] = [];
+      saved[cb].push([null,null,null,null]);
+      saveBinder(saved);
+      reRenderBinder();
     }
 
-    function deletePage(cb,pi) { const saved=JSON.parse(localStorage.getItem('binder_pages')||'{}'); saved[cb].splice(pi,1); if(!saved[cb].length)delete saved[cb]; saveBinder(saved); reRenderBinder(); }
-    function saveBinder(data) { localStorage.setItem('binder_pages',JSON.stringify(data)); }
-    function reRenderBinder() { const combined=[...allItems,...allWish].filter(i=>matchFilter(i,activeFilter)); const byComeback=groupBy(combined,i=>i.isWish?i.row[1]:i.row[COL.COMEBACK]); renderBinder(byComeback); }
+    function deletePage(cb, pi) {
+      const saved = JSON.parse(localStorage.getItem('binder_pages')||'{}');
+      saved[cb].splice(pi, 1);
+      if (!saved[cb].length) delete saved[cb];
+      saveBinder(saved);
+      reRenderBinder();
+    }
 
+    function saveBinder(data) { localStorage.setItem('binder_pages', JSON.stringify(data)); }
+
+    function reRenderBinder() {
+      const combined = [...allItems, ...allWish].filter(i => matchFilter(i, activeFilter));
+      const byComeback = groupBy(combined, i => i.isWish ? i.row[1] : i.row[COL.COMEBACK]);
+      renderBinder(byComeback);
+    }
+
+    // ── Wishlist ───────────────────────────────────
     function renderWishList() {
-      const el=document.getElementById('wish-list');
-      const filtered=allWish.filter(i=>matchFilter(i,activeWishFilter));
-      if(!filtered.length){el.innerHTML=emptyState('ti-heart','Nenhum item na wishlist ainda.');return;}
-      const byComeback=groupBy(filtered,i=>i.row[1]);
-      el.innerHTML=Object.entries(byComeback).map(([cb,items])=>`
+      const el = document.getElementById('wish-list');
+      const filtered = allWish.filter(i => matchFilter(i, activeWishFilter));
+      if (!filtered.length) { el.innerHTML = emptyState('ti-heart','Nenhum item na wishlist ainda.'); return; }
+      const byComeback = groupBy(filtered, i => i.row[1]);
+      el.innerHTML = Object.entries(byComeback).map(([cb, items]) => `
         <div class="section-label">${cb} <span></span></div>
-        ${items.map(item=>`<div class="list-card wish"><div class="list-thumb">${item.row[4]?`<img src="${item.row[4]}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}</div><div class="list-body"><div class="list-name">${item.row[6]||'—'} · ${cb}</div><div class="list-meta">${item.row[2]||'—'}</div></div><button class="btn btn-ghost" style="font-size:11px;padding:4px 8px;color:var(--status-done-color);border-color:var(--status-done-border);white-space:nowrap;" onclick="markBought(${item.sheetRow},this)"><i class="ti ti-check" style="font-size:11px;"></i> Comprei!</button></div>`).join('')}`).join('');
+        ${items.map(item => {
+          const img = item.row[4];
+          const nome = item.row[6]||'—';
+          const set  = item.row[2]||'—';
+          return `<div class="list-card wish">
+            <div class="list-thumb">
+              ${img?`<img src="${img}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}
+            </div>
+            <div class="list-body">
+              <div class="list-name">${nome} · ${cb}</div>
+              <div class="list-meta">${set}</div>
+            </div>
+            <button class="btn btn-ghost" style="font-size:11px; padding:4px 8px; color:var(--status-done-color); border-color:var(--status-done-border); white-space:nowrap;" onclick="markBought(${item.sheetRow}, this)">
+              <i class="ti ti-check" style="font-size:11px;"></i> Comprei!
+            </button>
+          </div>`;
+        }).join('')}`).join('');
     }
 
     async function markBought(sheetRow, btn) {
@@ -299,13 +508,42 @@
       } catch(e) { btn.disabled = false; btn.innerHTML = '<i class="ti ti-check"></i> Comprei!'; }
     }
 
-    function openDetail(isWish,sheetRow) { if(!isWish) window.location.href=`item-detail.html?row=${sheetRow}`; }
-    function copyPublicLink() { navigator.clipboard.writeText(window.location.href+'?public=1').then(()=>showToast('Link copiado!')); }
-    function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',3500); }
-    function emptyState(icon,msg) { return `<div class="empty-state"><i class="ti ${icon}"></i><p>${msg}</p></div>`; }
+    function openDetail(isWish, sheetRow) {
+      if (!isWish) window.location.href = `item-detail.html?row=${sheetRow}`;
+    }
 
-    function swTop(el) { document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('on')); document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on')); el.classList.add('on'); document.getElementById('panel-'+el.dataset.p).classList.add('on'); const fab=document.getElementById('fab-wish'); if(fab)fab.style.display=el.dataset.p==='wishlist'?'flex':'none'; }
-    function swView(el) { document.querySelectorAll('.view-tab').forEach(t=>t.classList.remove('on')); ['grade','lista','binder'].forEach(v=>{const e=document.getElementById('view-'+v);if(e)e.style.display='none';}); el.classList.add('on'); document.getElementById('view-'+el.dataset.v).style.display='block'; }
+    function copyPublicLink() {
+      const url = window.location.href + '?public=1';
+      navigator.clipboard.writeText(url).then(() => showToast('Link copiado!'));
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(() => t.style.display = 'none', 2500);
+    }
+
+    function emptyState(icon, msg) {
+      return `<div class="empty-state"><i class="ti ${icon}"></i><p>${msg}</p></div>`;
+    }
+
+    function swTop(el) {
+      document.querySelectorAll('.top-tab').forEach(t => t.classList.remove('on'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+      el.classList.add('on');
+      document.getElementById('panel-' + el.dataset.p).classList.add('on');
+      const fab = document.getElementById('fab-wish');
+      if (fab) fab.style.display = el.dataset.p === 'wishlist' ? 'flex' : 'none';
+    }
+
+    function swView(el) {
+      document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('on'));
+      ['grade','lista','binder'].forEach(v => { const e = document.getElementById('view-'+v); if(e) e.style.display='none'; });
+      el.classList.add('on');
+      document.getElementById('view-' + el.dataset.v).style.display = 'block';
+      document.getElementById('fab-wish').style.display = el.dataset.v === 'wishlist' ? 'flex' : 'none';
+    }
   </script>
 </body>
 </html>
