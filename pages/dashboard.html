@@ -7,77 +7,110 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
   <link rel="stylesheet" href="../css/tokens.css">
   <link rel="stylesheet" href="../css/base.css">
-  <link rel="stylesheet" href="../css/dashboard.css">
   <script src="../js/app.js"></script>
   <script src="../js/nav.js"></script>
+  <style>
+    body { background: var(--bg-base); }
+
+    .dash { padding: 20px 16px 60px; display: flex; flex-direction: column; gap: 36px; }
+
+    /* Greeting */
+    .greeting { display: flex; align-items: flex-start; justify-content: space-between; }
+    .greeting-text { font-size: 28px; font-weight: 400; color: var(--text-primary); line-height: 1.2; }
+    .greeting-name { color: var(--lilac-dark); }
+    .greeting-icon { width: 42px; height: 42px; border-radius: 50%; background: var(--pink-light); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+
+    /* CTA */
+    .cta-btn { background: var(--text-primary); border-radius: var(--radius-pill); padding: 13px 20px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; text-decoration: none; border: none; width: 100%; }
+    .cta-btn span { font-size: 13px; font-weight: 400; color: #fff; font-family: var(--font-body); }
+
+    /* Section header */
+    .sec-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .sec-title { font-size: 20px; font-weight: 400; color: var(--text-primary); }
+    .ver-mais { font-size: 12px; font-weight: 400; color: var(--lilac-dark); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; background: none; border: none; font-family: var(--font-body); }
+
+    /* Resumo cards */
+    .resumo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .r-card { border-radius: 14px; padding: 16px 14px 12px; position: relative; cursor: pointer; text-decoration: none; display: block; }
+    .r-card-dark { background: var(--text-primary); }
+    .r-card-lilac { background: var(--lilac-light); }
+    .r-num { font-size: 44px; font-weight: 700; line-height: 1; }
+    .r-card-dark .r-num { color: #fff; }
+    .r-card-lilac .r-num { color: var(--text-primary); }
+    .r-label { font-family: var(--font-label); font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 6px; }
+    .r-card-dark .r-label { color: var(--pink-light); }
+    .r-card-lilac .r-label { color: var(--lilac-dark); }
+    .r-sub { font-size: 11px; font-weight: 400; margin-top: 2px; }
+    .r-card-dark .r-sub { color: var(--text-faint); }
+    .r-card-lilac .r-sub { color: var(--text-secondary); }
+    .r-arr { position: absolute; bottom: 12px; right: 12px; font-size: 14px; }
+    .r-card-dark .r-arr { color: #faf7f7; }
+    .r-card-lilac .r-arr { color: var(--text-primary); }
+
+    /* Alerta */
+    .alert-bar { background: var(--text-primary); border-radius: 12px; border-left: 3.5px solid var(--pink-light); padding: 13px 16px; display: flex; align-items: center; gap: 8px; margin-top: 8px; cursor: pointer; text-decoration: none; }
+    .alert-icon { font-size: 14px; color: var(--pink-light); flex-shrink: 0; }
+    .alert-txt { font-size: 13px; color: rgba(255,255,255,0.75); flex: 1; }
+    .alert-val { font-size: 13px; font-weight: 700; color: var(--pink-light); }
+    .alert-arr { font-size: 13px; color: rgba(255,255,255,0.75); margin-left: 4px; }
+
+    /* Comunidades */
+    .comm-list { display: flex; flex-direction: column; gap: 8px; }
+    .comm-item { background: var(--bg-surface); padding: 12px 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; border-radius: 12px; border-left: 3.5px solid transparent; text-decoration: none; }
+    .comm-item.pending { border-left-color: var(--pink-light); }
+    .comm-item.ok { border-left-color: var(--lilac-mid); }
+    .comm-avatar { width: 36px; height: 36px; border-radius: 50%; background: #3b3b3b; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff9fa; flex-shrink: 0; font-family: var(--font-label); }
+    .comm-name { font-size: 14px; font-weight: 400; color: var(--text-primary); margin-bottom: 4px; }
+    .comm-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .comm-items-txt { font-size: 11px; color: var(--text-faint); display: flex; align-items: center; gap: 3px; }
+    .comm-pend-txt { font-size: 11px; color: var(--pink-dark); display: flex; align-items: center; gap: 3px; }
+    .comm-arr { font-size: 15px; color: #ccc; margin-left: auto; }
+
+    /* Recentes */
+    .recent-list { display: flex; flex-direction: column; gap: 8px; }
+    .recent-item { background: var(--bg-surface); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; text-decoration: none; }
+    .recent-thumb { width: 52px; height: 72px; border-radius: 8px; background: var(--lilac-light); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--lilac-dark); }
+    .recent-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .recent-body { flex: 1; min-width: 0; }
+    .recent-badge { font-family: var(--font-label); font-size: 8px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; display: block; }
+    .badge-comprado { color: var(--lilac-dark); }
+    .badge-wishlist { color: var(--pink-dark); }
+    .recent-name { font-size: 13px; font-weight: 400; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .recent-subtitle { font-size: 11px; color: #3b3b3b; margin-top: 2px; }
+    .recent-info { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .recent-date { font-size: 11px; color: var(--text-faint); flex-shrink: 0; align-self: flex-start; }
+
+    /* Total de itens */
+    .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .filter-pill { font-family: var(--font-label); font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 6px 12px; border-radius: var(--radius-pill); background: var(--bg-elevated); color: var(--text-primary); cursor: pointer; border: none; }
+    .filter-pill.active { background: var(--lilac-light); }
+    .bars { display: flex; flex-direction: column; gap: 7px; }
+    .bar-row { display: flex; align-items: center; gap: 8px; }
+    .bar-label { font-size: 11px; color: var(--text-faint); width: 62px; text-align: right; flex-shrink: 0; }
+    .bar-track { flex: 1; height: 7px; background: var(--bg-surface); border-radius: 4px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 4px; background: var(--lilac-light); }
+    .bar-num { font-size: 11px; color: var(--text-faint); width: 28px; flex-shrink: 0; }
+
+    /* Binders */
+    .binders-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .binder-card { background: var(--bg-surface); border-radius: 14px; padding: 10px; cursor: pointer; }
+    .binder-cover { width: 100%; aspect-ratio: 3/4; border-radius: 8px; margin-bottom: 8px; object-fit: cover; display: block; }
+    .binder-num { font-family: var(--font-label); font-size: 8px; font-weight: 700; letter-spacing: 0.08em; color: var(--lilac-dark); text-transform: uppercase; }
+    .binder-name { font-size: 12px; font-weight: 400; color: var(--text-primary); margin-top: 2px; }
+    .binder-sub { font-size: 10px; color: var(--text-faint); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { animation: spin 1s linear infinite; display: inline-block; }
+  </style>
 </head>
 <body>
-  <main class="container" style="padding-top:32px; padding-bottom:64px;">
-    <div style="margin-bottom:32px;">
-      <h1 id="dash-greeting" style="margin-bottom:4px;">Minha coleção</h1>
-      <p id="dash-date" style="color:var(--text-muted); font-size:13px;"></p>
-    </div>
-    <div id="alert-banner" style="display:none; background:var(--status-pending-bg); border:1px solid var(--status-pending-border); border-radius:var(--radius-lg); padding:14px 18px; margin-bottom:24px; display:flex; align-items:center; gap:12px;">
-      <i class="ti ti-alert-triangle" style="font-size:18px; color:var(--status-pending-color); flex-shrink:0;"></i>
-      <div>
-        <div style="font-size:13px; font-weight:500; color:var(--status-pending-color);" id="alert-title">Pagamentos pendentes</div>
-        <div style="font-size:12px; color:var(--text-muted);" id="alert-sub"></div>
-      </div>
-      <a href="items.html?filter=pending" class="btn btn-ghost" style="margin-left:auto; padding:5px 12px; font-size:12px;">
-        Ver todos <i class="ti ti-arrow-right"></i>
-      </a>
-    </div>
-    <div class="grid-4 mb-6" id="metric-cards">
-      <div class="metric-card">
-        <div class="metric-icon" style="background:var(--status-pending-bg);"><i class="ti ti-alert-triangle" style="color:var(--status-pending-color);"></i></div>
-        <div class="metric-label">Pgto pendente</div>
-        <div class="metric-value" id="metric-pending" style="color:var(--status-pending-color);">—</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon" style="background:var(--status-transit-bg);"><i class="ti ti-truck" style="color:var(--status-transit-color);"></i></div>
-        <div class="metric-label">Em trânsito</div>
-        <div class="metric-value" id="metric-transit" style="color:var(--status-transit-color);">—</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon" style="background:var(--status-done-bg);"><i class="ti ti-circle-check" style="color:var(--status-done-color);"></i></div>
-        <div class="metric-label">Recebidos</div>
-        <div class="metric-value" id="metric-done" style="color:var(--status-done-color);">—</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-icon" style="background:var(--accent-muted);"><i class="ti ti-package" style="color:var(--accent);"></i></div>
-        <div class="metric-label">Total de itens</div>
-        <div class="metric-value" id="metric-total" style="color:var(--accent);">—</div>
-      </div>
-    </div>
-    <div id="pending-value-card" class="card mb-6" style="display:flex; align-items:center; gap:16px; padding:16px 20px;">
-      <i class="ti ti-coin" style="font-size:20px; color:var(--status-pending-color);"></i>
-      <div>
-        <div style="font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px;">Total pendente</div>
-        <div id="metric-pending-value" style="font-family:var(--font-mono); font-size:22px; color:var(--status-pending-color);">R$ —</div>
-      </div>
-    </div>
-    <div id="section-pending">
-      <div class="section-header">
-        <h2>Atenção imediata</h2>
-        <div class="section-line"></div>
-        <i class="ti ti-alert-triangle" style="font-size:14px; color:var(--status-pending-color);"></i>
-      </div>
-      <div id="list-pending">
-        <div class="loading-state" style="text-align:center; padding:32px; color:var(--text-muted); font-size:13px;">
-          <i class="ti ti-loader" style="font-size:20px; display:block; margin-bottom:8px;"></i>
-          Carregando...
-        </div>
-      </div>
-    </div>
-    <div id="section-transit" class="mt-6">
-      <div class="section-header">
-        <h2>Em trânsito</h2>
-        <div class="section-line"></div>
-        <i class="ti ti-truck" style="font-size:14px; color:var(--status-transit-color);"></i>
-      </div>
-      <div id="list-transit"></div>
+  <main class="dash" id="dash-content">
+    <div style="text-align:center; padding:48px; color:var(--text-faint);">
+      <i class="ti ti-loader spinner" style="font-size:28px; display:block; margin-bottom:12px;"></i>
+      Carregando...
     </div>
   </main>
+
   <script src="../js/dashboard.js"></script>
 </body>
 </html>
