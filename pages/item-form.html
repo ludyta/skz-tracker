@@ -159,7 +159,7 @@
 
     async function loadDropdowns() {
       const [listRows, commRows] = await Promise.all([
-        Sheets.get('Listas!A3:C100'),
+        Sheets.get('Listas!A2:C100'),
         Sheets.get(CONFIG.RANGES.COMMUNITIES),
       ]);
 
@@ -241,7 +241,10 @@
       ];
 
       try {
-        await Sheets.append(CONFIG.RANGES.ITEMS, [row]);
+        // Find first truly empty row in column A, then write there
+        const existing = await Sheets.get(CONFIG.RANGES.ITEMS) || [];
+        const nextRow = existing.length + 2; // +2 because data starts at row 2, +1 for next empty
+        await Sheets.set(`Itens!A${nextRow}:AB${nextRow}`, [row]);
         document.getElementById('step-3').classList.remove('active');
         document.getElementById('success-screen').classList.add('show');
         document.getElementById('step-indicator').style.display = 'none';
