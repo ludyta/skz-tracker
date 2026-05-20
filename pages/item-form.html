@@ -198,10 +198,6 @@
           <label>Nome do set / pedido</label>
           <input type="text" id="f-nomeset" placeholder="ex: Pedido individual, Set Changbinas">
         </div>
-        <div class="field">
-          <label>Set / POB</label>
-          <input type="text" id="f-set-cx" placeholder="ex: Makestar POB">
-        </div>
       </div>
 
       <div class="nav-btns">
@@ -231,6 +227,17 @@
           <div class="field">
             <label>Membro</label>
             <select id="fi-membro"><option value="">Selecione...</option></select>
+          </div>
+        </div>
+        <!-- Comeback e Set/POB — só na caixinha -->
+        <div id="fi-cx-fields" style="display:none;">
+          <div class="field">
+            <label>Comeback / Era</label>
+            <select id="fi-comeback"><option value="">Selecione...</option></select>
+          </div>
+          <div class="field">
+            <label>Set / POB</label>
+            <input type="text" id="fi-set-cx" placeholder="ex: Makestar POB">
           </div>
         </div>
         <div class="field-row">
@@ -356,6 +363,7 @@
       fillSelect('f-comeback',   comebacks,'Selecione...');
       fillSelect('fi-tipo',      tipos,    'Selecione...');
       fillSelect('fi-membro',    membros,  'Selecione...');
+      fillSelect('fi-comeback',  comebacks,'Selecione...');
       updateGomSelect('');
     }
 
@@ -393,6 +401,7 @@
       document.getElementById('cx-box').classList.toggle('show', tipo === 'cx');
       document.getElementById('f-setpob-wrap').style.display  = tipo === 'inter' ? 'block' : 'none';
       document.getElementById('f-nomeset-wrap').style.display = tipo === 'cx'    ? 'block' : 'none';
+      document.getElementById('fi-cx-fields').style.display   = tipo === 'cx'    ? 'block' : 'none';
       document.getElementById('fi-valor-wrap').style.display  = tipo === 'cx'    ? 'block' : 'none';
     }
 
@@ -442,6 +451,8 @@
       const item = {
         tipo,
         membro,
+        comeback: tipoCeg === 'cx' ? document.getElementById('fi-comeback').value : '',
+        set:      tipoCeg === 'cx' ? document.getElementById('fi-set-cx').value : '',
         numset:   document.getElementById('fi-numset').value,
         numclaim: document.getElementById('fi-numclaim').value,
         img:      document.getElementById('fi-img').value,
@@ -451,8 +462,8 @@
       pedidoItems.push(item);
       renderItemsList();
 
-      ['fi-tipo','fi-membro'].forEach(id => { document.getElementById(id).selectedIndex = 0; });
-      ['fi-numset','fi-numclaim','fi-img','fi-valor'].forEach(id => { document.getElementById(id).value = ''; });
+      ['fi-tipo','fi-membro','fi-comeback'].forEach(id => { const el = document.getElementById(id); if(el) el.selectedIndex = 0; });
+      ['fi-numset','fi-numclaim','fi-img','fi-valor','fi-set-cx'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
       toggleAddForm();
     }
 
@@ -464,10 +475,11 @@
     function renderItemsList() {
       const list = document.getElementById('items-list');
       if (!pedidoItems.length) { list.innerHTML = ''; return; }
-      const comeback = document.getElementById('f-comeback').value;
+      const comebackGlobal = document.getElementById('f-comeback').value;
       list.innerHTML = pedidoItems.map((item, idx) => {
+        const comeback = tipoCeg === 'cx' ? item.comeback : comebackGlobal;
         const nome = [item.tipo, item.membro, comeback].filter(Boolean).join(' · ');
-        const meta = [item.numset ? `Set ${item.numset}` : '', item.numclaim ? `Claim ${item.numclaim}` : ''].filter(Boolean).join(' · ');
+        const meta = [item.set, item.numset ? `Set ${item.numset}` : '', item.numclaim ? `Claim ${item.numclaim}` : ''].filter(Boolean).join(' · ');
         const val  = parseFloat(item.valor)||0;
         return `<div class="item-entry">
           <div class="item-entry-thumb"><i class="ti ti-id-badge"></i></div>
@@ -505,15 +517,15 @@
       if (g('f-data-claim')) origemHtml += `<div class="rev-row"><span>Data claim</span><span>${g('f-data-claim')}</span></div>`;
       document.getElementById('rev-origem').innerHTML = origemHtml;
 
-      const count = pedidoItems.length;
-      const comeback = g('f-comeback');
+      const comebackGlobal = g('f-comeback');
       document.getElementById('rev-itens-count').textContent = `${count} ${count === 1 ? 'item' : 'itens'}`;
       const total = pedidoItems.reduce((acc, it) => acc + (parseFloat(it.valor)||0), 0);
       document.getElementById('rev-total').textContent = formatBRL(total);
       document.getElementById('rev-itens-list').innerHTML = pedidoItems.map(item => {
+        const comeback = tipoCeg === 'cx' ? item.comeback : comebackGlobal;
         const nome = [item.tipo, item.membro, comeback].filter(Boolean).join(' · ');
         const val  = parseFloat(item.valor)||0;
-        return `<div class="rev-row"><span>${nome}</span><span>${val > 0 ? formatBRL(val) : '—'}</span></div>`;
+        return `<div class="rev-row"><span>${nome || '—'}</span><span>${val > 0 ? formatBRL(val) : '—'}</span></div>`;
       }).join('');
     }
 
@@ -532,7 +544,8 @@
       const plat       = tipoCeg === 'cx' ? g('f-plataforma') : '';
       const mes        = tipoCeg === 'cx' ? g('f-mes') : '';
       const linhaGom   = tipoCeg === 'cx' ? g('f-linha-gom') : '';
-      const setInter   = tipoCeg === 'inter' ? g('f-set') : g('f-set-cx');
+      const comebackGlobal = g('f-comeback');
+      const setInter   = g('f-set');
       const nomeset    = tipoCeg === 'cx' ? g('f-nomeset') : '';
       const stItemPad  = tipoCeg === 'inter' ? g('f-st-item') : 'Aguardando cobrança';
       const vlItemPad  = tipoCeg === 'inter' ? g('f-vl-item') : '';
@@ -542,6 +555,8 @@
         let nextRow = existing.length + 4;
 
         for (const item of pedidoItems) {
+          const comeback = tipoCeg === 'cx' ? (item.comeback || '') : comebackGlobal;
+          const setItem  = tipoCeg === 'cx' ? (item.set || '') : setInter;
           const stItem = stItemPad;
           const vlItem = parseFloat(tipoCeg === 'inter' ? vlItemPad : item.valor) || 0;
           const statusInicial = stItem === 'Cobrado — pendente' ? 'Cobrado — pendente'
@@ -551,7 +566,7 @@
           const pendente  = stItem === 'Cobrado — pendente' ? vlItem : 0;
 
           const row = [
-            item.tipo, comeback, setInter, item.numset, item.img,
+            item.tipo, comeback, setItem, item.numset, item.img,
             'Por membro (OT8)', item.membro, item.numclaim,
             comunidade, gom, linkCeg,
             vlItem.toString(), stItem,
