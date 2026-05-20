@@ -13,8 +13,6 @@
     .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--space-3); margin-top: var(--space-5); display: flex; align-items: center; gap: var(--space-2); }
     .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
     .list-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; margin-bottom: 12px; }
-    .list-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .list-title { font-size: 14px; font-weight: 500; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
     .list-items { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
     .list-item { display: flex; align-items: center; gap: 8px; background: var(--bg-elevated); border-radius: var(--radius-md); padding: 8px 12px; }
     .list-item-text { flex: 1; font-size: 13px; color: var(--text-primary); }
@@ -53,14 +51,15 @@
 
   <div class="toast" id="toast"></div>
   <script>
-    // Colunas da aba Listas: A=Tipo, B=Comeback, C=Membro, D=Tipo Claim, E=Status Pgto
+    // Colunas da aba Listas: A=Tipo, B=Comeback, C=Membro, D=Plataforma
     const LISTS = [
-      { key: 'tipo',     col: 'A', title: 'Tipos de item',    icon: 'ti-tag',        placeholder: 'ex: Photocard' },
-      { key: 'comeback', col: 'B', title: 'Comebacks',        icon: 'ti-music',      placeholder: 'ex: MIROH' },
-      { key: 'membro',   col: 'C', title: 'Membros',          icon: 'ti-user',       placeholder: 'ex: Han' },
+      { key: 'tipo',       col: 'A', title: 'Tipos de item',  icon: 'ti-tag',     placeholder: 'ex: Photocard' },
+      { key: 'comeback',   col: 'B', title: 'Comebacks',      icon: 'ti-music',   placeholder: 'ex: MIROH' },
+      { key: 'membro',     col: 'C', title: 'Membros',        icon: 'ti-user',    placeholder: 'ex: Han' },
+      { key: 'plataforma', col: 'D', title: 'Plataformas CEG', icon: 'ti-world',  placeholder: 'ex: Mercari' },
     ];
 
-    let data = {}; // { tipo: ['Photocard',...], comeback: [...], membro: [...] }
+    let data = {};
 
     document.addEventListener('DOMContentLoaded', async () => {
       await Auth.init();
@@ -70,7 +69,7 @@
     });
 
     async function loadLists() {
-      const rows = await Sheets.get('Listas!A3:E100');
+      const rows = await Sheets.get('Listas!A3:D100');
       LISTS.forEach(list => { data[list.key] = []; });
       (rows||[]).forEach(row => {
         LISTS.forEach((list, i) => {
@@ -125,14 +124,14 @@
       const newVal = el.querySelector('.list-item-edit input').value.trim();
       if (!newVal) return;
       data[key][idx] = newVal;
-      await saveList(key);
+      await saveList();
       reRenderList(key);
     }
 
     async function removeItem(key, idx) {
       if (!confirm(`Remover "${data[key][idx]}"?`)) return;
       data[key].splice(idx, 1);
-      await saveList(key);
+      await saveList();
       reRenderList(key);
     }
 
@@ -142,20 +141,18 @@
       if (!val) return;
       if (data[key].includes(val)) { showToast('Este item já existe!'); return; }
       data[key].push(val);
-      await saveList(key);
+      await saveList();
       input.value = '';
       reRenderList(key);
     }
 
-    async function saveList(key) {
-      const list = LISTS.find(l => l.key === key);
-      // Salva a coluna inteira — primeiro limpa, depois escreve
+    async function saveList() {
       const maxRows = Math.max(...LISTS.map(l => data[l.key].length), 1);
       const rows = Array.from({ length: maxRows }, (_, i) => {
         return LISTS.map(l => data[l.key][i] || '');
       });
       try {
-        await Sheets.set(`Listas!A3:C${maxRows + 2}`, rows);
+        await Sheets.set(`Listas!A3:D${maxRows + 2}`, rows);
         showToast('Salvo!');
       } catch(e) { showToast('Erro ao salvar.'); }
     }
