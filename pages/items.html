@@ -92,7 +92,6 @@
       </div>
       <div class="f-dropdown" id="dd-member">
         <div class="f-opt selected" onclick="selectFilter('member','','Membro')">Todos</div>
-        ${['Bang Chan','Lee Know','Changbin','Hyunjin','Han','Felix','Seungmin','I.N','OT8'].map(m=>`<div class="f-opt" onclick="selectFilter('member','${m}','${m}')">${m}</div>`).join('')}
       </div>
 
       <div class="f-tag" id="tag-community" onclick="toggleDropdown('community')">
@@ -107,7 +106,6 @@
       </div>
       <div class="f-dropdown" id="dd-type">
         <div class="f-opt selected" onclick="selectFilter('type','','Tipo')">Todos</div>
-        ${['Photocard','Álbum','Merch','Incluso de Álbum','Outro'].map(t=>`<div class="f-opt" onclick="selectFilter('type','${t}','${t}')">${t}</div>`).join('')}
       </div>
     </div>
     <div id="items-list">
@@ -170,10 +168,17 @@
       allItems = rows.map((row, idx) => ({ row, sheetRow: idx + 4 })).filter(({ row }) => row[COL.TIPO]);
       const comebacks = [...new Set(allItems.map(i => i.row[COL.COMEBACK]).filter(Boolean))].sort();
       const communities = [...new Set(allItems.map(i => i.row[COL.COMUNIDADE]).filter(Boolean))].sort();
+      const membros = ['Bang Chan','Lee Know','Changbin','Hyunjin','Han','Felix','Seungmin','I.N','OT8'];
+      const tipos = ['Photocard','Álbum','Merch','Incluso de Álbum','Outro'];
+
       const ddCb = document.getElementById('dd-comeback');
       comebacks.forEach(v => { const d = document.createElement('div'); d.className='f-opt'; d.textContent=v; d.onclick=()=>selectFilter('comeback',v,v); ddCb.appendChild(d); });
       const ddCo = document.getElementById('dd-community');
       communities.forEach(v => { const d = document.createElement('div'); d.className='f-opt'; d.textContent=v; d.onclick=()=>selectFilter('community',v,v); ddCo.appendChild(d); });
+      const ddMb = document.getElementById('dd-member');
+      membros.forEach(v => { const d = document.createElement('div'); d.className='f-opt'; d.textContent=v; d.onclick=()=>selectFilter('member',v,v); ddMb.appendChild(d); });
+      const ddTp = document.getElementById('dd-type');
+      tipos.forEach(v => { const d = document.createElement('div'); d.className='f-opt'; d.textContent=v; d.onclick=()=>selectFilter('type',v,v); ddTp.appendChild(d); });
       renderList();
     }
 
