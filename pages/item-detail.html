@@ -10,6 +10,7 @@
   <style>
     .back-btn { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 13px; text-decoration: none; margin-bottom: 20px; transition: color var(--transition); }
     .back-btn:hover { color: var(--text-primary); }
+
     .item-hero { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); display: flex; gap: var(--space-5); margin-bottom: var(--space-4); }
     .hero-img { width: 90px; height: 90px; border-radius: var(--radius-md); background: var(--bg-elevated); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--text-faint); font-size: 28px; }
     .hero-img img { width: 100%; height: 100%; object-fit: cover; }
@@ -21,17 +22,23 @@
     .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2); }
     .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
 
+    .cx-info-box { background: var(--lilac-light); border: 1px solid var(--lilac-mid); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: var(--space-3); }
+    .cx-info-label { font-family: var(--font-label); font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--lilac-dark); margin-bottom: 10px; }
+
     .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin-bottom: var(--space-4); }
     .info-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); }
+    .info-card.full { grid-column: 1/-1; }
     .info-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px; }
     .info-value { font-size: 13px; color: var(--text-primary); }
     .info-value a { color: var(--accent); text-decoration: none; }
+
+    .cx-info-box .info-card { background: #fff; border-color: var(--lilac-mid); }
 
     .payment-step { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-2); display: flex; align-items: center; gap: var(--space-3); }
     .step-icon { width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
     .step-body { flex: 1; min-width: 0; }
     .step-name { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; }
-    .step-value { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); }
+    .step-value { font-size: 12px; color: var(--text-muted); }
     .step-action select { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 5px 10px; font-family: var(--font-body); font-size: 11px; color: var(--text-secondary); outline: none; cursor: pointer; -webkit-appearance: none; }
 
     .totals-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); margin-top: var(--space-4); display: flex; gap: var(--space-5); }
@@ -39,7 +46,6 @@
     .total-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px; }
     .total-value { font-family: var(--font-mono); font-size: 20px; }
 
-    /* Edit form */
     .edit-section { background: var(--bg-surface); border: 1px solid var(--accent-border); border-radius: var(--radius-lg); padding: var(--space-5); margin-top: var(--space-4); display: none; }
     .edit-section.open { display: block; }
     .field { margin-bottom: var(--space-3); }
@@ -47,16 +53,20 @@
     .field input, .field select, .field textarea { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 9px 12px; font-family: var(--font-body); font-size: 13px; color: var(--text-primary); outline: none; transition: border-color var(--transition); -webkit-appearance: none; }
     .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent-border); }
     .field input::placeholder { color: var(--text-faint); }
+    .field input[type="month"] { color: var(--text-primary); }
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
-    .edit-section-subtitle { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-deep); margin: var(--space-4) 0 var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border); }
+    .edit-subtitle { font-family: var(--font-label); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lilac-dark); margin: var(--space-4) 0 var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border); }
+    .edit-cx-box { background: var(--lilac-light); border: 1px solid var(--lilac-mid); border-radius: var(--radius-md); padding: 12px; margin-bottom: 12px; }
+    .edit-cx-box .field label { color: var(--lilac-dark); }
+    .edit-cx-box .field input, .edit-cx-box .field select { background: #fff; border-color: var(--lilac-mid); }
 
-    /* Danger zone */
     .danger-zone { background: var(--status-cancelled-bg); border: 1px solid var(--status-cancelled-border); border-radius: var(--radius-lg); padding: var(--space-4); margin-top: var(--space-5); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
     .danger-text p { font-size: 13px; font-weight: 500; color: var(--status-cancelled-color); margin-bottom: 2px; }
     .danger-text span { font-size: 11px; color: var(--text-muted); }
 
     .save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-surface); border-top: 1px solid var(--border); padding: 12px 20px; display: flex; gap: 10px; z-index: 50; transform: translateY(100%); transition: transform 0.25s ease; }
     .save-bar.visible { transform: translateY(0); }
+
     @keyframes spin { to { transform: rotate(360deg); } }
     .spinner { animation: spin 1s linear infinite; display: inline-block; }
     @media (max-width:640px) { .item-hero { flex-direction: column; } .info-grid { grid-template-columns: 1fr; } .field-row { grid-template-columns: 1fr; } }
@@ -65,7 +75,6 @@
   <script src="../js/nav.js"></script>
 </head>
 <body>
-
   <main class="container" style="padding-top:24px; padding-bottom:100px;">
     <a href="items.html" class="back-btn"><i class="ti ti-arrow-left"></i> Voltar para itens</a>
     <div id="content">
@@ -80,8 +89,10 @@
     <button class="btn btn-ghost" style="flex:1;" onclick="discardChanges()"><i class="ti ti-x"></i> Descartar</button>
     <button class="btn btn-primary" style="flex:2;" onclick="saveChanges()" id="save-btn"><i class="ti ti-check"></i> Salvar alterações</button>
   </div>
+
   <script>
-    let rowData = [], sheetRow = 0, hasChanges = false, communities = [];
+    let rowData = [], sheetRow = 0, hasChanges = false;
+    let comunidadesData = [], listasData = { tipos:[], comebacks:[], membros:[] };
 
     const STATUS_OPTIONS = ['Aguardando cobrança','Cobrado — pendente','Pago'];
     const STEPS = [
@@ -101,27 +112,61 @@
       const params = new URLSearchParams(window.location.search);
       sheetRow = parseInt(params.get('row'));
       if (!sheetRow) { window.location.href = 'items.html'; return; }
-      const [commRows] = await Promise.all([Sheets.get(CONFIG.RANGES.COMMUNITIES)]);
-      communities = (commRows||[]).filter(r => r[0]).map(r => ({ nome: r[0], gom: r[1]||'' }));
+
+      const [commRows, listRows] = await Promise.all([
+        Sheets.get(CONFIG.RANGES.COMMUNITIES),
+        Sheets.get('Listas!A3:D100'),
+      ]);
+      comunidadesData = (commRows||[]).filter(r=>r[0]).map(r => ({
+        nome: r[0],
+        goms: (r[1]||'').split('|').map(g=>g.trim()).filter(Boolean),
+        linkCeg: r[3]||'',
+      }));
+      listasData.tipos     = [...new Set((listRows||[]).map(r=>r[0]).filter(Boolean))];
+      listasData.comebacks = [...new Set((listRows||[]).map(r=>r[1]).filter(Boolean))];
+      listasData.membros   = [...new Set((listRows||[]).map(r=>r[2]).filter(Boolean))];
+      listasData.plats     = [...new Set((listRows||[]).map(r=>r[3]).filter(v=>v&&v.trim()))];
+
       await loadItem();
     });
 
     async function loadItem() {
-      const rows = await Sheets.get(`Itens!A${sheetRow}:AB${sheetRow}`);
+      const rows = await Sheets.get(`Itens!A${sheetRow}:AG${sheetRow}`);
       if (!rows || !rows[0]) { document.getElementById('content').innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:32px;">Item não encontrado.</p>'; return; }
       rowData = rows[0];
       render();
     }
 
+    function isCaixinha() { return (rowData[COL.TIPO_CEG]||'') === 'Caixinha'; }
+
     function render() {
       const row = rowData;
+      const cx  = isCaixinha();
       const img  = row[COL.IMG_LINK]||'';
-      const nome = [row[COL.TIPO],row[COL.MEMBRO],row[COL.COMEBACK],row[COL.SET_POB]].filter(Boolean).join(' · ')||'Item sem nome';
+      const tipo = row[COL.TIPO]||'';
+      const membro = row[COL.MEMBRO]||'';
+      const comeback = row[COL.COMEBACK]||'';
+      const set = row[COL.SET_POB]||'';
+      const nome = [tipo, membro, comeback, set].filter(Boolean).join(' · ')||'Item sem nome';
       const cls  = statusClass(row[COL.STATUS]);
       const pendente = parseFloat(row[COL.PENDENTE])||0;
       const pago     = parseFloat(row[COL.TOTAL_PAGO])||0;
       const comunidade = row[COL.COMUNIDADE]||'';
-      const gom = row[COL.GOM]||'';
+      const gom  = row[COL.GOM]||'';
+      const plat = row[COL.PLATAFORMA]||'';
+      const mes  = row[COL.MES_EDICAO]||'';
+      const linhaGom = row[COL.LINHA_GOM]||'';
+      const nomeset  = row[COL.NOME_SET]||'';
+      const ceg  = row[COL.NOTAS]||'';
+      const linkCeg  = row[COL.LINK_CEG]||'';
+      const dataClaim= row[COL.DATA_CLAIM]||'';
+      const dataRec  = row[COL.DATA_REC]||'';
+      const numSet   = row[COL.NUM_SET]||'';
+      const numClaim = row[COL.NUM_CLAIM]||'';
+
+      const heroMetaParts = cx
+        ? [comunidade, gom, plat].filter(Boolean)
+        : [comunidade, gom].filter(Boolean);
 
       const stepsHtml = STEPS.map(step => {
         const val   = row[step.val]||'';
@@ -136,22 +181,51 @@
         </div>`;
       }).join('');
 
-      const commOpts = communities.map(c => `<option value="${c.nome}" ${c.nome===comunidade?'selected':''}>${c.nome}</option>`).join('');
-      const linkCeg  = row[COL.LINK_CEG]||'';
-      const dataClaim= row[COL.DATA_CLAIM]||'';
-      const dataRec  = row[COL.DATA_REC]||'';
+      const cxBoxHtml = cx ? `
+        <div class="cx-info-box">
+          <div class="cx-info-label">Caixinha ${plat}</div>
+          <div class="info-grid" style="margin-bottom:0;">
+            <div class="info-card"><div class="info-label">Plataforma</div><div class="info-value">${plat||'—'}</div></div>
+            <div class="info-card"><div class="info-label">Mês/edição</div><div class="info-value">${mes?formatMesAno(mes):'—'}</div></div>
+            <div class="info-card"><div class="info-label">Nome do set</div><div class="info-value">${nomeset||'—'}</div></div>
+            <div class="info-card"><div class="info-label">Linha GOM</div><div class="info-value">${linhaGom||'—'}</div></div>
+          </div>
+        </div>` : '';
 
-      // Edit form options
-      const tipoOpts = ['Photocard','Álbum','Merch','Incluso de Álbum','Outro'].map(t => `<option ${t===row[COL.TIPO]?'selected':''}>${t}</option>`).join('');
-      const membroOpts = ['Bang Chan','Lee Know','Changbin','Hyunjin','Han','Felix','Seungmin','I.N','OT8'].map(m => `<option ${m===row[COL.MEMBRO]?'selected':''}>${m}</option>`).join('');
-      const claimOpts = ['Por membro (OT8)','Set genérico','Sem claim'].map(c => `<option ${c===row[COL.CLAIM_TYPE]?'selected':''}>${c}</option>`).join('');
+      // Edit form
+      const tipoOpts    = listasData.tipos.map(t => `<option ${t===tipo?'selected':''}>${t}</option>`).join('');
+      const cbOpts      = listasData.comebacks.map(c => `<option value="${c}" ${c===comeback?'selected':''}>${c}</option>`).join('');
+      const membroOpts  = listasData.membros.map(m => `<option ${m===membro?'selected':''}>${m}</option>`).join('');
+      const platOpts    = listasData.plats.map(p => `<option ${p===plat?'selected':''}>${p}</option>`).join('');
+      const commOpts    = comunidadesData.map(c => `<option value="${c.nome}" ${c.nome===comunidade?'selected':''}>${c.nome}</option>`).join('');
+      const comm        = comunidadesData.find(c=>c.nome===comunidade);
+      const gomOpts     = (comm?.goms||[]).map(g => `<option ${g===gom?'selected':''}>${g}</option>`).join('');
+
+      const editCxFields = cx ? `
+        <div class="edit-cx-box">
+          <div style="font-family:var(--font-label);font-size:9px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--lilac-dark);margin-bottom:10px;">Detalhes da caixinha</div>
+          <div class="field-row">
+            <div class="field"><label>Plataforma</label>
+              <select id="e-plat"><option value="">Selecione...</option>${platOpts}</select>
+            </div>
+            <div class="field"><label>Mês/edição</label>
+              <input type="month" id="e-mes" value="${mes}">
+            </div>
+          </div>
+          <div class="field"><label>Nome do set / pedido</label>
+            <input type="text" id="e-nomeset" value="${nomeset}" placeholder="ex: Pedido individual, Set Changbinas">
+          </div>
+          <div class="field"><label>Linha na planilha da GOM</label>
+            <input type="text" id="e-linha-gom" value="${linhaGom}" placeholder="ex: 657">
+          </div>
+        </div>` : '';
 
       document.getElementById('content').innerHTML = `
         <div class="item-hero">
           <div class="hero-img">${img?`<img src="${img}" alt="${nome}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}</div>
           <div class="hero-body">
             <div class="hero-name">${nome}</div>
-            <div class="hero-meta">${[comunidade,gom].filter(Boolean).join(' · ')||'—'}</div>
+            <div class="hero-meta">${heroMetaParts.join(' · ')||'—'}</div>
             <span class="badge badge-${cls}"><i class="ti ${statusIcon(row[COL.STATUS])}"></i>${statusLabel(row[COL.STATUS])}</span>
             <div class="hero-actions">
               <button class="btn btn-ghost" style="font-size:12px; padding:5px 10px;" onclick="toggleEdit()">
@@ -162,16 +236,21 @@
         </div>
 
         <div class="section-title">Informações</div>
+
+        ${cxBoxHtml}
+
         <div class="info-grid">
-          <div class="info-card"><div class="info-label">Tipo</div><div class="info-value">${row[COL.TIPO]||'—'}</div></div>
-          <div class="info-card"><div class="info-label">Comeback</div><div class="info-value">${row[COL.COMEBACK]||'—'}</div></div>
-          <div class="info-card"><div class="info-label">Set / POB</div><div class="info-value">${row[COL.SET_POB]||'—'} ${row[COL.NUM_SET]?'· Nº '+row[COL.NUM_SET]:''}</div></div>
-          <div class="info-card"><div class="info-label">Membro / Nº</div><div class="info-value">${row[COL.MEMBRO]||row[COL.NUM_CLAIM]||'—'}</div></div>
+          <div class="info-card"><div class="info-label">Tipo</div><div class="info-value">${tipo||'—'}</div></div>
+          <div class="info-card"><div class="info-label">Membro</div><div class="info-value">${membro||'—'}</div></div>
+          <div class="info-card"><div class="info-label">Comeback</div><div class="info-value">${comeback||'—'}</div></div>
+          <div class="info-card"><div class="info-label">Set / POB</div><div class="info-value">${set||'—'}${numSet?' · Set '+numSet:''}</div></div>
+          <div class="info-card"><div class="info-label">Nº do claim</div><div class="info-value">${numClaim||'—'}</div></div>
+          <div class="info-card"><div class="info-label">CEG</div><div class="info-value">${ceg||'—'}</div></div>
           <div class="info-card"><div class="info-label">Comunidade</div><div class="info-value">${comunidade||'—'}</div></div>
           <div class="info-card"><div class="info-label">GOM</div><div class="info-value">${gom||'—'}</div></div>
           <div class="info-card"><div class="info-label">Data do claim</div><div class="info-value">${dataClaim||'—'}</div></div>
-          <div class="info-card"><div class="info-label">Data de recebimento</div><div class="info-value">${dataRec||'—'}</div></div>
-          ${linkCeg?`<div class="info-card" style="grid-column:1/-1;"><div class="info-label">Planilha da CEG</div><div class="info-value"><a href="${linkCeg}" target="_blank">Abrir <i class="ti ti-external-link" style="font-size:11px;"></i></a></div></div>`:''}
+          <div class="info-card"><div class="info-label">Data recebimento</div><div class="info-value">${dataRec||'—'}</div></div>
+          ${linkCeg?`<div class="info-card full"><div class="info-label">Planilha da CEG</div><div class="info-value"><a href="${linkCeg}" target="_blank">Abrir <i class="ti ti-external-link" style="font-size:11px;"></i></a></div></div>`:''}
         </div>
 
         <div class="section-title">Pagamentos</div>
@@ -183,44 +262,46 @@
           <div class="total-item"><div class="total-label">Pendente</div><div class="total-value" style="color:${pendente>0?'var(--status-pending-color)':'var(--text-muted)'};">${formatBRL(pendente)}</div></div>
         </div>
 
-        <!-- Formulário de edição completa -->
+        <!-- Edição -->
         <div class="edit-section" id="edit-section">
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
-            <div class="section-title" style="margin:0; flex:1;">Editar item</div>
-          </div>
+          <div class="section-title" style="margin-bottom:16px;">Editar item</div>
 
-          <div class="edit-section-subtitle">Identificação</div>
-          <div class="field-row">
-            <div class="field"><label>Tipo</label><select id="e-tipo">${tipoOpts}</select></div>
-            <div class="field"><label>Comeback</label><input type="text" id="e-comeback" value="${row[COL.COMEBACK]||''}"></div>
-          </div>
-          <div class="field-row">
-            <div class="field"><label>Set / POB</label><input type="text" id="e-set" value="${row[COL.SET_POB]||''}"></div>
-            <div class="field"><label>Nº do set</label><input type="number" id="e-numset" value="${row[COL.NUM_SET]||''}"></div>
-          </div>
-          <div class="field"><label>Link da imagem</label><input type="url" id="e-img" value="${row[COL.IMG_LINK]||''}" placeholder="https://..."></div>
+          ${editCxFields}
 
-          <div class="edit-section-subtitle">Claim & Origem</div>
+          <div class="edit-subtitle">Identificação</div>
           <div class="field-row">
-            <div class="field"><label>Tipo de claim</label><select id="e-claim">${claimOpts}</select></div>
-            <div class="field"><label>Membro</label><select id="e-membro">${membroOpts}</select></div>
+            <div class="field"><label>Tipo</label><select id="e-tipo"><option value="">Selecione...</option>${tipoOpts}</select></div>
+            <div class="field"><label>Membro</label><select id="e-membro"><option value="">Selecione...</option>${membroOpts}</select></div>
+          </div>
+          <div class="field"><label>Comeback / Era</label>
+            <select id="e-comeback"><option value="">Selecione...</option>${cbOpts}</select>
           </div>
           <div class="field-row">
-            <div class="field"><label>Comunidade</label>
-              <select id="e-comunidade">
-                <option value="">Selecione...</option>
-                ${commOpts}
-              </select>
-            </div>
-            <div class="field"><label>GOM</label><input type="text" id="e-gom" value="${gom}"></div>
+            <div class="field"><label>Set / POB</label><input type="text" id="e-set" value="${set}" placeholder="ex: Makestar POB"></div>
+            <div class="field"><label>Nº do set</label><input type="number" id="e-numset" value="${numSet}"></div>
           </div>
+          <div class="field"><label>Nº do claim</label><input type="number" id="e-numclaim" value="${numClaim}"></div>
+          <div class="field"><label>Link da imagem</label><input type="url" id="e-img" value="${img}" placeholder="https://..."></div>
+
+          <div class="edit-subtitle">Origem</div>
+          <div class="field">
+            <label>Comunidade</label>
+            <select id="e-comunidade" onchange="updateEditGom(this.value)">
+              <option value="">Selecione...</option>${commOpts}
+            </select>
+          </div>
+          <div class="field">
+            <label>GOM</label>
+            <select id="e-gom"><option value="">Selecione...</option>${gomOpts}</select>
+          </div>
+          <div class="field"><label>CEG</label><input type="text" id="e-ceg" value="${ceg}" placeholder="ex: CEG Karma POBs"></div>
+          <div class="field"><label>Link da planilha da CEG</label><input type="url" id="e-link-ceg" value="${linkCeg}" placeholder="https://..."></div>
           <div class="field-row">
-            <div class="field"><label>Link CEG</label><input type="url" id="e-link-ceg" value="${linkCeg}" placeholder="https://..."></div>
             <div class="field"><label>Data do claim</label><input type="date" id="e-data-claim" value="${dataClaim}"></div>
+            <div class="field"><label>Data de recebimento</label><input type="date" id="e-data-rec" value="${dataRec}"></div>
           </div>
-          <div class="field"><label>Data de recebimento</label><input type="date" id="e-data-rec" value="${dataRec}"></div>
 
-          <div class="edit-section-subtitle">Pagamentos (valores em R$)</div>
+          <div class="edit-subtitle">Pagamentos (R$)</div>
           <div class="field-row">
             <div class="field"><label>Valor item</label><input type="number" id="e-vl-item" value="${row[COL.VL_ITEM]||''}" step="0.01" placeholder="0,00"></div>
             <div class="field"><label>Status item</label><select id="e-st-item">${STATUS_OPTIONS.map(o=>`<option ${o===row[COL.ST_ITEM]?'selected':''}>${o}</option>`).join('')}</select></div>
@@ -250,39 +331,43 @@
           </div>
         </div>
 
-        <!-- Danger zone -->
         <div class="danger-zone">
-          <div class="danger-text">
-            <p>Remover item</p>
-            <span>Esta ação não pode ser desfeita.</span>
-          </div>
-          <button class="btn btn-danger" onclick="deleteItem()">
-            <i class="ti ti-trash"></i> Remover
-          </button>
+          <div class="danger-text"><p>Remover item</p><span>Esta ação não pode ser desfeita.</span></div>
+          <button class="btn btn-danger" onclick="deleteItem()"><i class="ti ti-trash"></i> Remover</button>
         </div>`;
     }
 
-    function toggleEdit() {
-      document.getElementById('edit-section').classList.toggle('open');
-      if (document.getElementById('edit-section').classList.contains('open')) {
-        document.getElementById('edit-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    function updateEditGom(nomeComunidade) {
+      const sel = document.getElementById('e-gom');
+      const comm = comunidadesData.find(c => c.nome === nomeComunidade);
+      const goms = comm ? comm.goms : [];
+      const currentGom = rowData[COL.GOM]||'';
+      sel.innerHTML = `<option value="">Selecione...</option>` +
+        goms.map(g => `<option ${g===currentGom?'selected':''}>${g}</option>`).join('');
+      if (comm?.linkCeg) {
+        const linkEl = document.getElementById('e-link-ceg');
+        if (linkEl && !linkEl.value) linkEl.value = comm.linkCeg;
       }
+    }
+
+    function toggleEdit() {
+      const sec = document.getElementById('edit-section');
+      sec.classList.toggle('open');
+      if (sec.classList.contains('open')) sec.scrollIntoView({ behavior:'smooth', block:'start' });
     }
 
     async function saveFullEdit() {
       const btn = document.getElementById('edit-save-btn');
       btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
       btn.disabled = true;
-
       const g = id => document.getElementById(id)?.value || '';
+      const cx = isCaixinha();
 
-      // Deriva STATUS geral a partir dos status de pagamento editados
       const stValues = [g('e-st-item'), g('e-st-fi1'), g('e-st-fi2'), g('e-st-alf'), g('e-st-fnac')];
       const novoStatus = stValues.includes('Cobrado — pendente') ? 'Cobrado — pendente'
                        : stValues.every(s => s === 'Pago')       ? 'Pago'
                        : 'Aguardando cobrança';
 
-      // Calcula TOTAL_PAGO e PENDENTE
       const pagSteps = [
         { vl: g('e-vl-item'), st: g('e-st-item') },
         { vl: g('e-vl-fi1'),  st: g('e-st-fi1')  },
@@ -290,31 +375,34 @@
         { vl: g('e-vl-alf'),  st: g('e-st-alf')  },
         { vl: g('e-vl-fnac'), st: g('e-st-fnac') },
       ];
-      const totalPago   = pagSteps.filter(s => s.st === 'Pago').reduce((acc, s) => acc + (parseFloat(s.vl)||0), 0);
-      const totalPend   = pagSteps.filter(s => s.st === 'Cobrado — pendente').reduce((acc, s) => acc + (parseFloat(s.vl)||0), 0);
+      const totalPago = pagSteps.filter(s=>s.st==='Pago').reduce((acc,s)=>acc+(parseFloat(s.vl)||0),0);
+      const totalPend = pagSteps.filter(s=>s.st==='Cobrado — pendente').reduce((acc,s)=>acc+(parseFloat(s.vl)||0),0);
 
-      // Monta linha completa
       const newRow = [
         g('e-tipo'), g('e-comeback'), g('e-set'), g('e-numset'), g('e-img'),
-        g('e-claim'), g('e-membro'), rowData[COL.NUM_CLAIM]||'',
+        rowData[COL.CLAIM_TYPE]||'', g('e-membro'), g('e-numclaim'),
         g('e-comunidade'), g('e-gom'), g('e-link-ceg'),
         g('e-vl-item'), g('e-st-item'),
         g('e-vl-fi1'), g('e-st-fi1'),
         g('e-vl-fi2'), g('e-st-fi2'),
         novoStatus, rowData[COL.ETAPA]||'',
-        g('e-data-claim'), rowData[COL.NOTAS]||'', g('e-data-rec'),
+        g('e-data-claim'), g('e-ceg'), g('e-data-rec'),
         g('e-vl-alf'), g('e-st-alf'),
         g('e-vl-fnac'), g('e-st-fnac'),
         totalPago.toString(), totalPend.toString(),
+        rowData[COL.TIPO_CEG]||'',
+        cx ? g('e-plat')      : (rowData[COL.PLATAFORMA]||''),
+        cx ? g('e-mes')       : (rowData[COL.MES_EDICAO]||''),
+        cx ? g('e-linha-gom') : (rowData[COL.LINHA_GOM]||''),
+        cx ? g('e-nomeset')   : (rowData[COL.NOME_SET]||''),
       ];
 
       try {
-        await Sheets.set(`Itens!A${sheetRow}:AB${sheetRow}`, [newRow]);
+        await Sheets.set(`Itens!A${sheetRow}:AG${sheetRow}`, [newRow]);
         await loadItem();
         document.getElementById('edit-section').classList.remove('open');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top:0, behavior:'smooth' });
       } catch(e) { alert('Erro ao salvar. Tente novamente.'); }
-
       btn.innerHTML = '<i class="ti ti-check"></i> Salvar tudo';
       btn.disabled = false;
     }
@@ -322,12 +410,11 @@
     async function deleteItem() {
       if (!confirm('Remover este item? Esta ação não pode ser desfeita.')) return;
       try {
-        await Sheets.set(`Itens!A${sheetRow}:AB${sheetRow}`, [Array(28).fill('')]);
+        await Sheets.set(`Itens!A${sheetRow}:AG${sheetRow}`, [Array(33).fill('')]);
         window.location.href = 'items.html';
       } catch(e) { alert('Erro ao remover.'); }
     }
 
-    // ── Status de pagamento (save bar) ─────────────
     function onStatusChange(el) {
       hasChanges = true;
       document.getElementById('save-bar').classList.add('visible');
@@ -345,56 +432,41 @@
       btn.disabled = true;
       const selects = document.querySelectorAll('[data-col]');
       const updates = [];
-      selects.forEach(sel => {
-        const colIdx = parseInt(sel.dataset.col);
-        updates.push({ range: `Itens!${indexToCol(colIdx)}${sheetRow}`, value: sel.value });
-      });
+      selects.forEach(sel => updates.push({ range:`Itens!${indexToCol(parseInt(sel.dataset.col))}${sheetRow}`, value:sel.value }));
       try {
         await Promise.all(updates.map(u => Sheets.setCell(u.range, u.value)));
-
-        // Recalcula TOTAL_PAGO e PENDENTE com os valores atuais da planilha + status novos
         const stMap = {};
         selects.forEach(sel => { stMap[parseInt(sel.dataset.col)] = sel.value; });
-
         const calcSteps = [
-          { vl: COL.VL_ITEM, st: COL.ST_ITEM },
-          { vl: COL.VL_FI1,  st: COL.ST_FI1  },
-          { vl: COL.VL_FI2,  st: COL.ST_FI2  },
-          { vl: COL.VL_ALF,  st: COL.ST_ALF  },
-          { vl: COL.VL_FNAC, st: COL.ST_FNAC },
+          { vl:COL.VL_ITEM, st:COL.ST_ITEM },
+          { vl:COL.VL_FI1,  st:COL.ST_FI1  },
+          { vl:COL.VL_FI2,  st:COL.ST_FI2  },
+          { vl:COL.VL_ALF,  st:COL.ST_ALF  },
+          { vl:COL.VL_FNAC, st:COL.ST_FNAC },
         ];
         let totalPago = 0, totalPend = 0;
-        calcSteps.forEach(({ vl, st }) => {
-          const valor  = parseFloat(rowData[vl]) || 0;
+        calcSteps.forEach(({vl,st}) => {
+          const valor  = parseFloat(rowData[vl])||0;
           const status = stMap[st] ?? rowData[st] ?? '';
-          if (status === 'Pago')               totalPago += valor;
-          if (status === 'Cobrado — pendente') totalPend += valor;
+          if (status==='Pago') totalPago += valor;
+          if (status==='Cobrado — pendente') totalPend += valor;
         });
         await Sheets.setCell(`Itens!${indexToCol(COL.TOTAL_PAGO)}${sheetRow}`, totalPago.toString());
-        await Sheets.setCell(`Itens!${indexToCol(COL.PENDENTE)}${sheetRow}`,   totalPend.toString());
+        await Sheets.setCell(`Itens!${indexToCol(COL.PENDENTE)}${sheetRow}`, totalPend.toString());
         const stValues = [];
         selects.forEach(sel => {
-          const colIdx = parseInt(sel.dataset.col);
-          if ([COL.ST_ITEM, COL.ST_FI1, COL.ST_FI2, COL.ST_ALF, COL.ST_FNAC].includes(colIdx)) {
+          if ([COL.ST_ITEM,COL.ST_FI1,COL.ST_FI2,COL.ST_ALF,COL.ST_FNAC].includes(parseInt(sel.dataset.col)))
             stValues.push(sel.value);
-          }
         });
         const novoStatus = stValues.includes('Cobrado — pendente') ? 'Cobrado — pendente'
-                         : stValues.every(s => s === 'Pago')       ? 'Pago'
-                         : 'Aguardando cobrança';
+                         : stValues.every(s=>s==='Pago') ? 'Pago' : 'Aguardando cobrança';
         await Sheets.setCell(`Itens!${indexToCol(COL.STATUS)}${sheetRow}`, novoStatus);
-
         await loadItem();
         hasChanges = false;
         document.getElementById('save-bar').classList.remove('visible');
       } catch(e) { alert('Erro ao salvar. Tente novamente.'); }
       btn.innerHTML = '<i class="ti ti-check"></i> Salvar alterações';
       btn.disabled = false;
-    }
-
-    function indexToCol(idx) {
-      if (idx < 26) return String.fromCharCode(65 + idx);
-      return String.fromCharCode(64 + Math.floor(idx/26)) + String.fromCharCode(65 + (idx%26));
     }
   </script>
 </body>
