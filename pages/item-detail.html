@@ -276,6 +276,12 @@
 
       const g = id => document.getElementById(id)?.value || '';
 
+      // Deriva STATUS geral a partir dos status de pagamento editados
+      const stValues = [g('e-st-item'), g('e-st-fi1'), g('e-st-fi2'), g('e-st-alf'), g('e-st-fnac')];
+      const novoStatus = stValues.includes('Cobrado — pendente') ? 'Cobrado — pendente'
+                       : stValues.every(s => s === 'Pago')       ? 'Pago'
+                       : 'Aguardando cobrança';
+
       // Monta linha completa
       const newRow = [
         g('e-tipo'), g('e-comeback'), g('e-set'), g('e-numset'), g('e-img'),
@@ -284,7 +290,7 @@
         g('e-vl-item'), g('e-st-item'),
         g('e-vl-fi1'), g('e-st-fi1'),
         g('e-vl-fi2'), g('e-st-fi2'),
-        rowData[COL.STATUS]||'', rowData[COL.ETAPA]||'',
+        novoStatus, rowData[COL.ETAPA]||'',
         g('e-data-claim'), rowData[COL.NOTAS]||'', g('e-data-rec'),
         g('e-vl-alf'), g('e-st-alf'),
         g('e-vl-fnac'), g('e-st-fnac'),
@@ -334,6 +340,20 @@
       });
       try {
         await Promise.all(updates.map(u => Sheets.setCell(u.range, u.value)));
+
+        // Recalcula STATUS geral a partir dos status de pagamento atuais
+        const stValues = [];
+        selects.forEach(sel => {
+          const colIdx = parseInt(sel.dataset.col);
+          if ([COL.ST_ITEM, COL.ST_FI1, COL.ST_FI2, COL.ST_ALF, COL.ST_FNAC].includes(colIdx)) {
+            stValues.push(sel.value);
+          }
+        });
+        const novoStatus = stValues.includes('Cobrado — pendente') ? 'Cobrado — pendente'
+                         : stValues.every(s => s === 'Pago')       ? 'Pago'
+                         : 'Aguardando cobrança';
+        await Sheets.setCell(`Itens!${indexToCol(COL.STATUS)}${sheetRow}`, novoStatus);
+
         await loadItem();
         hasChanges = false;
         document.getElementById('save-bar').classList.remove('visible');
