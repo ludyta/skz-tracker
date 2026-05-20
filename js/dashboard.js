@@ -109,7 +109,7 @@ async function loadDashboard() {
           <div class="r-label">Recebidos</div>
           <div class="r-sub">${items.length ? Math.round(doneCount/items.length*100) : 0}% da coleção</div>
         </a>
-        <a href="portfolio.html" class="r-card r-card-lilac">
+        <a href="portfolio.html?tab=wishlist" class="r-card r-card-lilac">
           <i class="ti ti-arrow-right r-arr"></i>
           <div class="r-num">${wishCount}</div>
           <div class="r-label">Na Wishlist</div>
