@@ -28,6 +28,10 @@
     .field-hint { font-size: 11px; color: var(--text-faint); margin-top: 5px; }
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
 
+    /* Divisor de seção dentro do step */
+    .section-divider { font-family: var(--font-label); font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); margin: 20px 0 14px; display: flex; align-items: center; gap: 8px; }
+    .section-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+
     /* Tabs tipo CEG */
     .type-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
     .type-tab { flex: 1; padding: 10px 8px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--bg-elevated); font-family: var(--font-label); font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; text-align: center; transition: all var(--transition); }
@@ -66,6 +70,8 @@
     .rev-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
     .rev-title { font-size: 13px; font-weight: 500; color: var(--text-primary); }
     .rev-badge { font-family: var(--font-label); font-size: 9px; font-weight: 700; letter-spacing: 0.06em; padding: 3px 9px; border-radius: var(--radius-pill); background: var(--lilac-light); color: var(--lilac-dark); }
+    .rev-edit-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--lilac-dark); cursor: pointer; padding: 4px 10px; border: 1px solid var(--lilac-mid); border-radius: var(--radius-pill); background: var(--lilac-light); transition: all var(--transition); }
+    .rev-edit-btn:hover { background: var(--lilac-mid); color: #fff; }
     .rev-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
     .rev-row span:first-child { color: var(--text-muted); }
     .rev-row span:last-child { color: var(--text-primary); font-weight: 500; }
@@ -87,7 +93,6 @@
   <script src="../js/nav.js"></script>
 </head>
 <body>
-
   <main class="container" style="padding-top:24px; padding-bottom:60px; max-width:560px;">
     <a href="items.html" class="back-btn"><i class="ti ti-arrow-left"></i> Voltar</a>
     <h1 style="margin-bottom:6px;">Novo item</h1>
@@ -105,6 +110,7 @@
       <div class="step-title">Origem do pedido</div>
       <div class="step-sub">Informações compartilhadas entre todos os itens desta compra.</div>
 
+      <!-- Tipo de CEG -->
       <div class="field">
         <label>Tipo de CEG</label>
         <div class="type-tabs">
@@ -113,6 +119,7 @@
         </div>
       </div>
 
+      <!-- Campos caixinha -->
       <div class="cx-box" id="cx-box">
         <div class="cx-box-label">Detalhes da caixinha</div>
         <div class="field-row">
@@ -131,6 +138,7 @@
         </div>
       </div>
 
+      <!-- Comunidade e GOM -->
       <div class="field">
         <label>Comunidade</label>
         <select id="f-comunidade"><option value="">Selecione...</option></select>
@@ -146,10 +154,53 @@
       <div class="field">
         <label>Link da planilha da CEG</label>
         <input type="url" id="f-link-ceg" placeholder="https://docs.google.com/...">
+        <div class="field-hint">Pré-preenchido com o link da comunidade, se cadastrado.</div>
       </div>
       <div class="field">
         <label>Data do claim</label>
         <input type="date" id="f-data-claim">
+      </div>
+
+      <!-- Campos compartilhados do item -->
+      <div class="section-divider">Sobre os itens</div>
+
+      <div class="field">
+        <label>Comeback / Era</label>
+        <select id="f-comeback"><option value="">Selecione...</option></select>
+      </div>
+
+      <!-- Set/POB — inter -->
+      <div id="f-setpob-wrap">
+        <div class="field">
+          <label>Set / POB</label>
+          <input type="text" id="f-set" placeholder="ex: Makestar POB">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Valor do item (R$)</label>
+            <input type="number" id="f-vl-item" placeholder="0,00" step="0.01" min="0">
+          </div>
+          <div class="field">
+            <label>Status pgto</label>
+            <select id="f-st-item">
+              <option>Aguardando cobrança</option>
+              <option>Cobrado — pendente</option>
+              <option>Pago</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nome do set — caixinha -->
+      <div id="f-nomeset-wrap" style="display:none;">
+        <div class="field">
+          <label>Nome do set / pedido</label>
+          <input type="text" id="f-nomeset" placeholder="ex: Pedido individual, Set Changbinas">
+        </div>
+        <div class="field">
+          <label>Set / POB</label>
+          <input type="text" id="f-set-cx" placeholder="ex: Makestar POB">
+        </div>
       </div>
 
       <div class="nav-btns">
@@ -181,29 +232,6 @@
             <select id="fi-membro"><option value="">Selecione...</option></select>
           </div>
         </div>
-        <div class="field">
-          <label>Comeback / Era</label>
-          <select id="fi-comeback"><option value="">Selecione...</option></select>
-        </div>
-
-        <!-- Campo Set/POB — CEG Inter -->
-        <div class="field" id="fi-setpob-wrap">
-          <label>Set / POB</label>
-          <input type="text" id="fi-set" placeholder="ex: Makestar POB">
-        </div>
-
-        <!-- Campo Nome do set — Caixinha -->
-        <div class="field" id="fi-nomeset-wrap" style="display:none;">
-          <label>Nome do set / pedido</label>
-          <input type="text" id="fi-nomeset" placeholder="ex: Pedido individual, Set Changbinas">
-        </div>
-
-        <!-- Campo Set/POB também na Caixinha -->
-        <div class="field" id="fi-setpob-cx-wrap" style="display:none;">
-          <label>Set / POB</label>
-          <input type="text" id="fi-set-cx" placeholder="ex: Makestar POB">
-        </div>
-
         <div class="field-row">
           <div class="field">
             <label>Nº do set</label>
@@ -218,21 +246,11 @@
           <label>Link da imagem</label>
           <input type="url" id="fi-img" placeholder="https://...">
         </div>
-        <div class="field-row">
-          <div class="field">
-            <label>Valor (R$)</label>
-            <input type="number" id="fi-valor" placeholder="0,00" step="0.01" min="0">
-          </div>
-          <div class="field">
-            <label>Status pgto</label>
-            <select id="fi-st-item">
-              <option>Aguardando cobrança</option>
-              <option>Cobrado — pendente</option>
-              <option>Pago</option>
-            </select>
-          </div>
+        <!-- Valor só aparece na caixinha -->
+        <div class="field" id="fi-valor-wrap" style="display:none;">
+          <label>Valor (R$)</label>
+          <input type="number" id="fi-valor" placeholder="0,00" step="0.01" min="0">
         </div>
-
         <div class="nav-btns" style="margin-top:10px;">
           <button class="btn btn-ghost" style="flex:1;" onclick="toggleAddForm()">Cancelar</button>
           <button class="btn btn-primary" style="flex:2;" onclick="addItem()"><i class="ti ti-plus"></i> Adicionar</button>
@@ -254,7 +272,10 @@
       <div class="rev-card">
         <div class="rev-header">
           <div class="rev-title">Origem do pedido</div>
-          <div class="rev-badge" id="rev-tipo-badge">CEG INTER</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div class="rev-badge" id="rev-tipo-badge">CEG INTER</div>
+            <button class="rev-edit-btn" onclick="goStep(1)"><i class="ti ti-pencil" style="font-size:11px;"></i> Editar</button>
+          </div>
         </div>
         <div id="rev-origem"></div>
       </div>
@@ -262,6 +283,7 @@
       <div class="rev-card">
         <div class="rev-header">
           <div class="rev-title" id="rev-itens-count">0 itens</div>
+          <button class="rev-edit-btn" onclick="goStep(2)"><i class="ti ti-pencil" style="font-size:11px;"></i> Editar</button>
         </div>
         <div id="rev-itens-list"></div>
         <div class="rev-total">
@@ -293,16 +315,22 @@
   <script>
     let currentStep = 1;
     let tipoCeg = 'inter';
-    let pedidoItems = []; // lista de itens adicionados no step 2
+    let pedidoItems = [];
+    let comunidadesData = [];
 
     document.addEventListener('DOMContentLoaded', async () => {
       await Auth.init();
       const restored = await Auth.tryRestore();
       if (!restored) { window.location.href = '../index.html'; return; }
       await loadDropdowns();
-    });
 
-    let comunidadesData = []; // [{nome, goms:[]}]
+      // Listener comunidade → atualiza GOM e link CEG
+      document.getElementById('f-comunidade').addEventListener('change', e => {
+        const nome = e.target.value;
+        updateGomSelect(nome);
+        updateLinkCeg(nome);
+      });
+    });
 
     async function loadDropdowns() {
       const [listRows, commRows] = await Promise.all([
@@ -310,47 +338,25 @@
         Sheets.get(CONFIG.RANGES.COMMUNITIES),
       ]);
 
-      const tipos      = [...new Set((listRows||[]).map(r=>r[0]).filter(Boolean))];
-      const comebacks  = [...new Set((listRows||[]).map(r=>r[1]).filter(Boolean))];
-      const membros    = [...new Set((listRows||[]).map(r=>r[2]).filter(Boolean))];
-      const plats      = [...new Set((listRows||[]).map(r=>r[3]).filter(v => v && v.trim()))];
+      const tipos     = [...new Set((listRows||[]).map(r=>r[0]).filter(Boolean))];
+      const comebacks = [...new Set((listRows||[]).map(r=>r[1]).filter(Boolean))];
+      const membros   = [...new Set((listRows||[]).map(r=>r[2]).filter(Boolean))];
+      const plats     = [...new Set((listRows||[]).map(r=>r[3]).filter(v=>v&&v.trim()))];
 
-      // Comunidades com GOMs
       comunidadesData = (commRows||[]).filter(r=>r[0]).map(r => ({
-        nome: r[0],
-        goms: (r[1]||'').split('|').map(g=>g.trim()).filter(Boolean),
+        nome:    r[0],
+        goms:    (r[1]||'').split('|').map(g=>g.trim()).filter(Boolean),
+        linkCeg: r[3]||'',
       }));
       const comms = comunidadesData.map(c => c.nome);
 
-      fillSelect('f-plataforma', plats, 'Selecione...');
-      fillSelect('f-comunidade', comms, 'Selecione...');
-      fillSelect('fi-tipo',     tipos,    'Selecione...');
-      fillSelect('fi-comeback', comebacks,'Selecione...');
-      fillSelect('fi-membro',   membros,  'Selecione...');
-
-      // GOM começa vazio até selecionar comunidade
+      fillSelect('f-plataforma', plats,    'Selecione...');
+      fillSelect('f-comunidade', comms,    'Selecione...');
+      fillSelect('f-comeback',   comebacks,'Selecione...');
+      fillSelect('fi-tipo',      tipos,    'Selecione...');
+      fillSelect('fi-membro',    membros,  'Selecione...');
       updateGomSelect('');
     }
-
-    function updateGomSelect(nomeComunidade) {
-      const sel = document.getElementById('f-gom');
-      const comm = comunidadesData.find(c => c.nome === nomeComunidade);
-      const goms = comm ? comm.goms : [];
-      sel.innerHTML = goms.length
-        ? `<option value="">Selecione...</option>` + goms.map(g => `<option value="${g}">${g}</option>`).join('')
-        : `<option value="">Selecione a comunidade primeiro...</option>`;
-    }
-
-    // Listener comunidade → atualiza GOM
-    document.addEventListener('DOMContentLoaded', () => {
-      // delegado — o select é criado após loadDropdowns
-      document.body.addEventListener('change', e => {
-        if (e.target && e.target.id === 'f-comunidade') {
-          updateGomSelect(e.target.value);
-          document.getElementById('f-gom').value = '';
-        }
-      });
-    });
 
     function fillSelect(id, values, placeholder) {
       const sel = document.getElementById(id);
@@ -363,14 +369,30 @@
       });
     }
 
+    function updateGomSelect(nomeComunidade) {
+      const sel = document.getElementById('f-gom');
+      const comm = comunidadesData.find(c => c.nome === nomeComunidade);
+      const goms = comm ? comm.goms : [];
+      sel.innerHTML = goms.length
+        ? `<option value="">Selecione...</option>` + goms.map(g=>`<option value="${g}">${g}</option>`).join('')
+        : `<option value="">Selecione a comunidade primeiro...</option>`;
+    }
+
+    function updateLinkCeg(nomeComunidade) {
+      const comm = comunidadesData.find(c => c.nome === nomeComunidade);
+      if (comm && comm.linkCeg) {
+        document.getElementById('f-link-ceg').value = comm.linkCeg;
+      }
+    }
+
     function setTipoCeg(tipo) {
       tipoCeg = tipo;
       document.getElementById('tab-inter').classList.toggle('active', tipo === 'inter');
       document.getElementById('tab-cx').classList.toggle('active', tipo === 'cx');
       document.getElementById('cx-box').classList.toggle('show', tipo === 'cx');
-      document.getElementById('fi-setpob-wrap').style.display    = tipo === 'inter' ? 'block' : 'none';
-      document.getElementById('fi-nomeset-wrap').style.display   = tipo === 'cx'    ? 'block' : 'none';
-      document.getElementById('fi-setpob-cx-wrap').style.display = tipo === 'cx'    ? 'block' : 'none';
+      document.getElementById('f-setpob-wrap').style.display  = tipo === 'inter' ? 'block' : 'none';
+      document.getElementById('f-nomeset-wrap').style.display = tipo === 'cx'    ? 'block' : 'none';
+      document.getElementById('fi-valor-wrap').style.display  = tipo === 'cx'    ? 'block' : 'none';
     }
 
     function goStep(n) {
@@ -394,7 +416,7 @@
     function validateStep(n) {
       if (n === 1) {
         if (!document.getElementById('f-comunidade').value) { alert('Selecione a comunidade.'); return false; }
-        if (!document.getElementById('f-gom').value)        { alert('Informe a GOM/CEG.'); return false; }
+        if (!document.getElementById('f-comeback').value)   { alert('Selecione o comeback.'); return false; }
         if (tipoCeg === 'cx' && !document.getElementById('f-plataforma').value) { alert('Selecione a plataforma.'); return false; }
         if (tipoCeg === 'cx' && !document.getElementById('f-mes').value)        { alert('Selecione o mês/edição.'); return false; }
       }
@@ -412,37 +434,24 @@
     }
 
     function addItem() {
-      const tipo     = document.getElementById('fi-tipo').value;
-      const membro   = document.getElementById('fi-membro').value;
-      const comeback = document.getElementById('fi-comeback').value;
-      if (!tipo)     { alert('Selecione o tipo de item.'); return; }
-      if (!comeback) { alert('Selecione o comeback.'); return; }
+      const tipo   = document.getElementById('fi-tipo').value;
+      const membro = document.getElementById('fi-membro').value;
+      if (!tipo) { alert('Selecione o tipo de item.'); return; }
 
       const item = {
         tipo,
         membro,
-        comeback,
-        set:      tipoCeg === 'inter' ? document.getElementById('fi-set').value : document.getElementById('fi-set-cx').value,
-        nomeset:  tipoCeg === 'cx'    ? document.getElementById('fi-nomeset').value : '',
         numset:   document.getElementById('fi-numset').value,
         numclaim: document.getElementById('fi-numclaim').value,
         img:      document.getElementById('fi-img').value,
-        valor:    document.getElementById('fi-valor').value,
-        stItem:   document.getElementById('fi-st-item').value,
+        valor:    tipoCeg === 'cx' ? document.getElementById('fi-valor').value : document.getElementById('f-vl-item').value,
       };
 
       pedidoItems.push(item);
       renderItemsList();
 
-      // Limpa o mini-form
-      ['fi-tipo','fi-membro','fi-comeback','fi-st-item'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el.tagName === 'SELECT') el.selectedIndex = 0;
-      });
-      ['fi-set','fi-nomeset','fi-set-cx','fi-numset','fi-numclaim','fi-img','fi-valor'].forEach(id => {
-        document.getElementById(id).value = '';
-      });
-
+      ['fi-tipo','fi-membro'].forEach(id => { document.getElementById(id).selectedIndex = 0; });
+      ['fi-numset','fi-numclaim','fi-img','fi-valor'].forEach(id => { document.getElementById(id).value = ''; });
       toggleAddForm();
     }
 
@@ -454,51 +463,55 @@
     function renderItemsList() {
       const list = document.getElementById('items-list');
       if (!pedidoItems.length) { list.innerHTML = ''; return; }
+      const comeback = document.getElementById('f-comeback').value;
       list.innerHTML = pedidoItems.map((item, idx) => {
-        const nome = [item.tipo, item.membro, item.comeback].filter(Boolean).join(' · ');
-        const setInfo = tipoCeg === 'inter'
-          ? [item.set, item.numset ? `Set ${item.numset}` : '', item.numclaim ? `Claim ${item.numclaim}` : ''].filter(Boolean).join(' · ')
-          : [item.nomeset, item.numclaim ? `Claim ${item.numclaim}` : ''].filter(Boolean).join(' · ');
-        const val = parseFloat(item.valor)||0;
+        const nome = [item.tipo, item.membro, comeback].filter(Boolean).join(' · ');
+        const meta = [item.numset ? `Set ${item.numset}` : '', item.numclaim ? `Claim ${item.numclaim}` : ''].filter(Boolean).join(' · ');
+        const val  = parseFloat(item.valor)||0;
         return `<div class="item-entry">
           <div class="item-entry-thumb"><i class="ti ti-id-badge"></i></div>
           <div class="item-entry-info">
             <div class="item-entry-name">${nome || 'Item sem nome'}</div>
-            <div class="item-entry-meta">${setInfo || '—'}</div>
+            <div class="item-entry-meta">${meta || '—'}</div>
           </div>
           <div class="item-entry-val">${val > 0 ? formatBRL(val) : '—'}</div>
-          <button class="item-entry-del" onclick="removeItem(${idx})" title="Remover"><i class="ti ti-x" style="font-size:12px;"></i></button>
+          <button class="item-entry-del" onclick="removeItem(${idx})"><i class="ti ti-x" style="font-size:12px;"></i></button>
         </div>`;
       }).join('');
     }
 
     function buildReview() {
-      // Badge tipo
+      const g = id => document.getElementById(id)?.value || '';
       document.getElementById('rev-tipo-badge').textContent = tipoCeg === 'cx' ? 'CAIXINHA' : 'CEG INTER';
 
-      // Origem
-      const g = id => document.getElementById(id)?.value || '';
       let origemHtml = `
         <div class="rev-row"><span>Comunidade</span><span>${g('f-comunidade')}</span></div>
-        <div class="rev-row"><span>GOM</span><span>${g('f-gom')}</span></div>
+        <div class="rev-row"><span>GOM</span><span>${g('f-gom')||'—'}</span></div>
         ${g('f-ceg') ? `<div class="rev-row"><span>CEG</span><span>${g('f-ceg')}</span></div>` : ''}
+        <div class="rev-row"><span>Comeback</span><span>${g('f-comeback')}</span></div>
       `;
-      if (g('f-data-claim')) origemHtml += `<div class="rev-row"><span>Data claim</span><span>${g('f-data-claim')}</span></div>`;
-      if (tipoCeg === 'cx') {
+      if (tipoCeg === 'inter') {
+        if (g('f-set')) origemHtml += `<div class="rev-row"><span>Set / POB</span><span>${g('f-set')}</span></div>`;
+        if (g('f-vl-item')) origemHtml += `<div class="rev-row"><span>Valor</span><span>${formatBRL(g('f-vl-item'))}</span></div>`;
+        origemHtml += `<div class="rev-row"><span>Status pgto</span><span>${g('f-st-item')}</span></div>`;
+      } else {
         origemHtml += `<div class="rev-row"><span>Plataforma</span><span>${g('f-plataforma')}</span></div>`;
         if (g('f-mes')) origemHtml += `<div class="rev-row"><span>Mês</span><span>${formatMesAno(g('f-mes'))}</span></div>`;
+        if (g('f-nomeset')) origemHtml += `<div class="rev-row"><span>Nome do set</span><span>${g('f-nomeset')}</span></div>`;
+        if (g('f-set-cx')) origemHtml += `<div class="rev-row"><span>Set / POB</span><span>${g('f-set-cx')}</span></div>`;
         if (g('f-linha-gom')) origemHtml += `<div class="rev-row"><span>Linha GOM</span><span>${g('f-linha-gom')}</span></div>`;
       }
+      if (g('f-data-claim')) origemHtml += `<div class="rev-row"><span>Data claim</span><span>${g('f-data-claim')}</span></div>`;
       document.getElementById('rev-origem').innerHTML = origemHtml;
 
-      // Itens
       const count = pedidoItems.length;
+      const comeback = g('f-comeback');
       document.getElementById('rev-itens-count').textContent = `${count} ${count === 1 ? 'item' : 'itens'}`;
       const total = pedidoItems.reduce((acc, it) => acc + (parseFloat(it.valor)||0), 0);
       document.getElementById('rev-total').textContent = formatBRL(total);
       document.getElementById('rev-itens-list').innerHTML = pedidoItems.map(item => {
-        const nome = [item.tipo, item.membro, item.comeback].filter(Boolean).join(' · ');
-        const val = parseFloat(item.valor)||0;
+        const nome = [item.tipo, item.membro, comeback].filter(Boolean).join(' · ');
+        const val  = parseFloat(item.valor)||0;
         return `<div class="rev-row"><span>${nome}</span><span>${val > 0 ? formatBRL(val) : '—'}</span></div>`;
       }).join('');
     }
@@ -514,17 +527,22 @@
       const ceg        = g('f-ceg');
       const linkCeg    = g('f-link-ceg');
       const dataClaim  = g('f-data-claim');
+      const comeback   = g('f-comeback');
       const plat       = tipoCeg === 'cx' ? g('f-plataforma') : '';
       const mes        = tipoCeg === 'cx' ? g('f-mes') : '';
       const linhaGom   = tipoCeg === 'cx' ? g('f-linha-gom') : '';
+      const setInter   = tipoCeg === 'inter' ? g('f-set') : g('f-set-cx');
+      const nomeset    = tipoCeg === 'cx' ? g('f-nomeset') : '';
+      const stItemPad  = tipoCeg === 'inter' ? g('f-st-item') : 'Aguardando cobrança';
+      const vlItemPad  = tipoCeg === 'inter' ? g('f-vl-item') : '';
 
       try {
         const existing = await Sheets.get(CONFIG.RANGES.ITEMS) || [];
         let nextRow = existing.length + 4;
 
         for (const item of pedidoItems) {
-          const stItem = item.stItem;
-          const vlItem = parseFloat(item.valor) || 0;
+          const stItem = stItemPad;
+          const vlItem = parseFloat(tipoCeg === 'inter' ? vlItemPad : item.valor) || 0;
           const statusInicial = stItem === 'Cobrado — pendente' ? 'Cobrado — pendente'
                               : stItem === 'Pago'               ? 'Pago'
                               : 'Aguardando cobrança';
@@ -532,10 +550,10 @@
           const pendente  = stItem === 'Cobrado — pendente' ? vlItem : 0;
 
           const row = [
-            item.tipo, item.comeback, item.set, item.numset, item.img,
+            item.tipo, comeback, setInter, item.numset, item.img,
             'Por membro (OT8)', item.membro, item.numclaim,
             comunidade, gom, linkCeg,
-            item.valor, stItem,
+            vlItem.toString(), stItem,
             '', 'Aguardando cobrança',
             '', 'Aguardando cobrança',
             statusInicial, '',
@@ -544,8 +562,7 @@
             '', 'Aguardando cobrança',
             totalPago.toString(), pendente.toString(),
             tipoCeg === 'cx' ? 'Caixinha' : 'Internacional',
-            plat, mes, linhaGom,
-            tipoCeg === 'cx' ? item.nomeset : '',
+            plat, mes, linhaGom, nomeset,
           ];
 
           await Sheets.set(`Itens!A${nextRow}:AG${nextRow}`, [row]);
@@ -577,8 +594,9 @@
       document.getElementById('tab-inter').classList.add('active');
       document.getElementById('tab-cx').classList.remove('active');
       document.getElementById('cx-box').classList.remove('show');
-      document.getElementById('fi-setpob-wrap').style.display = 'block';
-      document.getElementById('fi-nomeset-wrap').style.display = 'none';
+      document.getElementById('f-setpob-wrap').style.display  = 'block';
+      document.getElementById('f-nomeset-wrap').style.display = 'none';
+      document.getElementById('fi-valor-wrap').style.display  = 'none';
       currentStep = 1;
       document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
       document.getElementById('step-1').classList.add('active');
