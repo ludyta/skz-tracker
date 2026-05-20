@@ -245,7 +245,8 @@
         g('f-data-claim'), '',
         '', 'Aguardando cobrança',
         '', 'Aguardando cobrança',
-        '', '',
+        stItem === 'Pago'               ? (parseFloat(g('f-vl-item'))||0).toString() : '0',
+        stItem === 'Cobrado — pendente' ? (parseFloat(g('f-vl-item'))||0).toString() : '0',
       ];
 
       try {
