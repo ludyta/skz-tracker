@@ -13,9 +13,19 @@
     .search-bar input { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px 10px 38px; font-family: var(--font-body); font-size: 14px; color: var(--text-primary); outline: none; transition: border-color var(--transition); }
     .search-bar input::placeholder { color: var(--text-faint); }
     .search-bar input:focus { border-color: var(--accent-border); }
-    .filters { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-5); }
-    .filter-select { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 6px 14px; font-family: var(--font-body); font-size: 12px; color: var(--text-secondary); outline: none; cursor: pointer; transition: all var(--transition); -webkit-appearance: none; }
-    .filter-select:focus { border-color: var(--accent-border); color: var(--text-primary); }
+    .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: var(--space-5); position: relative; }
+    .f-tag { display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: var(--radius-pill); border: 1px solid #ccc; background: #fff; font-family: var(--font-body); font-size: 12px; color: var(--text-muted); cursor: pointer; white-space: nowrap; transition: all var(--transition); user-select: none; }
+    .f-tag i { font-size: 11px; transition: transform 0.18s; }
+    .f-tag.active { background: var(--lilac-light); color: var(--lilac-dark); border-color: var(--lilac-mid); }
+    .f-tag.open i.chev { transform: rotate(180deg); }
+    .f-dropdown { display: none; position: absolute; top: calc(100% + 6px); background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 6px; z-index: 200; min-width: 180px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+    .f-dropdown.open { display: block; }
+    .f-opt { padding: 9px 12px; border-radius: var(--radius-md); font-size: 13px; color: var(--text-muted); cursor: pointer; transition: all var(--transition); display: flex; align-items: center; justify-content: space-between; }
+    .f-opt:hover { background: var(--bg-elevated); color: var(--text-primary); }
+    .f-opt.selected { background: var(--lilac-light); color: var(--lilac-dark); font-weight: 500; }
+    .f-opt.selected::after { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--lilac-dark); }
+    .f-overlay { display: none; position: fixed; inset: 0; z-index: 150; }
+    .f-overlay.open { display: block; }
     .group-header { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-5) 0 var(--space-3); }
     .group-header-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
     .group-header-line { flex: 1; height: 1px; background: var(--border); }
@@ -57,26 +67,48 @@
       <i class="ti ti-search"></i>
       <input type="text" id="search-input" placeholder="Buscar por item, membro, comeback, GOM...">
     </div>
-    <div class="filters">
-      <select class="filter-select" id="filter-status">
-        <option value="">Todos os status</option>
-        <option value="pending">Pgto pendente</option>
-        <option value="transit">Em trânsito</option>
-        <option value="waiting">Aguardando</option>
-        <option value="done">Recebido</option>
-      </select>
-      <select class="filter-select" id="filter-comeback"><option value="">Todos os comebacks</option></select>
-      <select class="filter-select" id="filter-member">
-        <option value="">Todos os membros</option>
-        <option>Bang Chan</option><option>Lee Know</option><option>Changbin</option>
-        <option>Hyunjin</option><option>Han</option><option>Felix</option>
-        <option>Seungmin</option><option>I.N</option><option>OT8</option>
-      </select>
-      <select class="filter-select" id="filter-community"><option value="">Todas as comunidades</option></select>
-      <select class="filter-select" id="filter-type">
-        <option value="">Todos os tipos</option>
-        <option>Photocard</option><option>Álbum</option><option>Merch</option><option>Incluso de Álbum</option>
-      </select>
+    <div class="filters" id="filters-bar">
+      <div class="f-overlay" id="f-overlay" onclick="closeAllDropdowns()"></div>
+      <div class="f-tag" id="tag-status" onclick="toggleDropdown('status')">
+        <span id="label-status">Status</span><i class="ti ti-chevron-down chev"></i>
+      </div>
+      <div class="f-dropdown" id="dd-status">
+        <div class="f-opt selected" onclick="selectFilter('status','','Status')">Todos os status</div>
+        <div class="f-opt" onclick="selectFilter('status','pending','Pgto pendente')">Pgto pendente</div>
+        <div class="f-opt" onclick="selectFilter('status','transit','Em trânsito')">Em trânsito</div>
+        <div class="f-opt" onclick="selectFilter('status','waiting','Aguardando')">Aguardando</div>
+        <div class="f-opt" onclick="selectFilter('status','done','Recebido')">Recebido</div>
+      </div>
+
+      <div class="f-tag" id="tag-comeback" onclick="toggleDropdown('comeback')">
+        <span id="label-comeback">Comeback</span><i class="ti ti-chevron-down chev"></i>
+      </div>
+      <div class="f-dropdown" id="dd-comeback">
+        <div class="f-opt selected" onclick="selectFilter('comeback','','Comeback')">Todos</div>
+      </div>
+
+      <div class="f-tag" id="tag-member" onclick="toggleDropdown('member')">
+        <span id="label-member">Membro</span><i class="ti ti-chevron-down chev"></i>
+      </div>
+      <div class="f-dropdown" id="dd-member">
+        <div class="f-opt selected" onclick="selectFilter('member','','Membro')">Todos</div>
+        ${['Bang Chan','Lee Know','Changbin','Hyunjin','Han','Felix','Seungmin','I.N','OT8'].map(m=>`<div class="f-opt" onclick="selectFilter('member','${m}','${m}')">${m}</div>`).join('')}
+      </div>
+
+      <div class="f-tag" id="tag-community" onclick="toggleDropdown('community')">
+        <span id="label-community">Comunidade</span><i class="ti ti-chevron-down chev"></i>
+      </div>
+      <div class="f-dropdown" id="dd-community">
+        <div class="f-opt selected" onclick="selectFilter('community','','Comunidade')">Todas</div>
+      </div>
+
+      <div class="f-tag" id="tag-type" onclick="toggleDropdown('type')">
+        <span id="label-type">Tipo</span><i class="ti ti-chevron-down chev"></i>
+      </div>
+      <div class="f-dropdown" id="dd-type">
+        <div class="f-opt selected" onclick="selectFilter('type','','Tipo')">Todos</div>
+        ${['Photocard','Álbum','Merch','Incluso de Álbum','Outro'].map(t=>`<div class="f-opt" onclick="selectFilter('type','${t}','${t}')">${t}</div>`).join('')}
+      </div>
     </div>
     <div id="items-list">
       <div class="empty-state"><i class="ti ti-loader spinner"></i><p>Carregando itens...</p></div>
@@ -86,47 +118,66 @@
   <a href="item-form.html" class="fab" title="Novo item"><i class="ti ti-plus"></i></a>
   <script>
     let allItems = [], showDone = false;
+    const filterState = { status:'', comeback:'', member:'', community:'', type:'', search:'' };
 
     document.addEventListener('DOMContentLoaded', async () => {
       await Auth.init();
       const restored = await Auth.tryRestore();
       if (!restored) { window.location.href = '../index.html'; return; }
       const params = new URLSearchParams(window.location.search);
-      if (params.get('filter') === 'pending') document.getElementById('filter-status').value = 'pending';
-      if (params.get('community')) document.getElementById('filter-community').value = decodeURIComponent(params.get('community'));
+      if (params.get('filter') === 'pending') setFilter('status','pending','Pgto pendente');
+      if (params.get('community')) setFilter('community', decodeURIComponent(params.get('community')), decodeURIComponent(params.get('community')));
       await loadItems();
-      setupFilters();
+      document.getElementById('search-input').addEventListener('input', () => { filterState.search = document.getElementById('search-input').value.toLowerCase().trim(); renderList(); });
     });
+
+    function toggleDropdown(key) {
+      const isOpen = document.getElementById('dd-'+key).classList.contains('open');
+      closeAllDropdowns();
+      if (!isOpen) {
+        document.getElementById('dd-'+key).classList.add('open');
+        document.getElementById('tag-'+key).classList.add('open');
+        document.getElementById('f-overlay').classList.add('open');
+      }
+    }
+
+    function closeAllDropdowns() {
+      document.querySelectorAll('.f-dropdown').forEach(d => d.classList.remove('open'));
+      document.querySelectorAll('.f-tag').forEach(t => t.classList.remove('open'));
+      document.getElementById('f-overlay').classList.remove('open');
+    }
+
+    function selectFilter(key, value, label) {
+      setFilter(key, value, label);
+      closeAllDropdowns();
+      renderList();
+    }
+
+    function setFilter(key, value, label) {
+      filterState[key] = value;
+      const defaultLabels = { status:'Status', comeback:'Comeback', member:'Membro', community:'Comunidade', type:'Tipo' };
+      document.getElementById('label-'+key).textContent = value ? label : defaultLabels[key];
+      document.getElementById('tag-'+key).classList.toggle('active', !!value);
+      // mark selected option
+      document.querySelectorAll(`#dd-${key} .f-opt`).forEach(o => {
+        o.classList.toggle('selected', o.textContent.trim() === label || (!value && o === document.querySelector(`#dd-${key} .f-opt`)));
+      });
+    }
 
     async function loadItems() {
       const rows = await Sheets.get(CONFIG.RANGES.ITEMS);
       if (!rows) return;
       allItems = rows.map((row, idx) => ({ row, sheetRow: idx + 4 })).filter(({ row }) => row[COL.TIPO]);
-      populateDropdown('filter-comeback', [...new Set(allItems.map(i => i.row[COL.COMEBACK]).filter(Boolean))].sort());
-      populateDropdown('filter-community', [...new Set(allItems.map(i => i.row[COL.COMUNIDADE]).filter(Boolean))].sort());
+      const comebacks = [...new Set(allItems.map(i => i.row[COL.COMEBACK]).filter(Boolean))].sort();
+      const communities = [...new Set(allItems.map(i => i.row[COL.COMUNIDADE]).filter(Boolean))].sort();
+      const ddCb = document.getElementById('dd-comeback');
+      comebacks.forEach(v => { const d = document.createElement('div'); d.className='f-opt'; d.textContent=v; d.onclick=()=>selectFilter('comeback',v,v); ddCb.appendChild(d); });
+      const ddCo = document.getElementById('dd-community');
+      communities.forEach(v => { const d = document.createElement('div'); d.className='f-opt'; d.textContent=v; d.onclick=()=>selectFilter('community',v,v); ddCo.appendChild(d); });
       renderList();
     }
 
-    function populateDropdown(id, values) {
-      const sel = document.getElementById(id);
-      values.forEach(v => { const o = document.createElement('option'); o.value = o.textContent = v; sel.appendChild(o); });
-    }
-
-    function setupFilters() {
-      ['search-input','filter-status','filter-comeback','filter-member','filter-community','filter-type']
-        .forEach(id => { const el = document.getElementById(id); el.addEventListener('input', renderList); el.addEventListener('change', renderList); });
-    }
-
-    function getFilters() {
-      return {
-        search:    document.getElementById('search-input').value.toLowerCase().trim(),
-        status:    document.getElementById('filter-status').value,
-        comeback:  document.getElementById('filter-comeback').value,
-        member:    document.getElementById('filter-member').value,
-        community: document.getElementById('filter-community').value,
-        type:      document.getElementById('filter-type').value,
-      };
-    }
+    function setupFilters() {}  // mantido por compatibilidade
 
     function matchesFilters(row, f) {
       const cls = statusClass(row[COL.STATUS]);
@@ -143,7 +194,7 @@
     }
 
     function renderList() {
-      const f = getFilters();
+      const f = filterState;
       const hasFilter = f.search || f.status || f.comeback || f.member || f.community || f.type;
       let filtered = allItems.filter(({ row }) => matchesFilters(row, f));
       const doneItems = filtered.filter(({ row }) => statusClass(row[COL.STATUS]) === 'done');
