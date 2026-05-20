@@ -14,11 +14,11 @@
     .step { display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
     .step:last-child { border-bottom:none; }
     .step-num { width:24px; height:24px; border-radius:50%; background:var(--bg-elevated); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:500; color:var(--text-muted); flex-shrink:0; margin-top:2px; }
-    .step-num.done { background:var(--status-done-bg); color:var(--status-done-color); }
-    .step-num.error { background:var(--status-cancelled-bg); color:var(--status-cancelled-color); }
+    .step-num.done    { background:var(--status-done-bg); color:var(--status-done-color); }
+    .step-num.error   { background:var(--status-cancelled-bg); color:var(--status-cancelled-color); }
     .step-num.running { background:var(--accent-muted); color:var(--accent-deep); }
     .step-text { font-size:13px; color:var(--text-primary); }
-    .step-sub { font-size:11px; color:var(--text-muted); margin-top:3px; }
+    .step-sub  { font-size:11px; color:var(--text-muted); margin-top:3px; }
     @keyframes spin { to { transform:rotate(360deg); } }
     .spinner { animation:spin 1s linear infinite; display:inline-block; }
   </style>
@@ -28,14 +28,16 @@
     <div style="text-align:center; margin-bottom:28px;">
       <i class="ti ti-database" style="font-size:36px; color:var(--accent-deep); display:block; margin-bottom:12px;"></i>
       <h2 style="font-size:20px; margin-bottom:6px;">Configurando planilha</h2>
-      <p style="font-size:13px; color:var(--text-muted);">Recriando a aba Itens do zero. Aguarde...</p>
+      <p style="font-size:13px; color:var(--text-muted);">Recriando todas as abas do zero. Aguarde...</p>
     </div>
 
     <div id="steps">
       <div class="step"><div class="step-num" id="s1">1</div><div><div class="step-text">Conectando ao Google Sheets</div><div class="step-sub" id="s1-sub">Aguardando...</div></div></div>
-      <div class="step"><div class="step-num" id="s2">2</div><div><div class="step-text">Apagando aba Itens atual</div><div class="step-sub" id="s2-sub">Aguardando...</div></div></div>
-      <div class="step"><div class="step-num" id="s3">3</div><div><div class="step-text">Criando aba Itens nova</div><div class="step-sub" id="s3-sub">Aguardando...</div></div></div>
-      <div class="step"><div class="step-num" id="s4">4</div><div><div class="step-text">Adicionando cabeçalhos</div><div class="step-sub" id="s4-sub">Aguardando...</div></div></div>
+      <div class="step"><div class="step-num" id="s2">2</div><div><div class="step-text">Recriando aba Itens</div><div class="step-sub" id="s2-sub">Aguardando...</div></div></div>
+      <div class="step"><div class="step-num" id="s3">3</div><div><div class="step-text">Recriando aba Listas</div><div class="step-sub" id="s3-sub">Aguardando...</div></div></div>
+      <div class="step"><div class="step-num" id="s4">4</div><div><div class="step-text">Recriando aba Comunidades</div><div class="step-sub" id="s4-sub">Aguardando...</div></div></div>
+      <div class="step"><div class="step-num" id="s5">5</div><div><div class="step-text">Recriando aba Wishlist</div><div class="step-sub" id="s5-sub">Aguardando...</div></div></div>
+      <div class="step"><div class="step-num" id="s6">6</div><div><div class="step-text">Recriando aba Pagamentos</div><div class="step-sub" id="s6-sub">Aguardando...</div></div></div>
     </div>
 
     <div id="result" style="display:none; text-align:center; margin-top:24px;"></div>
@@ -51,46 +53,45 @@
       if (sub) document.getElementById('s' + n + '-sub').textContent = sub;
     }
 
+    async function recreateSheet(BASE, headers, info, title, index) {
+      const existing = info.sheets.find(s => s.properties.title === title);
+      if (existing) {
+        await fetch(`${BASE}:batchUpdate`, {
+          method: 'POST', headers,
+          body: JSON.stringify({ requests: [{ deleteSheet: { sheetId: existing.properties.sheetId } }] })
+        });
+      }
+      await fetch(`${BASE}:batchUpdate`, {
+        method: 'POST', headers,
+        body: JSON.stringify({ requests: [{ addSheet: { properties: { title, index } } }] })
+      });
+    }
+
+    async function writeValues(BASE, headers, range, values) {
+      await fetch(`${BASE}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`, {
+        method: 'PUT', headers,
+        body: JSON.stringify({ range, majorDimension: 'ROWS', values })
+      });
+    }
+
     async function runSetup() {
       const token = localStorage.getItem('skz_token');
       if (!token) { window.location.href = '../index.html'; return; }
 
-      const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      };
-      const SHEET_ID = CONFIG.SHEET_ID;
-      const BASE = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}`;
+      const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+      const BASE = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SHEET_ID}`;
 
       try {
-        // Step 1 — get sheet info
+        // Step 1 — conectar
         setStep(1, 'running', 'Buscando informações...');
         const infoRes = await fetch(BASE, { headers });
         const info = await infoRes.json();
         setStep(1, 'done', 'Conectado!');
 
-        // Step 2 — delete Itens sheet
-        setStep(2, 'running', 'Removendo aba antiga...');
-        const itensSheet = info.sheets.find(s => s.properties.title === 'Itens');
-        if (itensSheet) {
-          await fetch(`${BASE}:batchUpdate`, {
-            method: 'POST', headers,
-            body: JSON.stringify({ requests: [{ deleteSheet: { sheetId: itensSheet.properties.sheetId } }] })
-          });
-        }
-        setStep(2, 'done', 'Aba removida!');
-
-        // Step 3 — create new Itens sheet
-        setStep(3, 'running', 'Criando aba limpa...');
-        await fetch(`${BASE}:batchUpdate`, {
-          method: 'POST', headers,
-          body: JSON.stringify({ requests: [{ addSheet: { properties: { title: 'Itens', index: 0 } } }] })
-        });
-        setStep(3, 'done', 'Aba criada!');
-
-        // Step 4 — add headers (agora vai até AG = col 33)
-        setStep(4, 'running', 'Inserindo cabeçalhos...');
-        const headerValues = [[
+        // Step 2 — aba Itens
+        setStep(2, 'running', 'Recriando aba Itens...');
+        await recreateSheet(BASE, headers, info, 'Itens', 0);
+        await writeValues(BASE, headers, 'Itens!A1:AG1', [[
           'Tipo','Comeback','Set POB','Num Set','Link Imagem',
           'Claim Type','Membro','Num Claim',
           'Comunidade','GOM','Link CEG',
@@ -99,20 +100,72 @@
           'Vl Alf','St Alf','Vl Fnac','St Fnac',
           'Total Pago','Pendente',
           'Tipo CEG','Plataforma','Mes Edicao','Linha GOM','Nome Set'
-        ]];
-        await fetch(`${BASE}/values/Itens!A1:AG1?valueInputOption=USER_ENTERED`, {
-          method: 'PUT', headers,
-          body: JSON.stringify({ range: 'Itens!A1:AG1', majorDimension: 'ROWS', values: headerValues })
-        });
-        setStep(4, 'done', 'Cabeçalhos adicionados!');
+        ]]);
+        setStep(2, 'done', 'Aba Itens criada!');
+
+        // Step 3 — aba Listas
+        setStep(3, 'running', 'Recriando aba Listas...');
+        await recreateSheet(BASE, headers, info, 'Listas', 1);
+        await writeValues(BASE, headers, 'Listas!A1:D1', [[
+          'SKZ TRACKER — Listas de referência (editável)', '', '', ''
+        ]]);
+        await writeValues(BASE, headers, 'Listas!A2:D2', [[
+          'Tipo de Item', 'Comeback', 'Membro', 'Plataforma CEG'
+        ]]);
+        await writeValues(BASE, headers, 'Listas!A3:D11', [
+          ['Photocard',       'DO IT',    'Bang Chan', 'Mercari'   ],
+          ['Álbum',           'KARMA',    'Lee Know',  'Bunjang'   ],
+          ['Merch',           'HOLLOW',   'Changbin',  'Xianyu'    ],
+          ['Incluso de Álbum','5-STAR',   'Hyunjin',   'Poca Market'],
+          ['Outro',           'MAXIDENT', 'Han',       ''          ],
+          ['',                'ODDINARY', 'Felix',     ''          ],
+          ['',                'NOEASY',   'Seungmin',  ''          ],
+          ['',                'DO IT',    'I.N',       ''          ],
+          ['',                '',         'OT8',       ''          ],
+        ]);
+        setStep(3, 'done', 'Aba Listas criada!');
+
+        // Step 4 — aba Comunidades
+        setStep(4, 'running', 'Recriando aba Comunidades...');
+        await recreateSheet(BASE, headers, info, 'Comunidades', 2);
+        await writeValues(BASE, headers, 'Comunidades!A1:F1', [[
+          'SKZ TRACKER — Comunidades', '', '', '', '', ''
+        ]]);
+        await writeValues(BASE, headers, 'Comunidades!A2:F2', [[
+          'Nome da Comunidade','Nome da GOM','Link WhatsApp','Link Planilha CEG','Tipos de Item','Observações'
+        ]]);
+        setStep(4, 'done', 'Aba Comunidades criada!');
+
+        // Step 5 — aba Wishlist
+        setStep(5, 'running', 'Recriando aba Wishlist...');
+        await recreateSheet(BASE, headers, info, 'Wishlist', 3);
+        await writeValues(BASE, headers, 'Wishlist!A1:P1', [[
+          'Tipo','Comeback','Set POB','Num Set','Link Imagem',
+          'Claim Type','Membro','Num Claim',
+          'Comunidade','GOM','Link CEG',
+          'Vl Item','St Item','Status','Etapa','Notas'
+        ]]);
+        setStep(5, 'done', 'Aba Wishlist criada!');
+
+        // Step 6 — aba Pagamentos
+        setStep(6, 'running', 'Recriando aba Pagamentos...');
+        await recreateSheet(BASE, headers, info, 'Pagamentos', 4);
+        await writeValues(BASE, headers, 'Pagamentos!A1:F1', [[
+          'SKZ TRACKER — Pagamentos', '', '', '', '', ''
+        ]]);
+        await writeValues(BASE, headers, 'Pagamentos!A2:F2', [[
+          'Data','Item (referência)','Etapa Paga','Valor (R$)','Comprovante','Comunidade'
+        ]]);
+        setStep(6, 'done', 'Aba Pagamentos criada!');
 
         document.getElementById('result').style.display = 'block';
         document.getElementById('result').innerHTML = `
           <div style="background:var(--status-done-bg);border:1px solid var(--status-done-border);border-radius:var(--radius-md);padding:16px;margin-bottom:16px;">
             <i class="ti ti-circle-check" style="font-size:24px;color:var(--status-done-color);display:block;margin-bottom:8px;"></i>
             <div style="font-size:13px;font-weight:500;color:var(--status-done-color);">Planilha configurada com sucesso!</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">A aba Itens foi recriada com os novos campos.</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Todas as abas foram recriadas limpas e prontas para uso.</div>
           </div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Próximos passos: vá em Configurações para adicionar comunidades, e comece a cadastrar seus itens!</p>
           <a href="dashboard.html" class="btn btn-primary" style="justify-content:center;width:100%;">
             <i class="ti ti-arrow-right"></i> Ir para o Dashboard
           </a>`;
