@@ -159,7 +159,7 @@
 
     async function loadDropdowns() {
       const [listRows, commRows] = await Promise.all([
-        Sheets.get('Listas!A2:C100'),
+        Sheets.get('Listas!A3:C100'),
         Sheets.get(CONFIG.RANGES.COMMUNITIES),
       ]);
 
@@ -227,23 +227,31 @@
       btn.disabled = true;
 
       const g = id => document.getElementById(id).value;
+
+      // Bug 3: STATUS geral inicial derivado do ST_ITEM escolhido
+      const stItem = g('f-st-item');
+      const statusInicial = stItem === 'Cobrado — pendente' ? 'Cobrado — pendente'
+                          : stItem === 'Pago'               ? 'Pago'
+                          : 'Aguardando cobrança';
+
       const row = [
         g('f-tipo'), g('f-comeback'), g('f-set'), g('f-numset'), g('f-img'),
         g('f-claim-type'), g('f-membro'), g('f-numclaim'),
         g('f-comunidade'), g('f-gom'), g('f-link-ceg'),
-        g('f-vl-item'), g('f-st-item'),
+        g('f-vl-item'), stItem,
         '', 'Aguardando cobrança',
         '', 'Aguardando cobrança',
-        '', '',
+        statusInicial, '',
         g('f-data-claim'), '',
         '', 'Aguardando cobrança',
         '', 'Aguardando cobrança',
+        '', '',
       ];
 
       try {
-        // Find first truly empty row in column A, then write there
+        // Bug 1: CONFIG.RANGES.ITEMS começa na linha 4, então nextRow = length + 4
         const existing = await Sheets.get(CONFIG.RANGES.ITEMS) || [];
-        const nextRow = existing.length + 2; // +2 because data starts at row 2, +1 for next empty
+        const nextRow = existing.length + 4;
         await Sheets.set(`Itens!A${nextRow}:AB${nextRow}`, [row]);
         document.getElementById('step-3').classList.remove('active');
         document.getElementById('success-screen').classList.add('show');
