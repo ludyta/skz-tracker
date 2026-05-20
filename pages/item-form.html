@@ -136,8 +136,12 @@
         <select id="f-comunidade"><option value="">Selecione...</option></select>
       </div>
       <div class="field">
-        <label>GOM / CEG</label>
-        <input type="text" id="f-gom" placeholder="ex: Dani, Carol, João">
+        <label>GOM</label>
+        <select id="f-gom"><option value="">Selecione a comunidade primeiro...</option></select>
+      </div>
+      <div class="field">
+        <label>CEG</label>
+        <input type="text" id="f-ceg" placeholder="ex: CEG Karma POBs">
       </div>
       <div class="field">
         <label>Link da planilha da CEG</label>
@@ -192,6 +196,12 @@
         <div class="field" id="fi-nomeset-wrap" style="display:none;">
           <label>Nome do set / pedido</label>
           <input type="text" id="fi-nomeset" placeholder="ex: Pedido individual, Set Changbinas">
+        </div>
+
+        <!-- Campo Set/POB também na Caixinha -->
+        <div class="field" id="fi-setpob-cx-wrap" style="display:none;">
+          <label>Set / POB</label>
+          <input type="text" id="fi-set-cx" placeholder="ex: Makestar POB">
         </div>
 
         <div class="field-row">
@@ -292,6 +302,8 @@
       await loadDropdowns();
     });
 
+    let comunidadesData = []; // [{nome, goms:[]}]
+
     async function loadDropdowns() {
       const [listRows, commRows] = await Promise.all([
         Sheets.get('Listas!A3:D100'),
@@ -301,15 +313,44 @@
       const tipos      = [...new Set((listRows||[]).map(r=>r[0]).filter(Boolean))];
       const comebacks  = [...new Set((listRows||[]).map(r=>r[1]).filter(Boolean))];
       const membros    = [...new Set((listRows||[]).map(r=>r[2]).filter(Boolean))];
-      const plats      = [...new Set((listRows||[]).map(r=>r[3]).filter(Boolean))];
-      const comms      = (commRows||[]).filter(r=>r[0]).map(r=>r[0]);
+      const plats      = [...new Set((listRows||[]).map(r=>r[3]).filter(v => v && v.trim()))];
+
+      // Comunidades com GOMs
+      comunidadesData = (commRows||[]).filter(r=>r[0]).map(r => ({
+        nome: r[0],
+        goms: (r[1]||'').split('|').map(g=>g.trim()).filter(Boolean),
+      }));
+      const comms = comunidadesData.map(c => c.nome);
 
       fillSelect('f-plataforma', plats, 'Selecione...');
       fillSelect('f-comunidade', comms, 'Selecione...');
       fillSelect('fi-tipo',     tipos,    'Selecione...');
       fillSelect('fi-comeback', comebacks,'Selecione...');
       fillSelect('fi-membro',   membros,  'Selecione...');
+
+      // GOM começa vazio até selecionar comunidade
+      updateGomSelect('');
     }
+
+    function updateGomSelect(nomeComunidade) {
+      const sel = document.getElementById('f-gom');
+      const comm = comunidadesData.find(c => c.nome === nomeComunidade);
+      const goms = comm ? comm.goms : [];
+      sel.innerHTML = goms.length
+        ? `<option value="">Selecione...</option>` + goms.map(g => `<option value="${g}">${g}</option>`).join('')
+        : `<option value="">Selecione a comunidade primeiro...</option>`;
+    }
+
+    // Listener comunidade → atualiza GOM
+    document.addEventListener('DOMContentLoaded', () => {
+      // delegado — o select é criado após loadDropdowns
+      document.body.addEventListener('change', e => {
+        if (e.target && e.target.id === 'f-comunidade') {
+          updateGomSelect(e.target.value);
+          document.getElementById('f-gom').value = '';
+        }
+      });
+    });
 
     function fillSelect(id, values, placeholder) {
       const sel = document.getElementById(id);
@@ -327,8 +368,9 @@
       document.getElementById('tab-inter').classList.toggle('active', tipo === 'inter');
       document.getElementById('tab-cx').classList.toggle('active', tipo === 'cx');
       document.getElementById('cx-box').classList.toggle('show', tipo === 'cx');
-      document.getElementById('fi-setpob-wrap').style.display  = tipo === 'inter' ? 'block' : 'none';
-      document.getElementById('fi-nomeset-wrap').style.display = tipo === 'cx'    ? 'block' : 'none';
+      document.getElementById('fi-setpob-wrap').style.display    = tipo === 'inter' ? 'block' : 'none';
+      document.getElementById('fi-nomeset-wrap').style.display   = tipo === 'cx'    ? 'block' : 'none';
+      document.getElementById('fi-setpob-cx-wrap').style.display = tipo === 'cx'    ? 'block' : 'none';
     }
 
     function goStep(n) {
@@ -380,7 +422,7 @@
         tipo,
         membro,
         comeback,
-        set:      tipoCeg === 'inter' ? document.getElementById('fi-set').value : '',
+        set:      tipoCeg === 'inter' ? document.getElementById('fi-set').value : document.getElementById('fi-set-cx').value,
         nomeset:  tipoCeg === 'cx'    ? document.getElementById('fi-nomeset').value : '',
         numset:   document.getElementById('fi-numset').value,
         numclaim: document.getElementById('fi-numclaim').value,
@@ -397,7 +439,7 @@
         const el = document.getElementById(id);
         if (el.tagName === 'SELECT') el.selectedIndex = 0;
       });
-      ['fi-set','fi-nomeset','fi-numset','fi-numclaim','fi-img','fi-valor'].forEach(id => {
+      ['fi-set','fi-nomeset','fi-set-cx','fi-numset','fi-numclaim','fi-img','fi-valor'].forEach(id => {
         document.getElementById(id).value = '';
       });
 
@@ -415,7 +457,7 @@
       list.innerHTML = pedidoItems.map((item, idx) => {
         const nome = [item.tipo, item.membro, item.comeback].filter(Boolean).join(' · ');
         const setInfo = tipoCeg === 'inter'
-          ? [item.set, item.numset ? `Nº ${item.numset}` : '', item.numclaim ? `Claim ${item.numclaim}` : ''].filter(Boolean).join(' · ')
+          ? [item.set, item.numset ? `Set ${item.numset}` : '', item.numclaim ? `Claim ${item.numclaim}` : ''].filter(Boolean).join(' · ')
           : [item.nomeset, item.numclaim ? `Claim ${item.numclaim}` : ''].filter(Boolean).join(' · ');
         const val = parseFloat(item.valor)||0;
         return `<div class="item-entry">
@@ -439,6 +481,7 @@
       let origemHtml = `
         <div class="rev-row"><span>Comunidade</span><span>${g('f-comunidade')}</span></div>
         <div class="rev-row"><span>GOM</span><span>${g('f-gom')}</span></div>
+        ${g('f-ceg') ? `<div class="rev-row"><span>CEG</span><span>${g('f-ceg')}</span></div>` : ''}
       `;
       if (g('f-data-claim')) origemHtml += `<div class="rev-row"><span>Data claim</span><span>${g('f-data-claim')}</span></div>`;
       if (tipoCeg === 'cx') {
@@ -468,6 +511,7 @@
       const g = id => document.getElementById(id)?.value || '';
       const comunidade = g('f-comunidade');
       const gom        = g('f-gom');
+      const ceg        = g('f-ceg');
       const linkCeg    = g('f-link-ceg');
       const dataClaim  = g('f-data-claim');
       const plat       = tipoCeg === 'cx' ? g('f-plataforma') : '';
@@ -495,7 +539,7 @@
             '', 'Aguardando cobrança',
             '', 'Aguardando cobrança',
             statusInicial, '',
-            dataClaim, '', '',
+            dataClaim, ceg, '',
             '', 'Aguardando cobrança',
             '', 'Aguardando cobrança',
             totalPago.toString(), pendente.toString(),
