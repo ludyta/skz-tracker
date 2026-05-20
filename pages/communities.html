@@ -65,7 +65,7 @@
 
     <div class="panel" id="panel-form">
       <div class="field"><label>Nome da comunidade</label><input type="text" id="fn-nome" placeholder="ex: SKZ Brasil OT8"></div>
-      <div class="field"><label>Nome da GOM / CEG</label><input type="text" id="fn-gom" placeholder="ex: Fulana"></div>
+      <div class="field"><label>GOM</label><input type="text" id="fn-gom" placeholder="ex: Dani, Carol, João"></div>
       <div class="field"><label>Link do WhatsApp</label><input type="url" id="fn-whats" placeholder="https://wa.me/..."></div>
       <div class="field"><label>Link da planilha CEG</label><input type="url" id="fn-sheet" placeholder="https://docs.google.com/..."></div>
       <div class="field"><label>Tipos de item</label><input type="text" id="fn-tipos" placeholder="ex: Photocard, Merch"></div>
@@ -123,14 +123,8 @@
             <i class="ti ti-chevron-right" style="font-size:16px; color:var(--text-faint);"></i>
           </div>
           <div class="comm-stats">
-            <a href="items.html?community=${encodeURIComponent(nome)}" class="stat" style="text-decoration:none; cursor:pointer;">
-              <div class="stat-val" style="color:var(--accent);">${ativos}</div>
-              <div class="stat-lab">itens ativos</div>
-            </a>
-            <a href="items.html?community=${encodeURIComponent(nome)}&filter=pending" class="stat" style="text-decoration:none; cursor:pointer;">
-              <div class="stat-val" style="color:${pendentes>0?'var(--status-pending-color)':'var(--status-done-color)'};">${pendentes}</div>
-              <div class="stat-lab">pgto pendente</div>
-            </a>
+            <div class="stat"><div class="stat-val" style="color:var(--accent);">${ativos}</div><div class="stat-lab">itens ativos</div></div>
+            <div class="stat"><div class="stat-val" style="color:${pendentes>0?'var(--status-pending-color)':'var(--status-done-color)'};">${pendentes}</div><div class="stat-lab">pgto pendente</div></div>
           </div>
           <div class="comm-links" >
             ${whats?`<a class="link-btn whats" href="${whats}" target="_blank" onclick="event.stopPropagation()"><i class="ti ti-brand-whatsapp" style="font-size:13px;"></i> WhatsApp</a>`:`<div class="link-btn" style="opacity:0.4;cursor:default;"><i class="ti ti-brand-whatsapp" style="font-size:13px;"></i> WhatsApp</div>`}
