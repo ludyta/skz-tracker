@@ -250,9 +250,21 @@
           <input type="url" id="fi-img" placeholder="https://...">
         </div>
         <!-- Valor só aparece na caixinha -->
-        <div class="field" id="fi-valor-wrap" style="display:none;">
-          <label>Valor (R$)</label>
-          <input type="number" id="fi-valor" placeholder="0,00" step="0.01" min="0">
+        <div id="fi-valor-wrap" style="display:none;">
+          <div class="field-row">
+            <div class="field">
+              <label>Valor (R$)</label>
+              <input type="number" id="fi-valor" placeholder="0,00" step="0.01" min="0">
+            </div>
+            <div class="field">
+              <label>Status pgto</label>
+              <select id="fi-st-item-cx">
+                <option>Aguardando cobrança</option>
+                <option>Cobrado — pendente</option>
+                <option>Pago</option>
+              </select>
+            </div>
+          </div>
         </div>
         <div class="nav-btns" style="margin-top:10px;">
           <button class="btn btn-ghost" style="flex:1;" onclick="toggleAddForm()">Cancelar</button>
@@ -451,12 +463,13 @@
         numclaim: document.getElementById('fi-numclaim').value,
         img:      document.getElementById('fi-img').value,
         valor:    tipoCeg === 'cx' ? document.getElementById('fi-valor').value : document.getElementById('f-vl-item').value,
+        stItem:   tipoCeg === 'cx' ? document.getElementById('fi-st-item-cx').value : document.getElementById('f-st-item').value,
       };
 
       pedidoItems.push(item);
       renderItemsList();
 
-      ['fi-tipo','fi-membro','fi-comeback'].forEach(id => { const el = document.getElementById(id); if(el) el.selectedIndex = 0; });
+      ['fi-tipo','fi-membro','fi-comeback','fi-st-item-cx'].forEach(id => { const el = document.getElementById(id); if(el) el.selectedIndex = 0; });
       ['fi-numset','fi-numclaim','fi-img','fi-valor','fi-set-cx'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
       toggleAddForm();
     }
@@ -551,7 +564,7 @@
         for (const item of pedidoItems) {
           const comeback = tipoCeg === 'cx' ? (item.comeback || '') : comebackGlobal;
           const setItem  = tipoCeg === 'cx' ? (item.set || '') : setInter;
-          const stItem = stItemPad;
+          const stItem = tipoCeg === 'cx' ? (item.stItem || 'Aguardando cobrança') : stItemPad;
           const vlItem = parseFloat(tipoCeg === 'inter' ? vlItemPad : item.valor) || 0;
           const statusInicial = stItem === 'Cobrado — pendente' ? 'Cobrado — pendente'
                               : stItem === 'Pago'               ? 'Pago'
