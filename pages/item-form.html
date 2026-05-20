@@ -80,7 +80,7 @@
     .rev-total-val { font-size: 18px; font-weight: 700; color: var(--lilac-dark); }
 
     .nav-btns { display: flex; gap: var(--space-3); margin-top: var(--space-6); }
-    .btn-back-icon { flex: 0 0 44px; width: 44px; padding: 11px 0; justify-content: center; }
+    .btn-back-icon { flex: 0 0 auto; padding: 11px 16px; justify-content: center; }
 
     .success-screen { display: none; text-align: center; padding: 48px 24px; }
     .success-screen.show { display: block; }
@@ -258,7 +258,7 @@
       </div>
 
       <div class="nav-btns">
-        <button class="btn btn-ghost btn-back-icon" onclick="goStep(1)"><i class="ti ti-arrow-left"></i></button>
+        <button class="btn btn-ghost btn-back-icon" onclick="goStep(1)"><i class="ti ti-arrow-left"></i> Voltar</button>
         <button class="btn btn-primary" style="flex:3;" onclick="goStep(3)">Revisar <i class="ti ti-arrow-right"></i></button>
       </div>
     </div>
@@ -293,7 +293,7 @@
       </div>
 
       <div class="nav-btns">
-        <button class="btn btn-ghost btn-back-icon" onclick="goStep(2)"><i class="ti ti-arrow-left"></i></button>
+        <button class="btn btn-ghost btn-back-icon" onclick="goStep(2)"><i class="ti ti-arrow-left"></i> Voltar</button>
         <button class="btn btn-primary" style="flex:3; background:var(--lilac-dark);" onclick="submit()" id="submit-btn">
           <i class="ti ti-circle-check"></i> Salvar tudo
         </button>
