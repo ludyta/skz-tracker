@@ -508,28 +508,28 @@
         <div class="rev-row"><span>Comunidade</span><span>${g('f-comunidade')}</span></div>
         <div class="rev-row"><span>GOM</span><span>${g('f-gom')||'—'}</span></div>
         ${g('f-ceg') ? `<div class="rev-row"><span>CEG</span><span>${g('f-ceg')}</span></div>` : ''}
-        <div class="rev-row"><span>Comeback</span><span>${g('f-comeback')}</span></div>
       `;
       if (tipoCeg === 'inter') {
-        if (g('f-set')) origemHtml += `<div class="rev-row"><span>Set / POB</span><span>${g('f-set')}</span></div>`;
-        if (g('f-vl-item')) origemHtml += `<div class="rev-row"><span>Valor</span><span>${formatBRL(g('f-vl-item'))}</span></div>`;
+        if (g('f-comeback')) origemHtml += `<div class="rev-row"><span>Comeback</span><span>${g('f-comeback')}</span></div>`;
+        if (g('f-set'))      origemHtml += `<div class="rev-row"><span>Set / POB</span><span>${g('f-set')}</span></div>`;
+        if (g('f-vl-item'))  origemHtml += `<div class="rev-row"><span>Valor</span><span>${formatBRL(g('f-vl-item'))}</span></div>`;
         origemHtml += `<div class="rev-row"><span>Status pgto</span><span>${g('f-st-item')}</span></div>`;
       } else {
         origemHtml += `<div class="rev-row"><span>Plataforma</span><span>${g('f-plataforma')}</span></div>`;
-        if (g('f-mes')) origemHtml += `<div class="rev-row"><span>Mês</span><span>${formatMesAno(g('f-mes'))}</span></div>`;
-        if (g('f-nomeset')) origemHtml += `<div class="rev-row"><span>Nome do set</span><span>${g('f-nomeset')}</span></div>`;
-        if (g('f-set-cx')) origemHtml += `<div class="rev-row"><span>Set / POB</span><span>${g('f-set-cx')}</span></div>`;
+        if (g('f-mes'))      origemHtml += `<div class="rev-row"><span>Mês</span><span>${formatMesAno(g('f-mes'))}</span></div>`;
+        if (g('f-nomeset'))  origemHtml += `<div class="rev-row"><span>Nome do set</span><span>${g('f-nomeset')}</span></div>`;
         if (g('f-linha-gom')) origemHtml += `<div class="rev-row"><span>Linha GOM</span><span>${g('f-linha-gom')}</span></div>`;
       }
       if (g('f-data-claim')) origemHtml += `<div class="rev-row"><span>Data claim</span><span>${g('f-data-claim')}</span></div>`;
       document.getElementById('rev-origem').innerHTML = origemHtml;
 
-      const comebackGlobal = g('f-comeback');
+      const comebackGlobal = tipoCeg === 'inter' ? g('f-comeback') : '';
+      const count = pedidoItems.length;
       document.getElementById('rev-itens-count').textContent = `${count} ${count === 1 ? 'item' : 'itens'}`;
       const total = pedidoItems.reduce((acc, it) => acc + (parseFloat(it.valor)||0), 0);
       document.getElementById('rev-total').textContent = formatBRL(total);
       document.getElementById('rev-itens-list').innerHTML = pedidoItems.map(item => {
-        const comeback = tipoCeg === 'cx' ? item.comeback : comebackGlobal;
+        const comeback = tipoCeg === 'cx' ? (item.comeback || '') : comebackGlobal;
         const nome = [item.tipo, item.membro, comeback].filter(Boolean).join(' · ');
         const val  = parseFloat(item.valor)||0;
         return `<div class="rev-row"><span>${nome || '—'}</span><span>${val > 0 ? formatBRL(val) : '—'}</span></div>`;
