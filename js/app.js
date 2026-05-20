@@ -9,7 +9,7 @@ const CONFIG = {
     COMMUNITIES: 'Comunidades',
   },
   RANGES: {
-    ITEMS:       'Itens!A4:AB',
+    ITEMS:       'Itens!A4:AG',
     COMMUNITIES: 'Comunidades!A3:F',
     PAYMENTS:    'Pagamentos!A3:F',
   },
@@ -17,11 +17,24 @@ const CONFIG = {
 
 // ══ COL MAP ══════════════════════════════════════
 const COL = {
+  // Identificação
   TIPO:0, COMEBACK:1, SET_POB:2, NUM_SET:3, IMG_LINK:4,
+  // Claim & Origem
   CLAIM_TYPE:5, MEMBRO:6, NUM_CLAIM:7, COMUNIDADE:8, GOM:9, LINK_CEG:10,
+  // Pagamentos
   VL_ITEM:11, ST_ITEM:12, VL_FI1:13, ST_FI1:14, VL_FI2:15, ST_FI2:16,
+  // Status geral
   STATUS:17, ETAPA:18, DATA_CLAIM:19, NOTAS:20, DATA_REC:21,
-  VL_ALF:22, ST_ALF:23, VL_FNAC:24, ST_FNAC:25, TOTAL_PAGO:26, PENDENTE:27,
+  // Alfândega e Frete Nacional
+  VL_ALF:22, ST_ALF:23, VL_FNAC:24, ST_FNAC:25,
+  // Totais
+  TOTAL_PAGO:26, PENDENTE:27,
+  // CEG (novos campos)
+  TIPO_CEG:28,       // col AC — Internacional / Caixinha
+  PLATAFORMA:29,     // col AD — Mercari, Bunjang, etc (só caixinha)
+  MES_EDICAO:30,     // col AE — formato YYYY-MM (só caixinha)
+  LINHA_GOM:31,      // col AF — linha na planilha da GOM (só caixinha)
+  NOME_SET:32,       // col AG — nome do set/pedido (só caixinha)
 };
 
 // ══ AUTH ═════════════════════════════════════════
@@ -62,7 +75,6 @@ const Auth = {
     Auth.isSignedIn = false;
     Auth.user = null;
     localStorage.removeItem('skz_token');
-    // Redirect to login
     const isPages = window.location.pathname.includes('/pages/');
     window.location.href = isPages ? '../index.html' : 'index.html';
   },
@@ -158,4 +170,12 @@ function formatBRL(value) {
 function indexToCol(idx) {
   if (idx < 26) return String.fromCharCode(65 + idx);
   return String.fromCharCode(64 + Math.floor(idx/26)) + String.fromCharCode(65 + (idx%26));
+}
+
+// Formata YYYY-MM para "Maio 2025"
+function formatMesAno(value) {
+  if (!value) return '—';
+  const [year, month] = value.split('-');
+  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  return `${meses[parseInt(month)-1]} ${year}`;
 }
