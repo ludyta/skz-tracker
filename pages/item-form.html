@@ -133,6 +133,10 @@
             <input type="month" id="f-mes">
           </div>
         </div>
+        <div class="field">
+          <label>Nome do set / pedido</label>
+          <input type="text" id="f-nomeset" placeholder="ex: Pedido individual, Set Changbinas">
+        </div>
         <div class="field" style="margin-bottom:0;">
           <label>Linha na planilha da GOM</label>
           <input type="text" id="f-linha-gom" placeholder="ex: 657">
@@ -162,16 +166,13 @@
         <input type="date" id="f-data-claim">
       </div>
 
-      <!-- Campos compartilhados do item -->
-      <div class="section-divider">Sobre os itens</div>
-
-      <div class="field">
-        <label>Comeback / Era</label>
-        <select id="f-comeback"><option value="">Selecione...</option></select>
-      </div>
-
-      <!-- Set/POB — inter -->
+      <!-- Campos compartilhados do item — só inter -->
       <div id="f-setpob-wrap">
+        <div class="section-divider">Sobre os itens</div>
+        <div class="field">
+          <label>Comeback / Era</label>
+          <select id="f-comeback"><option value="">Selecione...</option></select>
+        </div>
         <div class="field">
           <label>Set / POB</label>
           <input type="text" id="f-set" placeholder="ex: Makestar POB">
@@ -192,13 +193,7 @@
         </div>
       </div>
 
-      <!-- Nome do set — caixinha -->
-      <div id="f-nomeset-wrap" style="display:none;">
-        <div class="field">
-          <label>Nome do set / pedido</label>
-          <input type="text" id="f-nomeset" placeholder="ex: Pedido individual, Set Changbinas">
-        </div>
-      </div>
+
 
       <div class="nav-btns">
         <button class="btn btn-primary" style="flex:1;" onclick="goStep(2)">Próximo <i class="ti ti-arrow-right"></i></button>
@@ -400,7 +395,6 @@
       document.getElementById('tab-cx').classList.toggle('active', tipo === 'cx');
       document.getElementById('cx-box').classList.toggle('show', tipo === 'cx');
       document.getElementById('f-setpob-wrap').style.display  = tipo === 'inter' ? 'block' : 'none';
-      document.getElementById('f-nomeset-wrap').style.display = tipo === 'cx'    ? 'block' : 'none';
       document.getElementById('fi-cx-fields').style.display   = tipo === 'cx'    ? 'block' : 'none';
       document.getElementById('fi-valor-wrap').style.display  = tipo === 'cx'    ? 'block' : 'none';
     }
@@ -426,7 +420,7 @@
     function validateStep(n) {
       if (n === 1) {
         if (!document.getElementById('f-comunidade').value) { alert('Selecione a comunidade.'); return false; }
-        if (!document.getElementById('f-comeback').value)   { alert('Selecione o comeback.'); return false; }
+        if (tipoCeg === 'inter' && !document.getElementById('f-comeback').value) { alert('Selecione o comeback.'); return false; }
         if (tipoCeg === 'cx' && !document.getElementById('f-plataforma').value) { alert('Selecione a plataforma.'); return false; }
         if (tipoCeg === 'cx' && !document.getElementById('f-mes').value)        { alert('Selecione o mês/edição.'); return false; }
       }
@@ -611,7 +605,7 @@
       document.getElementById('tab-cx').classList.remove('active');
       document.getElementById('cx-box').classList.remove('show');
       document.getElementById('f-setpob-wrap').style.display  = 'block';
-      document.getElementById('f-nomeset-wrap').style.display = 'none';
+      
       document.getElementById('fi-valor-wrap').style.display  = 'none';
       currentStep = 1;
       document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
