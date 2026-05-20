@@ -282,6 +282,17 @@
                        : stValues.every(s => s === 'Pago')       ? 'Pago'
                        : 'Aguardando cobrança';
 
+      // Calcula TOTAL_PAGO e PENDENTE
+      const pagSteps = [
+        { vl: g('e-vl-item'), st: g('e-st-item') },
+        { vl: g('e-vl-fi1'),  st: g('e-st-fi1')  },
+        { vl: g('e-vl-fi2'),  st: g('e-st-fi2')  },
+        { vl: g('e-vl-alf'),  st: g('e-st-alf')  },
+        { vl: g('e-vl-fnac'), st: g('e-st-fnac') },
+      ];
+      const totalPago   = pagSteps.filter(s => s.st === 'Pago').reduce((acc, s) => acc + (parseFloat(s.vl)||0), 0);
+      const totalPend   = pagSteps.filter(s => s.st === 'Cobrado — pendente').reduce((acc, s) => acc + (parseFloat(s.vl)||0), 0);
+
       // Monta linha completa
       const newRow = [
         g('e-tipo'), g('e-comeback'), g('e-set'), g('e-numset'), g('e-img'),
@@ -294,7 +305,7 @@
         g('e-data-claim'), rowData[COL.NOTAS]||'', g('e-data-rec'),
         g('e-vl-alf'), g('e-st-alf'),
         g('e-vl-fnac'), g('e-st-fnac'),
-        '', '', // total pago e pendente (calculados)
+        totalPago.toString(), totalPend.toString(),
       ];
 
       try {
@@ -341,7 +352,26 @@
       try {
         await Promise.all(updates.map(u => Sheets.setCell(u.range, u.value)));
 
-        // Recalcula STATUS geral a partir dos status de pagamento atuais
+        // Recalcula TOTAL_PAGO e PENDENTE com os valores atuais da planilha + status novos
+        const stMap = {};
+        selects.forEach(sel => { stMap[parseInt(sel.dataset.col)] = sel.value; });
+
+        const calcSteps = [
+          { vl: COL.VL_ITEM, st: COL.ST_ITEM },
+          { vl: COL.VL_FI1,  st: COL.ST_FI1  },
+          { vl: COL.VL_FI2,  st: COL.ST_FI2  },
+          { vl: COL.VL_ALF,  st: COL.ST_ALF  },
+          { vl: COL.VL_FNAC, st: COL.ST_FNAC },
+        ];
+        let totalPago = 0, totalPend = 0;
+        calcSteps.forEach(({ vl, st }) => {
+          const valor  = parseFloat(rowData[vl]) || 0;
+          const status = stMap[st] ?? rowData[st] ?? '';
+          if (status === 'Pago')               totalPago += valor;
+          if (status === 'Cobrado — pendente') totalPend += valor;
+        });
+        await Sheets.setCell(`Itens!${indexToCol(COL.TOTAL_PAGO)}${sheetRow}`, totalPago.toString());
+        await Sheets.setCell(`Itens!${indexToCol(COL.PENDENTE)}${sheetRow}`,   totalPend.toString());
         const stValues = [];
         selects.forEach(sel => {
           const colIdx = parseInt(sel.dataset.col);
