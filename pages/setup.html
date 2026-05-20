@@ -88,7 +88,7 @@
         });
         setStep(3, 'done', 'Aba criada!');
 
-        // Step 4 — add headers
+        // Step 4 — add headers (agora vai até AG = col 33)
         setStep(4, 'running', 'Inserindo cabeçalhos...');
         const headerValues = [[
           'Tipo','Comeback','Set POB','Num Set','Link Imagem',
@@ -96,21 +96,22 @@
           'Comunidade','GOM','Link CEG',
           'Vl Item','St Item','Vl FI1','St FI1','Vl FI2','St FI2',
           'Status','Etapa','Data Claim','Notas','Data Rec',
-          'Vl Alf','St Alf','Vl Fnac','St Fnac','Total Pago','Pendente'
+          'Vl Alf','St Alf','Vl Fnac','St Fnac',
+          'Total Pago','Pendente',
+          'Tipo CEG','Plataforma','Mes Edicao','Linha GOM','Nome Set'
         ]];
-        await fetch(`${BASE}/values/Itens!A1:AB1?valueInputOption=USER_ENTERED`, {
+        await fetch(`${BASE}/values/Itens!A1:AG1?valueInputOption=USER_ENTERED`, {
           method: 'PUT', headers,
-          body: JSON.stringify({ range: 'Itens!A1:AB1', majorDimension: 'ROWS', values: headerValues })
+          body: JSON.stringify({ range: 'Itens!A1:AG1', majorDimension: 'ROWS', values: headerValues })
         });
         setStep(4, 'done', 'Cabeçalhos adicionados!');
 
-        // Done!
         document.getElementById('result').style.display = 'block';
         document.getElementById('result').innerHTML = `
           <div style="background:var(--status-done-bg);border:1px solid var(--status-done-border);border-radius:var(--radius-md);padding:16px;margin-bottom:16px;">
             <i class="ti ti-circle-check" style="font-size:24px;color:var(--status-done-color);display:block;margin-bottom:8px;"></i>
             <div style="font-size:13px;font-weight:500;color:var(--status-done-color);">Planilha configurada com sucesso!</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">A aba Itens foi recriada limpa e pronta para uso.</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">A aba Itens foi recriada com os novos campos.</div>
           </div>
           <a href="dashboard.html" class="btn btn-primary" style="justify-content:center;width:100%;">
             <i class="ti ti-arrow-right"></i> Ir para o Dashboard
@@ -125,9 +126,7 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      runSetup();
-    });
+    document.addEventListener('DOMContentLoaded', () => { runSetup(); });
   </script>
 </body>
 </html>
