@@ -123,8 +123,14 @@
             <i class="ti ti-chevron-right" style="font-size:16px; color:var(--text-faint);"></i>
           </div>
           <div class="comm-stats">
-            <div class="stat"><div class="stat-val" style="color:var(--accent);">${ativos}</div><div class="stat-lab">itens ativos</div></div>
-            <div class="stat"><div class="stat-val" style="color:${pendentes>0?'var(--status-pending-color)':'var(--status-done-color)'};">${pendentes}</div><div class="stat-lab">pgto pendente</div></div>
+            <a href="items.html?community=${encodeURIComponent(nome)}" class="stat" style="text-decoration:none; cursor:pointer;">
+              <div class="stat-val" style="color:var(--accent);">${ativos}</div>
+              <div class="stat-lab">itens ativos</div>
+            </a>
+            <a href="items.html?community=${encodeURIComponent(nome)}&filter=pending" class="stat" style="text-decoration:none; cursor:pointer;">
+              <div class="stat-val" style="color:${pendentes>0?'var(--status-pending-color)':'var(--status-done-color)'};">${pendentes}</div>
+              <div class="stat-lab">pgto pendente</div>
+            </a>
           </div>
           <div class="comm-links" >
             ${whats?`<a class="link-btn whats" href="${whats}" target="_blank" onclick="event.stopPropagation()"><i class="ti ti-brand-whatsapp" style="font-size:13px;"></i> WhatsApp</a>`:`<div class="link-btn" style="opacity:0.4;cursor:default;"><i class="ti ti-brand-whatsapp" style="font-size:13px;"></i> WhatsApp</div>`}
