@@ -149,6 +149,11 @@
       if (!restored) { window.location.href = '../index.html'; return; }
       await ensureWishlistSheet();
       await loadAll();
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('tab') === 'wishlist') {
+        const wishTab = document.querySelector('.top-tab[data-p="wishlist"]');
+        if (wishTab) swTop(wishTab);
+      }
     });
 
     // ── Garante que a aba Wishlist existe ──────────
