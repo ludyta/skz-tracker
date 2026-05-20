@@ -134,7 +134,7 @@ async function loadDashboard() {
       </div>
       <div class="comm-list">
         ${commStats.map(c => `
-          <a href="communities.html" class="comm-item ${c.pending > 0 ? 'pending' : 'ok'}">
+          <a href="items.html?community=${encodeURIComponent(c.name)}" class="comm-item ${c.pending > 0 ? 'pending' : 'ok'}">
             <div class="comm-avatar">${c.name.charAt(0).toUpperCase()}</div>
             <div style="flex:1;min-width:0;">
               <div class="comm-name">${c.name}</div>
