@@ -17,28 +17,39 @@
     .hero-body { flex: 1; min-width: 0; }
     .hero-name { font-family: var(--font-display); font-size: 18px; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; line-height: 1.3; }
     .hero-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
-    .hero-actions { display: flex; gap: 6px; margin-top: 10px; }
 
-    .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2); }
-    .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); }
+    .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; gap: var(--space-2); flex: 1; }
+    .section-title::after { content:''; flex:1; height:1px; background:var(--border); margin-left: var(--space-2); }
+    .edit-toggle-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); padding: 4px 10px; border: 1px solid var(--border); border-radius: var(--radius-pill); background: transparent; cursor: pointer; transition: all var(--transition); flex-shrink: 0; margin-left: 8px; }
+    .edit-toggle-btn:hover { border-color: var(--accent-border); color: var(--lilac-dark); }
+    .edit-toggle-btn.active { border-color: var(--accent-border); color: var(--lilac-dark); background: var(--lilac-light); }
 
     .cx-info-box { background: var(--lilac-light); border: 1px solid var(--lilac-mid); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: var(--space-3); }
     .cx-info-label { font-family: var(--font-label); font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--lilac-dark); margin-bottom: 10px; }
 
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin-bottom: var(--space-4); }
-    .info-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin-bottom: var(--space-2); }
+    .info-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); transition: border-color var(--transition); }
     .info-card.full { grid-column: 1/-1; }
+    .info-card.editing { border-color: var(--accent-border); background: var(--bg-base); }
     .info-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px; }
     .info-value { font-size: 13px; color: var(--text-primary); }
     .info-value a { color: var(--accent); text-decoration: none; }
-
+    .info-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--accent-border); padding: 2px 0; font-family: var(--font-body); font-size: 13px; color: var(--text-primary); outline: none; -webkit-appearance: none; }
+    .info-input::placeholder { color: var(--text-faint); }
+    .info-select { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--accent-border); padding: 2px 0; font-family: var(--font-body); font-size: 13px; color: var(--text-primary); outline: none; -webkit-appearance: none; cursor: pointer; }
     .cx-info-box .info-card { background: #fff; border-color: var(--lilac-mid); }
+    .cx-info-box .info-card.editing { border-color: var(--lilac-dark); }
 
-    .payment-step { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-2); display: flex; align-items: center; gap: var(--space-3); }
+    .save-actions { display: flex; gap: 8px; margin-top: var(--space-3); margin-bottom: var(--space-4); }
+
+    .payment-step { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-2); display: flex; align-items: center; gap: var(--space-3); transition: border-color var(--transition); }
+    .payment-step.editing { border-color: var(--accent-border); }
     .step-icon { width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
     .step-body { flex: 1; min-width: 0; }
     .step-name { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; }
     .step-value { font-size: 12px; color: var(--text-muted); }
+    .step-value-input { width: 80px; background: transparent; border: none; border-bottom: 1px solid var(--accent-border); padding: 2px 0; font-family: var(--font-body); font-size: 12px; color: var(--text-primary); outline: none; }
     .step-action select { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 5px 10px; font-family: var(--font-body); font-size: 11px; color: var(--text-secondary); outline: none; cursor: pointer; -webkit-appearance: none; }
 
     .totals-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); margin-top: var(--space-4); display: flex; gap: var(--space-5); }
@@ -46,36 +57,19 @@
     .total-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 6px; }
     .total-value { font-family: var(--font-mono); font-size: 20px; }
 
-    .edit-section { background: var(--bg-surface); border: 1px solid var(--accent-border); border-radius: var(--radius-lg); padding: var(--space-5); margin-top: var(--space-4); display: none; }
-    .edit-section.open { display: block; }
-    .field { margin-bottom: var(--space-3); }
-    .field label { display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 5px; }
-    .field input, .field select, .field textarea { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 9px 12px; font-family: var(--font-body); font-size: 13px; color: var(--text-primary); outline: none; transition: border-color var(--transition); -webkit-appearance: none; }
-    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent-border); }
-    .field input::placeholder { color: var(--text-faint); }
-    .field input[type="month"] { color: var(--text-primary); }
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
-    .edit-subtitle { font-family: var(--font-label); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--lilac-dark); margin: var(--space-4) 0 var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border); }
-    .edit-cx-box { background: var(--lilac-light); border: 1px solid var(--lilac-mid); border-radius: var(--radius-md); padding: 12px; margin-bottom: 12px; }
-    .edit-cx-box .field label { color: var(--lilac-dark); }
-    .edit-cx-box .field input, .edit-cx-box .field select { background: #fff; border-color: var(--lilac-mid); }
-
     .danger-zone { background: var(--status-cancelled-bg); border: 1px solid var(--status-cancelled-border); border-radius: var(--radius-lg); padding: var(--space-4); margin-top: var(--space-5); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
     .danger-text p { font-size: 13px; font-weight: 500; color: var(--status-cancelled-color); margin-bottom: 2px; }
     .danger-text span { font-size: 11px; color: var(--text-muted); }
 
-    .save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg-surface); border-top: 1px solid var(--border); padding: 12px 20px; display: flex; gap: 10px; z-index: 50; transform: translateY(100%); transition: transform 0.25s ease; }
-    .save-bar.visible { transform: translateY(0); }
-
     @keyframes spin { to { transform: rotate(360deg); } }
     .spinner { animation: spin 1s linear infinite; display: inline-block; }
-    @media (max-width:640px) { .item-hero { flex-direction: column; } .info-grid { grid-template-columns: 1fr; } .field-row { grid-template-columns: 1fr; } }
+    @media (max-width:640px) { .item-hero { flex-direction: column; } .info-grid { grid-template-columns: 1fr; } }
   </style>
   <script src="../js/app.js"></script>
   <script src="../js/nav.js"></script>
 </head>
 <body>
-  <main class="container" style="padding-top:24px; padding-bottom:100px;">
+  <main class="container" style="padding-top:24px; padding-bottom:60px;">
     <a href="items.html" class="back-btn"><i class="ti ti-arrow-left"></i> Voltar para itens</a>
     <div id="content">
       <div style="text-align:center; padding:48px; color:var(--text-muted);">
@@ -85,14 +79,10 @@
     </div>
   </main>
 
-  <div class="save-bar" id="save-bar">
-    <button class="btn btn-ghost" style="flex:1;" onclick="discardChanges()"><i class="ti ti-x"></i> Descartar</button>
-    <button class="btn btn-primary" style="flex:2;" onclick="saveChanges()" id="save-btn"><i class="ti ti-check"></i> Salvar alterações</button>
-  </div>
-
   <script>
-    let rowData = [], sheetRow = 0, hasChanges = false;
-    let comunidadesData = [], listasData = { tipos:[], comebacks:[], membros:[] };
+    let rowData = [], sheetRow = 0;
+    let comunidadesData = [], listasData = {};
+    let editingInfo = false, editingPay = false;
 
     const STATUS_OPTIONS = ['Aguardando cobrança','Cobrado — pendente','Pago'];
     const STEPS = [
@@ -102,8 +92,8 @@
       { name:'Alfândega',      val: COL.VL_ALF,  st: COL.ST_ALF  },
       { name:'Frete nacional', val: COL.VL_FNAC, st: COL.ST_FNAC },
     ];
-    const STEP_ICONS = { 'Aguardando cobrança':'ti-clock','Cobrado — pendente':'ti-alert-triangle','Pago':'ti-circle-check' };
     const STEP_CLS   = { 'Aguardando cobrança':'waiting','Cobrado — pendente':'pending','Pago':'done' };
+    const STEP_ICONS = { 'Aguardando cobrança':'ti-clock','Cobrado — pendente':'ti-alert-triangle','Pago':'ti-circle-check' };
 
     document.addEventListener('DOMContentLoaded', async () => {
       await Auth.init();
@@ -112,12 +102,11 @@
       const params = new URLSearchParams(window.location.search);
       sheetRow = parseInt(params.get('row'));
       if (!sheetRow) { window.location.href = 'items.html'; return; }
-
       const [commRows, listRows] = await Promise.all([
         Sheets.get(CONFIG.RANGES.COMMUNITIES),
         Sheets.get('Listas!A3:D100'),
       ]);
-      comunidadesData = (commRows||[]).filter(r=>r[0]).map(r => ({
+      comunidadesData = (commRows||[]).filter(r=>r[0]).map(r=>({
         nome: r[0],
         goms: (r[1]||'').split('|').map(g=>g.trim()).filter(Boolean),
         linkCeg: r[3]||'',
@@ -126,209 +115,170 @@
       listasData.comebacks = [...new Set((listRows||[]).map(r=>r[1]).filter(Boolean))];
       listasData.membros   = [...new Set((listRows||[]).map(r=>r[2]).filter(Boolean))];
       listasData.plats     = [...new Set((listRows||[]).map(r=>r[3]).filter(v=>v&&v.trim()))];
-
       await loadItem();
     });
 
     async function loadItem() {
       const rows = await Sheets.get(`Itens!A${sheetRow}:AG${sheetRow}`);
-      if (!rows || !rows[0]) { document.getElementById('content').innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:32px;">Item não encontrado.</p>'; return; }
+      if (!rows||!rows[0]) { document.getElementById('content').innerHTML='<p style="color:var(--text-muted);text-align:center;padding:32px;">Item não encontrado.</p>'; return; }
       rowData = rows[0];
+      editingInfo = false;
+      editingPay  = false;
       render();
     }
 
-    function isCaixinha() { return (rowData[COL.TIPO_CEG]||'') === 'Caixinha'; }
+    function isCx() { return (rowData[COL.TIPO_CEG]||'')==='Caixinha'; }
+
+    function selOpts(arr, val) {
+      return arr.map(v=>`<option value="${v}" ${v===val?'selected':''}>${v}</option>`).join('');
+    }
 
     function render() {
       const row = rowData;
-      const cx  = isCaixinha();
-      const img  = row[COL.IMG_LINK]||'';
-      const tipo = row[COL.TIPO]||'';
-      const membro = row[COL.MEMBRO]||'';
+      const cx  = isCx();
+      const img      = row[COL.IMG_LINK]||'';
+      const tipo     = row[COL.TIPO]||'';
+      const membro   = row[COL.MEMBRO]||'';
       const comeback = row[COL.COMEBACK]||'';
-      const set = row[COL.SET_POB]||'';
-      const nome = [tipo, membro, comeback, set].filter(Boolean).join(' · ')||'Item sem nome';
-      const cls  = statusClass(row[COL.STATUS]);
-      const pendente = parseFloat(row[COL.PENDENTE])||0;
-      const pago     = parseFloat(row[COL.TOTAL_PAGO])||0;
+      const set      = row[COL.SET_POB]||'';
+      const numSet   = row[COL.NUM_SET]||'';
+      const numClaim = row[COL.NUM_CLAIM]||'';
       const comunidade = row[COL.COMUNIDADE]||'';
-      const gom  = row[COL.GOM]||'';
-      const plat = row[COL.PLATAFORMA]||'';
-      const mes  = row[COL.MES_EDICAO]||'';
-      const linhaGom = row[COL.LINHA_GOM]||'';
-      const nomeset  = row[COL.NOME_SET]||'';
-      const ceg  = row[COL.NOTAS]||'';
+      const gom      = row[COL.GOM]||'';
+      const ceg      = row[COL.NOTAS]||'';
       const linkCeg  = row[COL.LINK_CEG]||'';
       const dataClaim= row[COL.DATA_CLAIM]||'';
       const dataRec  = row[COL.DATA_REC]||'';
-      const numSet   = row[COL.NUM_SET]||'';
-      const numClaim = row[COL.NUM_CLAIM]||'';
+      const plat     = row[COL.PLATAFORMA]||'';
+      const mes      = row[COL.MES_EDICAO]||'';
+      const linhaGom = row[COL.LINHA_GOM]||'';
+      const nomeset  = row[COL.NOME_SET]||'';
+      const pendente = parseFloat(row[COL.PENDENTE])||0;
+      const pago     = parseFloat(row[COL.TOTAL_PAGO])||0;
+      const cls      = statusClass(row[COL.STATUS]);
 
-      const heroMetaParts = cx
-        ? [comunidade, gom, plat].filter(Boolean)
-        : [comunidade, gom].filter(Boolean);
+      const nome = [tipo,membro,comeback,set].filter(Boolean).join(' · ')||'Item sem nome';
+      const heroMeta = cx ? [comunidade,gom,plat].filter(Boolean) : [comunidade,gom].filter(Boolean);
 
+      const comm = comunidadesData.find(c=>c.nome===comunidade);
+      const gomOpts = (comm?.goms||[]).map(g=>`<option value="${g}" ${g===gom?'selected':''}>${g}</option>`).join('');
+
+      // ── Info fields (view vs edit) ──
+      function infoCard(label, viewVal, editEl, full=false) {
+        return `<div class="info-card${full?' full':''}${editingInfo?' editing':''}">
+          <div class="info-label">${label}</div>
+          ${editingInfo ? editEl : `<div class="info-value">${viewVal||'—'}</div>`}
+        </div>`;
+      }
+
+      const cxBoxHtml = cx ? `<div class="cx-info-box">
+        <div class="cx-info-label">Caixinha ${plat}</div>
+        <div class="info-grid" style="margin-bottom:0;">
+          ${infoCard('Plataforma', plat,
+            `<select class="info-select" id="e-plat"><option value="">Selecione...</option>${selOpts(listasData.plats||[], plat)}</select>`)}
+          ${infoCard('Mês/edição', mes?formatMesAno(mes):'—',
+            `<input class="info-input" type="month" id="e-mes" value="${mes}">`)}
+          ${infoCard('Nome do set', nomeset,
+            `<input class="info-input" id="e-nomeset" value="${nomeset}" placeholder="ex: Set Changbinas">`)}
+          ${infoCard('Linha GOM', linhaGom,
+            `<input class="info-input" id="e-linha-gom" value="${linhaGom}" placeholder="ex: 657">`)}
+        </div>
+      </div>` : '';
+
+      const saveInfoBtns = editingInfo ? `<div class="save-actions">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;" onclick="cancelInfo()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:2;justify-content:center;" onclick="saveInfo()" id="save-info-btn"><i class="ti ti-check"></i> Salvar informações</button>
+      </div>` : '';
+
+      // ── Payment fields ──
       const stepsHtml = STEPS.map(step => {
-        const val   = row[step.val]||'';
-        const st    = row[step.st]||'Aguardando cobrança';
-        const stCls = STEP_CLS[st]||'waiting';
-        const stIcon= STEP_ICONS[st]||'ti-clock';
-        const opts  = STATUS_OPTIONS.map(o => `<option value="${o}" ${o===st?'selected':''}>${o}</option>`).join('');
-        return `<div class="payment-step">
+        const val  = row[step.val]||'';
+        const st   = row[step.st]||'Aguardando cobrança';
+        const stCls  = STEP_CLS[st]||'waiting';
+        const stIcon = STEP_ICONS[st]||'ti-clock';
+        const opts = STATUS_OPTIONS.map(o=>`<option value="${o}" ${o===st?'selected':''}>${o}</option>`).join('');
+        return `<div class="payment-step${editingPay?' editing':''}">
           <div class="step-icon" style="background:var(--status-${stCls}-bg);"><i class="ti ${stIcon}" style="color:var(--status-${stCls}-color);"></i></div>
-          <div class="step-body"><div class="step-name">${step.name}</div><div class="step-value">${val?formatBRL(val):'—'}</div></div>
-          <div class="step-action"><select data-col="${step.st}" onchange="onStatusChange(this)">${opts}</select></div>
+          <div class="step-body">
+            <div class="step-name">${step.name}</div>
+            ${editingPay
+              ? `<input class="step-value-input" type="number" data-val="${step.val}" value="${val}" placeholder="0,00" step="0.01" min="0">`
+              : `<div class="step-value">${val?formatBRL(val):'—'}</div>`}
+          </div>
+          <div class="step-action"><select data-col="${step.st}">${opts}</select></div>
         </div>`;
       }).join('');
 
-      const cxBoxHtml = cx ? `
-        <div class="cx-info-box">
-          <div class="cx-info-label">Caixinha ${plat}</div>
-          <div class="info-grid" style="margin-bottom:0;">
-            <div class="info-card"><div class="info-label">Plataforma</div><div class="info-value">${plat||'—'}</div></div>
-            <div class="info-card"><div class="info-label">Mês/edição</div><div class="info-value">${mes?formatMesAno(mes):'—'}</div></div>
-            <div class="info-card"><div class="info-label">Nome do set</div><div class="info-value">${nomeset||'—'}</div></div>
-            <div class="info-card"><div class="info-label">Linha GOM</div><div class="info-value">${linhaGom||'—'}</div></div>
-          </div>
-        </div>` : '';
-
-      // Edit form
-      const tipoOpts    = listasData.tipos.map(t => `<option ${t===tipo?'selected':''}>${t}</option>`).join('');
-      const cbOpts      = listasData.comebacks.map(c => `<option value="${c}" ${c===comeback?'selected':''}>${c}</option>`).join('');
-      const membroOpts  = listasData.membros.map(m => `<option ${m===membro?'selected':''}>${m}</option>`).join('');
-      const platOpts    = listasData.plats.map(p => `<option ${p===plat?'selected':''}>${p}</option>`).join('');
-      const commOpts    = comunidadesData.map(c => `<option value="${c.nome}" ${c.nome===comunidade?'selected':''}>${c.nome}</option>`).join('');
-      const comm        = comunidadesData.find(c=>c.nome===comunidade);
-      const gomOpts     = (comm?.goms||[]).map(g => `<option ${g===gom?'selected':''}>${g}</option>`).join('');
-
-      const editCxFields = cx ? `
-        <div class="edit-cx-box">
-          <div style="font-family:var(--font-label);font-size:9px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--lilac-dark);margin-bottom:10px;">Detalhes da caixinha</div>
-          <div class="field-row">
-            <div class="field"><label>Plataforma</label>
-              <select id="e-plat"><option value="">Selecione...</option>${platOpts}</select>
-            </div>
-            <div class="field"><label>Mês/edição</label>
-              <input type="month" id="e-mes" value="${mes}">
-            </div>
-          </div>
-          <div class="field"><label>Nome do set / pedido</label>
-            <input type="text" id="e-nomeset" value="${nomeset}" placeholder="ex: Pedido individual, Set Changbinas">
-          </div>
-          <div class="field"><label>Linha na planilha da GOM</label>
-            <input type="text" id="e-linha-gom" value="${linhaGom}" placeholder="ex: 657">
-          </div>
-        </div>` : '';
+      const savePayBtns = editingPay ? `<div class="save-actions">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;" onclick="cancelPay()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:2;justify-content:center;" onclick="savePay()" id="save-pay-btn"><i class="ti ti-check"></i> Salvar pagamentos</button>
+      </div>` : '';
 
       document.getElementById('content').innerHTML = `
         <div class="item-hero">
           <div class="hero-img">${img?`<img src="${img}" alt="${nome}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">`:'<i class="ti ti-photo"></i>'}</div>
           <div class="hero-body">
             <div class="hero-name">${nome}</div>
-            <div class="hero-meta">${heroMetaParts.join(' · ')||'—'}</div>
+            <div class="hero-meta">${heroMeta.join(' · ')||'—'}</div>
             <span class="badge badge-${cls}"><i class="ti ${statusIcon(row[COL.STATUS])}"></i>${statusLabel(row[COL.STATUS])}</span>
-            <div class="hero-actions">
-              <button class="btn btn-ghost" style="font-size:12px; padding:5px 10px;" onclick="toggleEdit()">
-                <i class="ti ti-pencil" style="font-size:13px;"></i> Editar
-              </button>
-            </div>
           </div>
         </div>
 
-        <div class="section-title">Informações</div>
+        <div class="section-header">
+          <div class="section-title">Informações</div>
+          <button class="edit-toggle-btn${editingInfo?' active':''}" onclick="toggleInfo()">
+            <i class="ti ti-pencil" style="font-size:12px;"></i> ${editingInfo?'Editando...':'Editar'}
+          </button>
+        </div>
 
         ${cxBoxHtml}
 
         <div class="info-grid">
-          <div class="info-card"><div class="info-label">Tipo</div><div class="info-value">${tipo||'—'}</div></div>
-          <div class="info-card"><div class="info-label">Membro</div><div class="info-value">${membro||'—'}</div></div>
-          <div class="info-card"><div class="info-label">Comeback</div><div class="info-value">${comeback||'—'}</div></div>
-          <div class="info-card"><div class="info-label">Set / POB</div><div class="info-value">${set||'—'}${numSet?' · Set '+numSet:''}</div></div>
-          <div class="info-card"><div class="info-label">Nº do claim</div><div class="info-value">${numClaim||'—'}</div></div>
-          <div class="info-card"><div class="info-label">CEG</div><div class="info-value">${ceg||'—'}</div></div>
-          <div class="info-card"><div class="info-label">Comunidade</div><div class="info-value">${comunidade||'—'}</div></div>
-          <div class="info-card"><div class="info-label">GOM</div><div class="info-value">${gom||'—'}</div></div>
-          <div class="info-card"><div class="info-label">Data do claim</div><div class="info-value">${dataClaim||'—'}</div></div>
-          <div class="info-card"><div class="info-label">Data recebimento</div><div class="info-value">${dataRec||'—'}</div></div>
-          ${linkCeg?`<div class="info-card full"><div class="info-label">Planilha da CEG</div><div class="info-value"><a href="${linkCeg}" target="_blank">Abrir <i class="ti ti-external-link" style="font-size:11px;"></i></a></div></div>`:''}
+          ${infoCard('Tipo', tipo,
+            `<select class="info-select" id="e-tipo"><option value="">Selecione...</option>${selOpts(listasData.tipos||[], tipo)}</select>`)}
+          ${infoCard('Membro', membro,
+            `<select class="info-select" id="e-membro"><option value="">Selecione...</option>${selOpts(listasData.membros||[], membro)}</select>`)}
+          ${infoCard('Comeback', comeback,
+            `<select class="info-select" id="e-comeback"><option value="">Selecione...</option>${selOpts(listasData.comebacks||[], comeback)}</select>`)}
+          ${infoCard('Set / POB', set+(numSet?' · Set '+numSet:''),
+            `<input class="info-input" id="e-set" value="${set}" placeholder="ex: Makestar POB">`)}
+          ${infoCard('Nº do set', numSet,
+            `<input class="info-input" type="number" id="e-numset" value="${numSet}">`)}
+          ${infoCard('Nº do claim', numClaim,
+            `<input class="info-input" type="number" id="e-numclaim" value="${numClaim}">`)}
+          ${infoCard('CEG', ceg,
+            `<input class="info-input" id="e-ceg" value="${ceg}" placeholder="ex: CEG Karma POBs">`)}
+          ${infoCard('Comunidade', comunidade,
+            `<select class="info-select" id="e-comunidade" onchange="updateGomOpts(this.value)"><option value="">Selecione...</option>${selOpts(comunidadesData.map(c=>c.nome), comunidade)}</select>`)}
+          ${infoCard('GOM', gom,
+            `<select class="info-select" id="e-gom"><option value="">Selecione...</option>${gomOpts}</select>`)}
+          ${infoCard('Data do claim', dataClaim,
+            `<input class="info-input" type="date" id="e-data-claim" value="${dataClaim}">`)}
+          ${infoCard('Data recebimento', dataRec,
+            `<input class="info-input" type="date" id="e-data-rec" value="${dataRec}">`)}
+          ${infoCard('Link da imagem', img?`<a href="${img}" target="_blank">Ver imagem <i class="ti ti-external-link" style="font-size:11px;"></i></a>`:null,
+            `<input class="info-input" type="url" id="e-img" value="${img}" placeholder="https://...">`, true)}
+          ${linkCeg?infoCard('Planilha da CEG',
+            `<a href="${linkCeg}" target="_blank">Abrir <i class="ti ti-external-link" style="font-size:11px;"></i></a>`,
+            `<input class="info-input" type="url" id="e-link-ceg" value="${linkCeg}" placeholder="https://...">`, true):''}
         </div>
 
-        <div class="section-title">Pagamentos</div>
+        ${saveInfoBtns}
+
+        <div class="section-header">
+          <div class="section-title">Pagamentos</div>
+          <button class="edit-toggle-btn${editingPay?' active':''}" onclick="togglePay()">
+            <i class="ti ti-pencil" style="font-size:12px;"></i> ${editingPay?'Editando...':'Editar'}
+          </button>
+        </div>
+
         ${stepsHtml}
+        ${savePayBtns}
 
         <div class="totals-card">
           <div class="total-item"><div class="total-label">Total pago</div><div class="total-value" style="color:var(--status-done-color);">${formatBRL(pago)}</div></div>
           <div style="width:1px;background:var(--border);"></div>
           <div class="total-item"><div class="total-label">Pendente</div><div class="total-value" style="color:${pendente>0?'var(--status-pending-color)':'var(--text-muted)'};">${formatBRL(pendente)}</div></div>
-        </div>
-
-        <!-- Edição -->
-        <div class="edit-section" id="edit-section">
-          <div class="section-title" style="margin-bottom:16px;">Editar item</div>
-
-          ${editCxFields}
-
-          <div class="edit-subtitle">Identificação</div>
-          <div class="field-row">
-            <div class="field"><label>Tipo</label><select id="e-tipo"><option value="">Selecione...</option>${tipoOpts}</select></div>
-            <div class="field"><label>Membro</label><select id="e-membro"><option value="">Selecione...</option>${membroOpts}</select></div>
-          </div>
-          <div class="field"><label>Comeback / Era</label>
-            <select id="e-comeback"><option value="">Selecione...</option>${cbOpts}</select>
-          </div>
-          <div class="field-row">
-            <div class="field"><label>Set / POB</label><input type="text" id="e-set" value="${set}" placeholder="ex: Makestar POB"></div>
-            <div class="field"><label>Nº do set</label><input type="number" id="e-numset" value="${numSet}"></div>
-          </div>
-          <div class="field"><label>Nº do claim</label><input type="number" id="e-numclaim" value="${numClaim}"></div>
-          <div class="field"><label>Link da imagem</label><input type="url" id="e-img" value="${img}" placeholder="https://..."></div>
-
-          <div class="edit-subtitle">Origem</div>
-          <div class="field">
-            <label>Comunidade</label>
-            <select id="e-comunidade" onchange="updateEditGom(this.value)">
-              <option value="">Selecione...</option>${commOpts}
-            </select>
-          </div>
-          <div class="field">
-            <label>GOM</label>
-            <select id="e-gom"><option value="">Selecione...</option>${gomOpts}</select>
-          </div>
-          <div class="field"><label>CEG</label><input type="text" id="e-ceg" value="${ceg}" placeholder="ex: CEG Karma POBs"></div>
-          <div class="field"><label>Link da planilha da CEG</label><input type="url" id="e-link-ceg" value="${linkCeg}" placeholder="https://..."></div>
-          <div class="field-row">
-            <div class="field"><label>Data do claim</label><input type="date" id="e-data-claim" value="${dataClaim}"></div>
-            <div class="field"><label>Data de recebimento</label><input type="date" id="e-data-rec" value="${dataRec}"></div>
-          </div>
-
-          <div class="edit-subtitle">Pagamentos (R$)</div>
-          <div class="field-row">
-            <div class="field"><label>Valor item</label><input type="number" id="e-vl-item" value="${row[COL.VL_ITEM]||''}" step="0.01" placeholder="0,00"></div>
-            <div class="field"><label>Status item</label><select id="e-st-item">${STATUS_OPTIONS.map(o=>`<option ${o===row[COL.ST_ITEM]?'selected':''}>${o}</option>`).join('')}</select></div>
-          </div>
-          <div class="field-row">
-            <div class="field"><label>Frete inter 1</label><input type="number" id="e-vl-fi1" value="${row[COL.VL_FI1]||''}" step="0.01" placeholder="0,00"></div>
-            <div class="field"><label>Status FI1</label><select id="e-st-fi1">${STATUS_OPTIONS.map(o=>`<option ${o===row[COL.ST_FI1]?'selected':''}>${o}</option>`).join('')}</select></div>
-          </div>
-          <div class="field-row">
-            <div class="field"><label>Frete inter 2</label><input type="number" id="e-vl-fi2" value="${row[COL.VL_FI2]||''}" step="0.01" placeholder="0,00"></div>
-            <div class="field"><label>Status FI2</label><select id="e-st-fi2">${STATUS_OPTIONS.map(o=>`<option ${o===row[COL.ST_FI2]?'selected':''}>${o}</option>`).join('')}</select></div>
-          </div>
-          <div class="field-row">
-            <div class="field"><label>Alfândega</label><input type="number" id="e-vl-alf" value="${row[COL.VL_ALF]||''}" step="0.01" placeholder="0,00"></div>
-            <div class="field"><label>Status alf.</label><select id="e-st-alf">${STATUS_OPTIONS.map(o=>`<option ${o===row[COL.ST_ALF]?'selected':''}>${o}</option>`).join('')}</select></div>
-          </div>
-          <div class="field-row">
-            <div class="field"><label>Frete nacional</label><input type="number" id="e-vl-fnac" value="${row[COL.VL_FNAC]||''}" step="0.01" placeholder="0,00"></div>
-            <div class="field"><label>Status fnac.</label><select id="e-st-fnac">${STATUS_OPTIONS.map(o=>`<option ${o===row[COL.ST_FNAC]?'selected':''}>${o}</option>`).join('')}</select></div>
-          </div>
-
-          <div style="display:flex; gap:10px; margin-top:20px;">
-            <button class="btn btn-ghost" style="flex:1;" onclick="toggleEdit()">Cancelar</button>
-            <button class="btn btn-primary" style="flex:2; justify-content:center;" onclick="saveFullEdit()" id="edit-save-btn">
-              <i class="ti ti-check"></i> Salvar tudo
-            </button>
-          </div>
         </div>
 
         <div class="danger-zone">
@@ -337,136 +287,107 @@
         </div>`;
     }
 
-    function updateEditGom(nomeComunidade) {
+    function toggleInfo() { editingInfo = !editingInfo; if(editingInfo) editingPay=false; render(); setTimeout(()=>{ document.querySelector('.info-grid')?.scrollIntoView({behavior:'smooth',block:'start'}); },100); }
+    function cancelInfo() { editingInfo = false; render(); }
+
+    function togglePay() { editingPay = !editingPay; if(editingPay) editingInfo=false; render(); setTimeout(()=>{ document.querySelector('.section-header:last-of-type')?.scrollIntoView({behavior:'smooth',block:'start'}); },100); }
+    function cancelPay() { editingPay = false; render(); }
+
+    function updateGomOpts(nomeComunidade) {
       const sel = document.getElementById('e-gom');
-      const comm = comunidadesData.find(c => c.nome === nomeComunidade);
-      const goms = comm ? comm.goms : [];
-      const currentGom = rowData[COL.GOM]||'';
-      sel.innerHTML = `<option value="">Selecione...</option>` +
-        goms.map(g => `<option ${g===currentGom?'selected':''}>${g}</option>`).join('');
+      if (!sel) return;
+      const comm = comunidadesData.find(c=>c.nome===nomeComunidade);
+      const goms = comm?.goms||[];
+      sel.innerHTML = `<option value="">Selecione...</option>` + goms.map(g=>`<option>${g}</option>`).join('');
       if (comm?.linkCeg) {
         const linkEl = document.getElementById('e-link-ceg');
         if (linkEl && !linkEl.value) linkEl.value = comm.linkCeg;
       }
     }
 
-    function toggleEdit() {
-      const sec = document.getElementById('edit-section');
-      sec.classList.toggle('open');
-      if (sec.classList.contains('open')) sec.scrollIntoView({ behavior:'smooth', block:'start' });
-    }
-
-    async function saveFullEdit() {
-      const btn = document.getElementById('edit-save-btn');
+    async function saveInfo() {
+      const btn = document.getElementById('save-info-btn');
       btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
       btn.disabled = true;
-      const g = id => document.getElementById(id)?.value || '';
-      const cx = isCaixinha();
-
-      const stValues = [g('e-st-item'), g('e-st-fi1'), g('e-st-fi2'), g('e-st-alf'), g('e-st-fnac')];
-      const novoStatus = stValues.includes('Cobrado — pendente') ? 'Cobrado — pendente'
-                       : stValues.every(s => s === 'Pago')       ? 'Pago'
-                       : 'Aguardando cobrança';
-
-      const pagSteps = [
-        { vl: g('e-vl-item'), st: g('e-st-item') },
-        { vl: g('e-vl-fi1'),  st: g('e-st-fi1')  },
-        { vl: g('e-vl-fi2'),  st: g('e-st-fi2')  },
-        { vl: g('e-vl-alf'),  st: g('e-st-alf')  },
-        { vl: g('e-vl-fnac'), st: g('e-st-fnac') },
-      ];
-      const totalPago = pagSteps.filter(s=>s.st==='Pago').reduce((acc,s)=>acc+(parseFloat(s.vl)||0),0);
-      const totalPend = pagSteps.filter(s=>s.st==='Cobrado — pendente').reduce((acc,s)=>acc+(parseFloat(s.vl)||0),0);
-
+      const g = id => document.getElementById(id)?.value||'';
+      const cx = isCx();
       const newRow = [
         g('e-tipo'), g('e-comeback'), g('e-set'), g('e-numset'), g('e-img'),
         rowData[COL.CLAIM_TYPE]||'', g('e-membro'), g('e-numclaim'),
-        g('e-comunidade'), g('e-gom'), g('e-link-ceg'),
-        g('e-vl-item'), g('e-st-item'),
-        g('e-vl-fi1'), g('e-st-fi1'),
-        g('e-vl-fi2'), g('e-st-fi2'),
-        novoStatus, rowData[COL.ETAPA]||'',
+        g('e-comunidade'), g('e-gom'), g('e-link-ceg')||rowData[COL.LINK_CEG]||'',
+        rowData[COL.VL_ITEM]||'', rowData[COL.ST_ITEM]||'',
+        rowData[COL.VL_FI1]||'',  rowData[COL.ST_FI1]||'',
+        rowData[COL.VL_FI2]||'',  rowData[COL.ST_FI2]||'',
+        rowData[COL.STATUS]||'',   rowData[COL.ETAPA]||'',
         g('e-data-claim'), g('e-ceg'), g('e-data-rec'),
-        g('e-vl-alf'), g('e-st-alf'),
-        g('e-vl-fnac'), g('e-st-fnac'),
-        totalPago.toString(), totalPend.toString(),
+        rowData[COL.VL_ALF]||'',  rowData[COL.ST_ALF]||'',
+        rowData[COL.VL_FNAC]||'', rowData[COL.ST_FNAC]||'',
+        rowData[COL.TOTAL_PAGO]||'', rowData[COL.PENDENTE]||'',
         rowData[COL.TIPO_CEG]||'',
-        cx ? g('e-plat')      : (rowData[COL.PLATAFORMA]||''),
-        cx ? g('e-mes')       : (rowData[COL.MES_EDICAO]||''),
-        cx ? g('e-linha-gom') : (rowData[COL.LINHA_GOM]||''),
-        cx ? g('e-nomeset')   : (rowData[COL.NOME_SET]||''),
+        cx ? g('e-plat')      : rowData[COL.PLATAFORMA]||'',
+        cx ? g('e-mes')       : rowData[COL.MES_EDICAO]||'',
+        cx ? g('e-linha-gom') : rowData[COL.LINHA_GOM]||'',
+        cx ? g('e-nomeset')   : rowData[COL.NOME_SET]||'',
       ];
-
       try {
         await Sheets.set(`Itens!A${sheetRow}:AG${sheetRow}`, [newRow]);
         await loadItem();
-        document.getElementById('edit-section').classList.remove('open');
-        window.scrollTo({ top:0, behavior:'smooth' });
-      } catch(e) { alert('Erro ao salvar. Tente novamente.'); }
-      btn.innerHTML = '<i class="ti ti-check"></i> Salvar tudo';
-      btn.disabled = false;
+      } catch(e) { alert('Erro ao salvar.'); btn.innerHTML='<i class="ti ti-check"></i> Salvar informações'; btn.disabled=false; }
+    }
+
+    async function savePay() {
+      const btn = document.getElementById('save-pay-btn');
+      btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
+      btn.disabled = true;
+      const valInputs = document.querySelectorAll('[data-val]');
+      const stSelects = document.querySelectorAll('[data-col]');
+      const vals = {}, sts = {};
+      valInputs.forEach(el => { vals[parseInt(el.dataset.val)] = el.value; });
+      stSelects.forEach(el => { sts[parseInt(el.dataset.col)] = el.value; });
+
+      const stValues = Object.values(sts);
+      const novoStatus = stValues.includes('Cobrado — pendente') ? 'Cobrado — pendente'
+                       : stValues.every(s=>s==='Pago') ? 'Pago' : 'Aguardando cobrança';
+
+      const calcSteps = [
+        {vl:COL.VL_ITEM,st:COL.ST_ITEM},{vl:COL.VL_FI1,st:COL.ST_FI1},
+        {vl:COL.VL_FI2,st:COL.ST_FI2},{vl:COL.VL_ALF,st:COL.ST_ALF},{vl:COL.VL_FNAC,st:COL.ST_FNAC},
+      ];
+      let totalPago=0, totalPend=0;
+      calcSteps.forEach(({vl,st})=>{
+        const v = parseFloat(vals[vl]??rowData[vl])||0;
+        const s = sts[st]??rowData[st]??'';
+        if(s==='Pago') totalPago+=v;
+        if(s==='Cobrado — pendente') totalPend+=v;
+      });
+
+      const newRow = [
+        rowData[COL.TIPO]||'', rowData[COL.COMEBACK]||'', rowData[COL.SET_POB]||'', rowData[COL.NUM_SET]||'', rowData[COL.IMG_LINK]||'',
+        rowData[COL.CLAIM_TYPE]||'', rowData[COL.MEMBRO]||'', rowData[COL.NUM_CLAIM]||'',
+        rowData[COL.COMUNIDADE]||'', rowData[COL.GOM]||'', rowData[COL.LINK_CEG]||'',
+        vals[COL.VL_ITEM]??rowData[COL.VL_ITEM]||'', sts[COL.ST_ITEM]||'',
+        vals[COL.VL_FI1]??rowData[COL.VL_FI1]||'',  sts[COL.ST_FI1]||'',
+        vals[COL.VL_FI2]??rowData[COL.VL_FI2]||'',  sts[COL.ST_FI2]||'',
+        novoStatus, rowData[COL.ETAPA]||'',
+        rowData[COL.DATA_CLAIM]||'', rowData[COL.NOTAS]||'', rowData[COL.DATA_REC]||'',
+        vals[COL.VL_ALF]??rowData[COL.VL_ALF]||'',  sts[COL.ST_ALF]||'',
+        vals[COL.VL_FNAC]??rowData[COL.VL_FNAC]||'',sts[COL.ST_FNAC]||'',
+        totalPago.toString(), totalPend.toString(),
+        rowData[COL.TIPO_CEG]||'', rowData[COL.PLATAFORMA]||'', rowData[COL.MES_EDICAO]||'',
+        rowData[COL.LINHA_GOM]||'', rowData[COL.NOME_SET]||'',
+      ];
+      try {
+        await Sheets.set(`Itens!A${sheetRow}:AG${sheetRow}`, [newRow]);
+        await loadItem();
+      } catch(e) { alert('Erro ao salvar.'); btn.innerHTML='<i class="ti ti-check"></i> Salvar pagamentos'; btn.disabled=false; }
     }
 
     async function deleteItem() {
-      if (!confirm('Remover este item? Esta ação não pode ser desfeita.')) return;
+      if(!confirm('Remover este item? Esta ação não pode ser desfeita.')) return;
       try {
         await Sheets.set(`Itens!A${sheetRow}:AG${sheetRow}`, [Array(33).fill('')]);
         window.location.href = 'items.html';
       } catch(e) { alert('Erro ao remover.'); }
-    }
-
-    function onStatusChange(el) {
-      hasChanges = true;
-      document.getElementById('save-bar').classList.add('visible');
-    }
-
-    function discardChanges() {
-      hasChanges = false;
-      document.getElementById('save-bar').classList.remove('visible');
-      render();
-    }
-
-    async function saveChanges() {
-      const btn = document.getElementById('save-btn');
-      btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
-      btn.disabled = true;
-      const selects = document.querySelectorAll('[data-col]');
-      const updates = [];
-      selects.forEach(sel => updates.push({ range:`Itens!${indexToCol(parseInt(sel.dataset.col))}${sheetRow}`, value:sel.value }));
-      try {
-        await Promise.all(updates.map(u => Sheets.setCell(u.range, u.value)));
-        const stMap = {};
-        selects.forEach(sel => { stMap[parseInt(sel.dataset.col)] = sel.value; });
-        const calcSteps = [
-          { vl:COL.VL_ITEM, st:COL.ST_ITEM },
-          { vl:COL.VL_FI1,  st:COL.ST_FI1  },
-          { vl:COL.VL_FI2,  st:COL.ST_FI2  },
-          { vl:COL.VL_ALF,  st:COL.ST_ALF  },
-          { vl:COL.VL_FNAC, st:COL.ST_FNAC },
-        ];
-        let totalPago = 0, totalPend = 0;
-        calcSteps.forEach(({vl,st}) => {
-          const valor  = parseFloat(rowData[vl])||0;
-          const status = stMap[st] ?? rowData[st] ?? '';
-          if (status==='Pago') totalPago += valor;
-          if (status==='Cobrado — pendente') totalPend += valor;
-        });
-        await Sheets.setCell(`Itens!${indexToCol(COL.TOTAL_PAGO)}${sheetRow}`, totalPago.toString());
-        await Sheets.setCell(`Itens!${indexToCol(COL.PENDENTE)}${sheetRow}`, totalPend.toString());
-        const stValues = [];
-        selects.forEach(sel => {
-          if ([COL.ST_ITEM,COL.ST_FI1,COL.ST_FI2,COL.ST_ALF,COL.ST_FNAC].includes(parseInt(sel.dataset.col)))
-            stValues.push(sel.value);
-        });
-        const novoStatus = stValues.includes('Cobrado — pendente') ? 'Cobrado — pendente'
-                         : stValues.every(s=>s==='Pago') ? 'Pago' : 'Aguardando cobrança';
-        await Sheets.setCell(`Itens!${indexToCol(COL.STATUS)}${sheetRow}`, novoStatus);
-        await loadItem();
-        hasChanges = false;
-        document.getElementById('save-bar').classList.remove('visible');
-      } catch(e) { alert('Erro ao salvar. Tente novamente.'); }
-      btn.innerHTML = '<i class="ti ti-check"></i> Salvar alterações';
-      btn.disabled = false;
     }
   </script>
 </body>
