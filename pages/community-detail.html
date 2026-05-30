@@ -265,7 +265,7 @@
           `<input class="info-input" id="e-sheet" type="url" value="${sheet}" placeholder="https://docs.google.com/...">`
         )}
 
-        ${infoCard('Tipos de item', tipos||'—',
+        ${infoCard('Grupos/Fandoms', tipos||'—',
           `<input class="info-input" id="e-tipos" value="${tipos}" placeholder="ex: Photocard, Merch">`
         )}
 
@@ -372,13 +372,13 @@
           obsText,
           stringifyLinks(links),
         ]]);
-        await loadData();
         editingInfo = false;
+        await loadData();
         window.scrollTo({ top: 0, behavior: 'smooth' });
-      } catch(e) { alert('Erro ao salvar. Tente novamente.'); }
-      if (document.getElementById('save-info-btn')) {
-        document.getElementById('save-info-btn').innerHTML = '<i class="ti ti-check"></i> Salvar';
-        document.getElementById('save-info-btn').disabled = false;
+      } catch(e) {
+        alert('Erro ao salvar. Tente novamente.');
+        const btn = document.getElementById('save-info-btn');
+        if (btn) { btn.innerHTML = '<i class="ti ti-check"></i> Salvar'; btn.disabled = false; }
       }
     }
 
