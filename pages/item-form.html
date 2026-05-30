@@ -8,87 +8,71 @@
   <link rel="stylesheet" href="../css/tokens.css">
   <link rel="stylesheet" href="../css/base.css">
   <style>
-    .back-btn { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 13px; text-decoration: none; margin-bottom: 20px; transition: color var(--transition); }
-    .back-btn:hover { color: var(--text-primary); }
-    .step-indicator { display: flex; gap: 6px; margin-bottom: 28px; }
-    .step-dot { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background var(--transition); }
-    .step-dot.active { background: var(--accent); }
-    .step-dot.done   { background: var(--status-done-color); }
-    .form-step { display: none; }
-    .form-step.active { display: block; }
-    .step-label { font-family: var(--font-label); font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
-    .step-title { font-family: var(--font-display); font-size: 20px; margin-bottom: 4px; }
-    .step-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
-    .field { margin-bottom: var(--space-4); }
-    .field label { display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
-    .field input, .field select { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; font-family: var(--font-body); font-size: 14px; color: var(--text-primary); outline: none; transition: border-color var(--transition); -webkit-appearance: none; }
-    .field input:focus, .field select:focus { border-color: var(--accent-border); }
-    .field input::placeholder { color: var(--text-faint); }
-    .field input[type="month"] { color: var(--text-primary); }
-    .field-hint { font-size: 11px; color: var(--text-faint); margin-top: 5px; }
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
-
-    /* Divisor de seção dentro do step */
-    .section-divider { font-family: var(--font-label); font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); margin: 20px 0 14px; display: flex; align-items: center; gap: 8px; }
+    .back-btn { display:inline-flex; align-items:center; gap:6px; color:var(--text-muted); font-size:13px; text-decoration:none; margin-bottom:20px; transition:color var(--transition); }
+    .back-btn:hover { color:var(--text-primary); }
+    .step-indicator { display:flex; gap:6px; margin-bottom:28px; }
+    .step-dot { flex:1; height:3px; border-radius:2px; background:var(--border); transition:background var(--transition); }
+    .step-dot.active { background:var(--accent); }
+    .step-dot.done   { background:var(--status-done-color); }
+    .form-step { display:none; }
+    .form-step.active { display:block; }
+    .step-label { font-family:var(--font-label); font-size:9px; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px; }
+    .step-title { font-family:var(--font-display); font-size:20px; margin-bottom:4px; }
+    .step-sub { font-size:13px; color:var(--text-muted); margin-bottom:24px; }
+    .field { margin-bottom:var(--space-4); }
+    .field label { display:block; font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+    .field input, .field select { width:100%; background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius-md); padding:10px 12px; font-family:var(--font-body); font-size:14px; color:var(--text-primary); outline:none; transition:border-color var(--transition); -webkit-appearance:none; }
+    .field input:focus, .field select:focus { border-color:var(--accent-border); }
+    .field input::placeholder { color:var(--text-faint); }
+    .field input[type="month"], .field input[type="date"] { color:var(--text-primary); }
+    .field-hint { font-size:11px; color:var(--text-faint); margin-top:5px; }
+    .field-row { display:grid; grid-template-columns:1fr 1fr; gap:var(--space-3); }
+    .section-divider { font-family:var(--font-label); font-size:9px; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--text-muted); margin:20px 0 14px; display:flex; align-items:center; gap:8px; }
     .section-divider::after { content:''; flex:1; height:1px; background:var(--border); }
-
-    /* Tabs tipo CEG */
-    .type-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-    .type-tab { flex: 1; padding: 10px 8px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--bg-elevated); font-family: var(--font-label); font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; text-align: center; transition: all var(--transition); }
-    .type-tab.active { background: var(--lilac-light); color: var(--lilac-dark); border-color: var(--lilac-mid); }
-
-    /* Box campos caixinha */
-    .cx-box { background: var(--lilac-light); border: 1px solid var(--lilac-mid); border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px; display: none; }
-    .cx-box.show { display: block; }
-    .cx-box-label { font-family: var(--font-label); font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--lilac-dark); margin-bottom: 12px; }
-    .cx-box .field label { color: var(--lilac-dark); }
-    .cx-box .field input, .cx-box .field select { background: #fff; border-color: var(--lilac-mid); }
-
-    /* Lista de itens no step 2 */
-    .items-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-    .item-entry { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
-    .item-entry-thumb { width: 34px; height: 34px; border-radius: 6px; background: var(--lilac-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .item-entry-thumb i { font-size: 15px; color: var(--lilac-dark); }
-    .item-entry-info { flex: 1; min-width: 0; }
-    .item-entry-name { font-size: 12px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .item-entry-meta { font-size: 11px; color: var(--text-muted); }
-    .item-entry-val { font-size: 12px; color: var(--lilac-dark); font-weight: 500; flex-shrink: 0; }
-    .item-entry-del { width: 26px; height: 26px; border-radius: var(--radius-sm); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-faint); background: transparent; flex-shrink: 0; transition: all var(--transition); }
-    .item-entry-del:hover { border-color: var(--status-cancelled-border); color: var(--status-cancelled-color); }
-
-    /* Formulário inline de novo item */
-    .add-item-btn { width: 100%; padding: 11px; border-radius: var(--radius-md); border: 1.5px dashed var(--lilac-mid); background: transparent; font-size: 13px; color: var(--lilac-dark); display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; margin-bottom: 14px; font-family: var(--font-body); transition: all var(--transition); }
-    .add-item-btn:hover { background: var(--lilac-light); }
-    .add-item-form { background: var(--lilac-light); border: 1px solid var(--lilac-mid); border-radius: var(--radius-md); padding: 14px; margin-bottom: 14px; display: none; }
-    .add-item-form.show { display: block; }
-    .add-item-form-title { font-family: var(--font-label); font-size: 9px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--lilac-dark); margin-bottom: 12px; }
-    .add-item-form .field label { color: var(--lilac-dark); }
-    .add-item-form .field input, .add-item-form .field select { background: #fff; border-color: var(--lilac-mid); }
-
-    /* Step 3 — revisão */
-    .rev-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; margin-bottom: 10px; }
-    .rev-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-    .rev-title { font-size: 13px; font-weight: 500; color: var(--text-primary); }
-    .rev-badge { font-family: var(--font-label); font-size: 9px; font-weight: 700; letter-spacing: 0.06em; padding: 3px 9px; border-radius: var(--radius-pill); background: var(--lilac-light); color: var(--lilac-dark); }
-    .rev-edit-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--lilac-dark); cursor: pointer; padding: 4px 10px; border: 1px solid var(--lilac-mid); border-radius: var(--radius-pill); background: var(--lilac-light); transition: all var(--transition); }
-    .rev-edit-btn:hover { background: var(--lilac-mid); color: #fff; }
-    .rev-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
-    .rev-row span:first-child { color: var(--text-muted); }
-    .rev-row span:last-child { color: var(--text-primary); font-weight: 500; }
-    .rev-total { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); margin-top: 8px; padding-top: 10px; }
-    .rev-total-label { font-family: var(--font-label); font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); }
-    .rev-total-val { font-size: 18px; font-weight: 700; color: var(--lilac-dark); }
-
-    .nav-btns { display: flex; gap: var(--space-3); margin-top: var(--space-6); }
-    .nav-btns .btn { justify-content: center; }
-    .btn-back-icon { flex: 0 0 auto; padding: 11px 16px; }
-
-    .success-screen { display: none; text-align: center; padding: 48px 24px; }
-    .success-screen.show { display: block; }
-    .success-icon { font-size: 48px; color: var(--status-done-color); display: block; margin-bottom: 16px; }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spinner { animation: spin 1s linear infinite; display: inline-block; }
+    .type-tabs { display:flex; gap:8px; margin-bottom:16px; }
+    .type-tab { flex:1; padding:10px 8px; border-radius:var(--radius-md); border:1px solid var(--border); background:var(--bg-elevated); font-family:var(--font-label); font-size:10px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; color:var(--text-muted); cursor:pointer; text-align:center; transition:all var(--transition); }
+    .type-tab.active { background:var(--lilac-light); color:var(--lilac-dark); border-color:var(--lilac-mid); }
+    .cx-box { background:var(--lilac-light); border:1px solid var(--lilac-mid); border-radius:var(--radius-md); padding:14px; margin-bottom:16px; display:none; }
+    .cx-box.show { display:block; }
+    .cx-box-label { font-family:var(--font-label); font-size:9px; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--lilac-dark); margin-bottom:12px; }
+    .cx-box .field label { color:var(--lilac-dark); }
+    .cx-box .field input, .cx-box .field select { background:#fff; border-color:var(--lilac-mid); }
+    .items-list { display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+    .item-entry { background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:10px 12px; display:flex; align-items:center; gap:10px; }
+    .item-entry-thumb { width:34px; height:34px; border-radius:6px; background:var(--lilac-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .item-entry-thumb i { font-size:15px; color:var(--lilac-dark); }
+    .item-entry-info { flex:1; min-width:0; }
+    .item-entry-name { font-size:12px; font-weight:500; color:var(--text-primary); margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .item-entry-meta { font-size:11px; color:var(--text-muted); }
+    .item-entry-val { font-size:12px; color:var(--lilac-dark); font-weight:500; flex-shrink:0; }
+    .item-entry-del { width:26px; height:26px; border-radius:var(--radius-sm); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-faint); background:transparent; flex-shrink:0; transition:all var(--transition); }
+    .item-entry-del:hover { border-color:var(--status-cancelled-border); color:var(--status-cancelled-color); }
+    .add-item-btn { width:100%; padding:11px; border-radius:var(--radius-md); border:1.5px dashed var(--lilac-mid); background:transparent; font-size:13px; color:var(--lilac-dark); display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; margin-bottom:14px; font-family:var(--font-body); transition:all var(--transition); }
+    .add-item-btn:hover { background:var(--lilac-light); }
+    .add-item-form { background:var(--lilac-light); border:1px solid var(--lilac-mid); border-radius:var(--radius-md); padding:14px; margin-bottom:14px; display:none; }
+    .add-item-form.show { display:block; }
+    .add-item-form-title { font-family:var(--font-label); font-size:9px; font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color:var(--lilac-dark); margin-bottom:12px; }
+    .add-item-form .field label { color:var(--lilac-dark); }
+    .add-item-form .field input, .add-item-form .field select { background:#fff; border-color:var(--lilac-mid); }
+    .rev-card { background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:14px; margin-bottom:10px; }
+    .rev-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .rev-title { font-size:13px; font-weight:500; color:var(--text-primary); }
+    .rev-badge { font-family:var(--font-label); font-size:9px; font-weight:700; letter-spacing:0.06em; padding:3px 9px; border-radius:var(--radius-pill); background:var(--lilac-light); color:var(--lilac-dark); }
+    .rev-edit-btn { display:inline-flex; align-items:center; gap:4px; font-size:11px; color:var(--lilac-dark); cursor:pointer; padding:4px 10px; border:1px solid var(--lilac-mid); border-radius:var(--radius-pill); background:var(--lilac-light); transition:all var(--transition); }
+    .rev-row { display:flex; justify-content:space-between; font-size:12px; padding:3px 0; }
+    .rev-row span:first-child { color:var(--text-muted); }
+    .rev-row span:last-child { color:var(--text-primary); font-weight:500; }
+    .rev-total { display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); margin-top:8px; padding-top:10px; }
+    .rev-total-label { font-family:var(--font-label); font-size:9px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; color:var(--text-muted); }
+    .rev-total-val { font-size:18px; font-weight:700; color:var(--lilac-dark); }
+    .nav-btns { display:flex; gap:var(--space-3); margin-top:var(--space-6); }
+    .nav-btns .btn { justify-content:center; }
+    .btn-back-icon { flex:0 0 auto; padding:11px 16px; }
+    .success-screen { display:none; text-align:center; padding:48px 24px; }
+    .success-screen.show { display:block; }
+    .success-icon { font-size:48px; color:var(--status-done-color); display:block; margin-bottom:16px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .spinner { animation:spin 1s linear infinite; display:inline-block; }
   </style>
   <script src="../js/app.js"></script>
   <script src="../js/nav.js"></script>
@@ -98,20 +82,18 @@
     <a href="items.html" class="back-btn"><i class="ti ti-arrow-left"></i> Voltar</a>
     <h1 style="margin-bottom:6px;">Novo item</h1>
     <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;">Cadastre um ou mais itens da mesma compra.</p>
-
     <div class="step-indicator" id="step-indicator">
       <div class="step-dot active"></div>
       <div class="step-dot"></div>
       <div class="step-dot"></div>
     </div>
 
-    <!-- ══ STEP 1 — Origem do pedido ══ -->
+    <!-- STEP 1 -->
     <div class="form-step active" id="step-1">
       <div class="step-label">Step 1 de 3</div>
       <div class="step-title">Origem do pedido</div>
       <div class="step-sub">Informações compartilhadas entre todos os itens desta compra.</div>
 
-      <!-- Tipo de CEG -->
       <div class="field">
         <label>Tipo de CEG</label>
         <div class="type-tabs">
@@ -120,70 +102,34 @@
         </div>
       </div>
 
-      <!-- Campos caixinha -->
       <div class="cx-box" id="cx-box">
         <div class="cx-box-label">Detalhes da caixinha</div>
         <div class="field-row">
-          <div class="field">
-            <label>Plataforma</label>
-            <select id="f-plataforma"><option value="">Selecione...</option></select>
-          </div>
-          <div class="field">
-            <label>Mês / Edição</label>
-            <input type="month" id="f-mes">
-          </div>
+          <div class="field"><label>Plataforma</label><select id="f-plataforma"><option value="">Selecione...</option></select></div>
+          <div class="field"><label>Mês / Edição</label><input type="month" id="f-mes"></div>
         </div>
-        <div class="field">
-          <label>Nome do set / pedido</label>
-          <input type="text" id="f-nomeset" placeholder="ex: Pedido individual, Set Changbinas">
-        </div>
-        <div class="field" style="margin-bottom:0;">
-          <label>Linha na planilha da GOM</label>
-          <input type="text" id="f-linha-gom" placeholder="ex: 657">
-        </div>
+        <div class="field"><label>Nome do set / pedido</label><input type="text" id="f-nomeset" placeholder="ex: Pedido individual, Set Changbinas"></div>
+        <div class="field" style="margin-bottom:0;"><label>Linha na planilha da GOM</label><input type="text" id="f-linha-gom" placeholder="ex: 657"></div>
       </div>
 
-      <!-- Comunidade e GOM -->
-      <div class="field">
-        <label>Comunidade</label>
-        <select id="f-comunidade"><option value="">Selecione...</option></select>
-      </div>
-      <div class="field">
-        <label>GOM</label>
-        <select id="f-gom"><option value="">Selecione a comunidade primeiro...</option></select>
-      </div>
-      <div class="field">
-        <label>CEG</label>
-        <input type="text" id="f-ceg" placeholder="ex: CEG Karma POBs">
-      </div>
+      <div class="field"><label>Comunidade</label><select id="f-comunidade"><option value="">Selecione...</option></select></div>
+      <div class="field"><label>GOM</label><select id="f-gom"><option value="">Selecione a comunidade primeiro...</option></select></div>
+      <div class="field"><label>CEG</label><input type="text" id="f-ceg" placeholder="ex: CEG Karma POBs"></div>
       <div class="field">
         <label>Link da planilha da CEG</label>
         <input type="url" id="f-link-ceg" placeholder="https://docs.google.com/...">
         <div class="field-hint">Pré-preenchido com o link da comunidade, se cadastrado.</div>
       </div>
-      <div class="field">
-        <label>Data do claim</label>
-        <input type="date" id="f-data-claim">
-      </div>
+      <div class="field"><label>Data do claim</label><input type="date" id="f-data-claim"></div>
 
-      <!-- Campos compartilhados do item — só inter -->
-      <div id="f-setpob-wrap">
-        <div class="section-divider">Sobre os itens</div>
-        <div class="field">
-          <label>Comeback / Era</label>
-          <select id="f-comeback"><option value="">Selecione...</option></select>
-        </div>
-        <div class="field">
-          <label>Set / POB</label>
-          <input type="text" id="f-set" placeholder="ex: Makestar POB">
-        </div>
+      <div class="section-divider">Sobre os itens</div>
+
+      <div id="f-inter-wrap">
+        <div class="field"><label>Comeback / Era</label><select id="f-comeback"><option value="">Selecione...</option></select></div>
+        <div class="field"><label>Set / POB</label><input type="text" id="f-set" placeholder="ex: Makestar POB"></div>
         <div class="field-row">
-          <div class="field">
-            <label>Valor do item (R$)</label>
-            <input type="number" id="f-vl-item" placeholder="0,00" step="0.01" min="0">
-          </div>
-          <div class="field">
-            <label>Status pgto</label>
+          <div class="field"><label>Valor do item (R$)</label><input type="number" id="f-vl-item" placeholder="0,00" step="0.01" min="0"></div>
+          <div class="field"><label>Status pgto</label>
             <select id="f-st-item">
               <option>Aguardando cobrança</option>
               <option>Cobrado — pendente</option>
@@ -191,16 +137,15 @@
             </select>
           </div>
         </div>
+        <div class="field"><label>Data limite pgto item</label><input type="date" id="f-dt-item"></div>
       </div>
-
-
 
       <div class="nav-btns">
         <button class="btn btn-primary" style="flex:1;" onclick="goStep(2)">Próximo <i class="ti ti-arrow-right"></i></button>
       </div>
     </div>
 
-    <!-- ══ STEP 2 — Itens do pedido ══ -->
+    <!-- STEP 2 -->
     <div class="form-step" id="step-2">
       <div class="step-label">Step 2 de 3</div>
       <div class="step-title">Itens do pedido</div>
@@ -215,56 +160,30 @@
       <div class="add-item-form" id="add-item-form">
         <div class="add-item-form-title">Novo item</div>
         <div class="field-row">
-          <div class="field">
-            <label>Tipo de item</label>
-            <select id="fi-tipo"><option value="">Selecione...</option></select>
-          </div>
-          <div class="field">
-            <label>Membro</label>
-            <select id="fi-membro"><option value="">Selecione...</option></select>
-          </div>
+          <div class="field"><label>Tipo de item</label><select id="fi-tipo"><option value="">Selecione...</option></select></div>
+          <div class="field"><label>Membro</label><select id="fi-membro"><option value="">Selecione...</option></select></div>
         </div>
-        <!-- Comeback e Set/POB — só na caixinha -->
         <div id="fi-cx-fields" style="display:none;">
-          <div class="field">
-            <label>Comeback / Era</label>
-            <select id="fi-comeback"><option value="">Selecione...</option></select>
-          </div>
-          <div class="field">
-            <label>Set / POB</label>
-            <input type="text" id="fi-set-cx" placeholder="ex: Makestar POB">
-          </div>
+          <div class="field"><label>Comeback / Era</label><select id="fi-comeback"><option value="">Selecione...</option></select></div>
+          <div class="field"><label>Set / POB</label><input type="text" id="fi-set-cx" placeholder="ex: Makestar POB"></div>
         </div>
         <div class="field-row">
-          <div class="field">
-            <label>Nº do set</label>
-            <input type="number" id="fi-numset" placeholder="ex: 4">
-          </div>
-          <div class="field">
-            <label>Nº do claim</label>
-            <input type="number" id="fi-numclaim" placeholder="ex: 7">
-          </div>
+          <div class="field"><label>Nº do set</label><input type="number" id="fi-numset" placeholder="ex: 4"></div>
+          <div class="field"><label>Nº do claim</label><input type="number" id="fi-numclaim" placeholder="ex: 7"></div>
         </div>
-        <div class="field">
-          <label>Link da imagem</label>
-          <input type="url" id="fi-img" placeholder="https://...">
-        </div>
-        <!-- Valor só aparece na caixinha -->
+        <div class="field"><label>Link da imagem</label><input type="url" id="fi-img" placeholder="https://..."></div>
         <div id="fi-valor-wrap" style="display:none;">
           <div class="field-row">
-            <div class="field">
-              <label>Valor (R$)</label>
-              <input type="number" id="fi-valor" placeholder="0,00" step="0.01" min="0">
-            </div>
-            <div class="field">
-              <label>Status pgto</label>
-              <select id="fi-st-item-cx">
+            <div class="field"><label>Valor (R$)</label><input type="number" id="fi-valor" placeholder="0,00" step="0.01" min="0"></div>
+            <div class="field"><label>Status pgto</label>
+              <select id="fi-st-item">
                 <option>Aguardando cobrança</option>
                 <option>Cobrado — pendente</option>
                 <option>Pago</option>
               </select>
             </div>
           </div>
+          <div class="field"><label>Data limite pgto</label><input type="date" id="fi-dt-item"></div>
         </div>
         <div class="nav-btns" style="margin-top:10px;">
           <button class="btn btn-ghost" style="flex:1;" onclick="toggleAddForm()">Cancelar</button>
@@ -278,7 +197,7 @@
       </div>
     </div>
 
-    <!-- ══ STEP 3 — Revisão ══ -->
+    <!-- STEP 3 -->
     <div class="form-step" id="step-3">
       <div class="step-label">Step 3 de 3</div>
       <div class="step-title">Revisão</div>
@@ -315,7 +234,7 @@
       </div>
     </div>
 
-    <!-- ══ Sucesso ══ -->
+    <!-- Sucesso -->
     <div class="success-screen" id="success-screen">
       <i class="ti ti-circle-check success-icon"></i>
       <h2 style="margin-bottom:8px;" id="success-title">Itens salvos!</h2>
@@ -328,22 +247,16 @@
   </main>
 
   <script>
-    let currentStep = 1;
-    let tipoCeg = 'inter';
-    let pedidoItems = [];
-    let comunidadesData = [];
+    let currentStep = 1, tipoCeg = 'inter', pedidoItems = [], comunidadesData = [];
 
     document.addEventListener('DOMContentLoaded', async () => {
       await Auth.init();
       const restored = await Auth.tryRestore();
       if (!restored) { window.location.href = '../index.html'; return; }
       await loadDropdowns();
-
-      // Listener comunidade → atualiza GOM e link CEG
       document.getElementById('f-comunidade').addEventListener('change', e => {
-        const nome = e.target.value;
-        updateGomSelect(nome);
-        updateLinkCeg(nome);
+        updateGomSelect(e.target.value);
+        updateLinkCeg(e.target.value);
       });
     });
 
@@ -352,21 +265,15 @@
         Sheets.get('Listas!A3:D100'),
         Sheets.get(CONFIG.RANGES.COMMUNITIES),
       ]);
-
       const tipos     = [...new Set((listRows||[]).map(r=>r[0]).filter(Boolean))];
       const comebacks = [...new Set((listRows||[]).map(r=>r[1]).filter(Boolean))];
       const membros   = [...new Set((listRows||[]).map(r=>r[2]).filter(Boolean))];
       const plats     = [...new Set((listRows||[]).map(r=>r[3]).filter(v=>v&&v.trim()))];
-
-      comunidadesData = (commRows||[]).filter(r=>r[0]).map(r => ({
-        nome:    r[0],
-        goms:    (r[1]||'').split('|').map(g=>g.trim()).filter(Boolean),
-        linkCeg: r[3]||'',
+      comunidadesData = (commRows||[]).filter(r=>r[0]).map(r=>({
+        nome: r[0], goms: (r[1]||'').split('|').map(g=>g.trim()).filter(Boolean), linkCeg: r[3]||'',
       }));
-      const comms = comunidadesData.map(c => c.nome);
-
       fillSelect('f-plataforma', plats,    'Selecione...');
-      fillSelect('f-comunidade', comms,    'Selecione...');
+      fillSelect('f-comunidade', comunidadesData.map(c=>c.nome), 'Selecione...');
       fillSelect('f-comeback',   comebacks,'Selecione...');
       fillSelect('fi-tipo',      tipos,    'Selecione...');
       fillSelect('fi-membro',    membros,  'Selecione...');
@@ -378,37 +285,31 @@
       const sel = document.getElementById(id);
       if (!sel) return;
       sel.innerHTML = `<option value="">${placeholder}</option>`;
-      values.forEach(v => {
-        const o = document.createElement('option');
-        o.value = o.textContent = v;
-        sel.appendChild(o);
-      });
+      values.forEach(v => { const o = document.createElement('option'); o.value = o.textContent = v; sel.appendChild(o); });
     }
 
-    function updateGomSelect(nomeComunidade) {
+    function updateGomSelect(nome) {
       const sel = document.getElementById('f-gom');
-      const comm = comunidadesData.find(c => c.nome === nomeComunidade);
-      const goms = comm ? comm.goms : [];
+      const comm = comunidadesData.find(c=>c.nome===nome);
+      const goms = comm?.goms||[];
       sel.innerHTML = goms.length
-        ? `<option value="">Selecione...</option>` + goms.map(g=>`<option value="${g}">${g}</option>`).join('')
+        ? `<option value="">Selecione...</option>` + goms.map(g=>`<option>${g}</option>`).join('')
         : `<option value="">Selecione a comunidade primeiro...</option>`;
     }
 
-    function updateLinkCeg(nomeComunidade) {
-      const comm = comunidadesData.find(c => c.nome === nomeComunidade);
-      if (comm && comm.linkCeg) {
-        document.getElementById('f-link-ceg').value = comm.linkCeg;
-      }
+    function updateLinkCeg(nome) {
+      const comm = comunidadesData.find(c=>c.nome===nome);
+      if (comm?.linkCeg) document.getElementById('f-link-ceg').value = comm.linkCeg;
     }
 
     function setTipoCeg(tipo) {
       tipoCeg = tipo;
-      document.getElementById('tab-inter').classList.toggle('active', tipo === 'inter');
-      document.getElementById('tab-cx').classList.toggle('active', tipo === 'cx');
-      document.getElementById('cx-box').classList.toggle('show', tipo === 'cx');
-      document.getElementById('f-setpob-wrap').style.display  = tipo === 'inter' ? 'block' : 'none';
-      document.getElementById('fi-cx-fields').style.display   = tipo === 'cx'    ? 'block' : 'none';
-      document.getElementById('fi-valor-wrap').style.display  = tipo === 'cx'    ? 'block' : 'none';
+      document.getElementById('tab-inter').classList.toggle('active', tipo==='inter');
+      document.getElementById('tab-cx').classList.toggle('active', tipo==='cx');
+      document.getElementById('cx-box').classList.toggle('show', tipo==='cx');
+      document.getElementById('f-inter-wrap').style.display  = tipo==='inter' ? 'block' : 'none';
+      document.getElementById('fi-cx-fields').style.display  = tipo==='cx'    ? 'block' : 'none';
+      document.getElementById('fi-valor-wrap').style.display = tipo==='cx'    ? 'block' : 'none';
     }
 
     function goStep(n) {
@@ -424,21 +325,19 @@
     function updateIndicator() {
       document.querySelectorAll('.step-dot').forEach((dot, i) => {
         dot.classList.remove('active','done');
-        if (i + 1 === currentStep) dot.classList.add('active');
-        if (i + 1 < currentStep)  dot.classList.add('done');
+        if (i+1===currentStep) dot.classList.add('active');
+        if (i+1<currentStep)   dot.classList.add('done');
       });
     }
 
     function validateStep(n) {
-      if (n === 1) {
+      if (n===1) {
         if (!document.getElementById('f-comunidade').value) { alert('Selecione a comunidade.'); return false; }
-        if (tipoCeg === 'inter' && !document.getElementById('f-comeback').value) { alert('Selecione o comeback.'); return false; }
-        if (tipoCeg === 'cx' && !document.getElementById('f-plataforma').value) { alert('Selecione a plataforma.'); return false; }
-        if (tipoCeg === 'cx' && !document.getElementById('f-mes').value)        { alert('Selecione o mês/edição.'); return false; }
+        if (tipoCeg==='inter' && !document.getElementById('f-comeback').value) { alert('Selecione o comeback.'); return false; }
+        if (tipoCeg==='cx' && !document.getElementById('f-plataforma').value) { alert('Selecione a plataforma.'); return false; }
+        if (tipoCeg==='cx' && !document.getElementById('f-mes').value)        { alert('Selecione o mês/edição.'); return false; }
       }
-      if (n === 2) {
-        if (pedidoItems.length === 0) { alert('Adicione pelo menos um item.'); return false; }
-      }
+      if (n===2 && pedidoItems.length===0) { alert('Adicione pelo menos um item.'); return false; }
       return true;
     }
 
@@ -450,89 +349,81 @@
     }
 
     function addItem() {
-      const tipo   = document.getElementById('fi-tipo').value;
-      const membro = document.getElementById('fi-membro').value;
+      const tipo = document.getElementById('fi-tipo').value;
       if (!tipo) { alert('Selecione o tipo de item.'); return; }
-
       const item = {
         tipo,
-        membro,
-        comeback: tipoCeg === 'cx' ? document.getElementById('fi-comeback').value : '',
-        set:      tipoCeg === 'cx' ? document.getElementById('fi-set-cx').value : '',
+        membro:   document.getElementById('fi-membro').value,
+        comeback: tipoCeg==='cx' ? document.getElementById('fi-comeback').value : '',
+        set:      tipoCeg==='cx' ? document.getElementById('fi-set-cx').value : '',
         numset:   document.getElementById('fi-numset').value,
         numclaim: document.getElementById('fi-numclaim').value,
         img:      document.getElementById('fi-img').value,
-        valor:    tipoCeg === 'cx' ? document.getElementById('fi-valor').value : document.getElementById('f-vl-item').value,
-        stItem:   tipoCeg === 'cx' ? document.getElementById('fi-st-item-cx').value : document.getElementById('f-st-item').value,
+        valor:    tipoCeg==='cx' ? document.getElementById('fi-valor').value : document.getElementById('f-vl-item').value,
+        stItem:   tipoCeg==='cx' ? document.getElementById('fi-st-item').value : document.getElementById('f-st-item').value,
+        dtItem:   tipoCeg==='cx' ? document.getElementById('fi-dt-item').value : document.getElementById('f-dt-item').value,
       };
-
       pedidoItems.push(item);
       renderItemsList();
-
-      ['fi-tipo','fi-membro','fi-comeback','fi-st-item-cx'].forEach(id => { const el = document.getElementById(id); if(el) el.selectedIndex = 0; });
-      ['fi-numset','fi-numclaim','fi-img','fi-valor','fi-set-cx'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+      ['fi-tipo','fi-membro','fi-comeback','fi-st-item'].forEach(id => { const el=document.getElementById(id); if(el) el.selectedIndex=0; });
+      ['fi-numset','fi-numclaim','fi-img','fi-valor','fi-set-cx','fi-dt-item'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
       toggleAddForm();
     }
 
-    function removeItem(idx) {
-      pedidoItems.splice(idx, 1);
-      renderItemsList();
-    }
+    function removeItem(idx) { pedidoItems.splice(idx,1); renderItemsList(); }
 
     function renderItemsList() {
       const list = document.getElementById('items-list');
-      if (!pedidoItems.length) { list.innerHTML = ''; return; }
       const comebackGlobal = document.getElementById('f-comeback').value;
-      list.innerHTML = pedidoItems.map((item, idx) => {
-        const comeback = tipoCeg === 'cx' ? item.comeback : comebackGlobal;
-        const nome = [item.tipo, item.membro, comeback].filter(Boolean).join(' · ');
-        const meta = [item.set, item.numset ? `Set ${item.numset}` : '', item.numclaim ? `Claim ${item.numclaim}` : ''].filter(Boolean).join(' · ');
+      list.innerHTML = pedidoItems.map((item,idx) => {
+        const cb   = tipoCeg==='cx' ? item.comeback : comebackGlobal;
+        const nome = [item.tipo,item.membro,cb].filter(Boolean).join(' · ');
+        const meta = [item.set, item.numset?`Set ${item.numset}`:'', item.numclaim?`Claim ${item.numclaim}`:''].filter(Boolean).join(' · ');
         const val  = parseFloat(item.valor)||0;
         return `<div class="item-entry">
           <div class="item-entry-thumb"><i class="ti ti-id-badge"></i></div>
           <div class="item-entry-info">
-            <div class="item-entry-name">${nome || 'Item sem nome'}</div>
-            <div class="item-entry-meta">${meta || '—'}</div>
+            <div class="item-entry-name">${nome||'Item sem nome'}</div>
+            <div class="item-entry-meta">${meta||'—'}</div>
           </div>
-          <div class="item-entry-val">${val > 0 ? formatBRL(val) : '—'}</div>
+          <div class="item-entry-val">${val>0?formatBRL(val):'—'}</div>
           <button class="item-entry-del" onclick="removeItem(${idx})"><i class="ti ti-x" style="font-size:12px;"></i></button>
         </div>`;
       }).join('');
     }
 
     function buildReview() {
-      const g = id => document.getElementById(id)?.value || '';
-      document.getElementById('rev-tipo-badge').textContent = tipoCeg === 'cx' ? 'CAIXINHA' : 'CEG INTER';
-
-      let origemHtml = `
+      const g = id => document.getElementById(id)?.value||'';
+      document.getElementById('rev-tipo-badge').textContent = tipoCeg==='cx' ? 'CAIXINHA' : 'CEG INTER';
+      let html = `
         <div class="rev-row"><span>Comunidade</span><span>${g('f-comunidade')}</span></div>
         <div class="rev-row"><span>GOM</span><span>${g('f-gom')||'—'}</span></div>
-        ${g('f-ceg') ? `<div class="rev-row"><span>CEG</span><span>${g('f-ceg')}</span></div>` : ''}
+        ${g('f-ceg')?`<div class="rev-row"><span>CEG</span><span>${g('f-ceg')}</span></div>`:''}
       `;
-      if (tipoCeg === 'inter') {
-        if (g('f-comeback')) origemHtml += `<div class="rev-row"><span>Comeback</span><span>${g('f-comeback')}</span></div>`;
-        if (g('f-set'))      origemHtml += `<div class="rev-row"><span>Set / POB</span><span>${g('f-set')}</span></div>`;
-        if (g('f-vl-item'))  origemHtml += `<div class="rev-row"><span>Valor</span><span>${formatBRL(g('f-vl-item'))}</span></div>`;
-        origemHtml += `<div class="rev-row"><span>Status pgto</span><span>${g('f-st-item')}</span></div>`;
+      if (tipoCeg==='inter') {
+        if (g('f-comeback')) html+=`<div class="rev-row"><span>Comeback</span><span>${g('f-comeback')}</span></div>`;
+        if (g('f-set'))      html+=`<div class="rev-row"><span>Set / POB</span><span>${g('f-set')}</span></div>`;
+        if (g('f-vl-item'))  html+=`<div class="rev-row"><span>Valor</span><span>${formatBRL(g('f-vl-item'))}</span></div>`;
+        html+=`<div class="rev-row"><span>Status pgto</span><span>${g('f-st-item')}</span></div>`;
       } else {
-        origemHtml += `<div class="rev-row"><span>Plataforma</span><span>${g('f-plataforma')}</span></div>`;
-        if (g('f-mes'))      origemHtml += `<div class="rev-row"><span>Mês</span><span>${formatMesAno(g('f-mes'))}</span></div>`;
-        if (g('f-nomeset'))  origemHtml += `<div class="rev-row"><span>Nome do set</span><span>${g('f-nomeset')}</span></div>`;
-        if (g('f-linha-gom')) origemHtml += `<div class="rev-row"><span>Linha GOM</span><span>${g('f-linha-gom')}</span></div>`;
+        html+=`<div class="rev-row"><span>Plataforma</span><span>${g('f-plataforma')}</span></div>`;
+        if (g('f-mes'))       html+=`<div class="rev-row"><span>Mês</span><span>${formatMesAno(g('f-mes'))}</span></div>`;
+        if (g('f-nomeset'))   html+=`<div class="rev-row"><span>Nome do set</span><span>${g('f-nomeset')}</span></div>`;
+        if (g('f-linha-gom')) html+=`<div class="rev-row"><span>Linha GOM</span><span>${g('f-linha-gom')}</span></div>`;
       }
-      if (g('f-data-claim')) origemHtml += `<div class="rev-row"><span>Data claim</span><span>${g('f-data-claim')}</span></div>`;
-      document.getElementById('rev-origem').innerHTML = origemHtml;
+      if (g('f-data-claim')) html+=`<div class="rev-row"><span>Data claim</span><span>${g('f-data-claim')}</span></div>`;
+      document.getElementById('rev-origem').innerHTML = html;
 
-      const comebackGlobal = tipoCeg === 'inter' ? g('f-comeback') : '';
+      const comebackGlobal = tipoCeg==='inter' ? g('f-comeback') : '';
       const count = pedidoItems.length;
-      document.getElementById('rev-itens-count').textContent = `${count} ${count === 1 ? 'item' : 'itens'}`;
-      const total = pedidoItems.reduce((acc, it) => acc + (parseFloat(it.valor)||0), 0);
+      document.getElementById('rev-itens-count').textContent = `${count} ${count===1?'item':'itens'}`;
+      const total = pedidoItems.reduce((acc,it)=>acc+(parseFloat(it.valor)||0),0);
       document.getElementById('rev-total').textContent = formatBRL(total);
-      document.getElementById('rev-itens-list').innerHTML = pedidoItems.map(item => {
-        const comeback = tipoCeg === 'cx' ? (item.comeback || '') : comebackGlobal;
-        const nome = [item.tipo, item.membro, comeback].filter(Boolean).join(' · ');
+      document.getElementById('rev-itens-list').innerHTML = pedidoItems.map(item=>{
+        const cb   = tipoCeg==='cx' ? (item.comeback||'') : comebackGlobal;
+        const nome = [item.tipo,item.membro,cb].filter(Boolean).join(' · ');
         const val  = parseFloat(item.valor)||0;
-        return `<div class="rev-row"><span>${nome || '—'}</span><span>${val > 0 ? formatBRL(val) : '—'}</span></div>`;
+        return `<div class="rev-row"><span>${nome||'—'}</span><span>${val>0?formatBRL(val):'—'}</span></div>`;
       }).join('');
     }
 
@@ -540,64 +431,52 @@
       const btn = document.getElementById('submit-btn');
       btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
       btn.disabled = true;
-
-      const g = id => document.getElementById(id)?.value || '';
-      const comunidade = g('f-comunidade');
-      const gom        = g('f-gom');
-      const ceg        = g('f-ceg');
-      const linkCeg    = g('f-link-ceg');
-      const dataClaim  = g('f-data-claim');
-      const comeback   = g('f-comeback');
-      const plat       = tipoCeg === 'cx' ? g('f-plataforma') : '';
-      const mes        = tipoCeg === 'cx' ? g('f-mes') : '';
-      const linhaGom   = tipoCeg === 'cx' ? g('f-linha-gom') : '';
-      const comebackGlobal = g('f-comeback');
-      const setInter   = g('f-set');
-      const nomeset    = tipoCeg === 'cx' ? g('f-nomeset') : '';
-      const stItemPad  = tipoCeg === 'inter' ? g('f-st-item') : 'Aguardando cobrança';
-      const vlItemPad  = tipoCeg === 'inter' ? g('f-vl-item') : '';
+      const g = id => document.getElementById(id)?.value||'';
+      const cx = tipoCeg==='cx';
+      const comunidade = g('f-comunidade'), gom = g('f-gom'), ceg = g('f-ceg');
+      const linkCeg = g('f-link-ceg'), dataClaim = g('f-data-claim');
+      const comebackGlobal = g('f-comeback'), setInter = g('f-set');
+      const nomeset = cx?g('f-nomeset'):'', plat = cx?g('f-plataforma'):'';
+      const mes = cx?g('f-mes'):'', linhaGom = cx?g('f-linha-gom'):'';
+      const stItemPad = cx?'Aguardando cobrança':g('f-st-item');
+      const dtItemPad = cx?'':g('f-dt-item');
+      const vlItemPad = cx?'':g('f-vl-item');
 
       try {
-        const existing = await Sheets.get(CONFIG.RANGES.ITEMS) || [];
+        const existing = await Sheets.get(CONFIG.RANGES.ITEMS)||[];
         let nextRow = existing.length + 4;
-
         for (const item of pedidoItems) {
-          const comeback = tipoCeg === 'cx' ? (item.comeback || '') : comebackGlobal;
-          const setItem  = tipoCeg === 'cx' ? (item.set || '') : setInter;
-          const stItem = tipoCeg === 'cx' ? (item.stItem || 'Aguardando cobrança') : stItemPad;
-          const vlItem = parseFloat(tipoCeg === 'inter' ? vlItemPad : item.valor) || 0;
-          const statusInicial = stItem === 'Cobrado — pendente' ? 'Cobrado — pendente'
-                              : stItem === 'Pago'               ? 'Pago'
-                              : 'Aguardando cobrança';
-          const totalPago = stItem === 'Pago' ? vlItem : 0;
-          const pendente  = stItem === 'Cobrado — pendente' ? vlItem : 0;
+          const cb     = cx ? (item.comeback||'') : comebackGlobal;
+          const setV   = cx ? (item.set||'') : setInter;
+          const stItem = cx ? (item.stItem||'Aguardando cobrança') : stItemPad;
+          const dtItem = cx ? (item.dtItem||'') : dtItemPad;
+          const vlItem = parseFloat(cx ? item.valor : vlItemPad)||0;
+          const totalPago = stItem==='Pago' ? vlItem : 0;
+          const pendente  = stItem==='Cobrado — pendente' ? vlItem : 0;
+          const statusGeral = stItem==='Cobrado — pendente' ? 'Cobrado — pendente'
+                            : stItem==='Pago' ? 'Pago' : 'Aguardando cobrança';
 
           const row = [
-            item.tipo, comeback, setItem, item.numset, item.img,
-            'Por membro (OT8)', item.membro, item.numclaim,
-            comunidade, gom, linkCeg,
-            vlItem.toString(), stItem,
-            '', 'Aguardando cobrança',
-            '', 'Aguardando cobrança',
-            statusInicial, '',
-            dataClaim, ceg, '',
-            '', 'Aguardando cobrança',
-            '', 'Aguardando cobrança',
-            totalPago.toString(), pendente.toString(),
-            tipoCeg === 'cx' ? 'Caixinha' : 'Internacional',
-            plat, mes, linhaGom, nomeset,
+            item.tipo, item.membro, cb, setV, item.numset, item.numclaim, item.img,
+            cx?'Caixinha':'Internacional', plat, mes, nomeset, linhaGom,
+            comunidade, gom, ceg, linkCeg, dataClaim,
+            '', '', '',
+            vlItem.toString(), stItem, dtItem,
+            '','Aguardando cobrança','',
+            '','Aguardando cobrança','',
+            '','Aguardando cobrança','',
+            '','Aguardando cobrança','',
+            totalPago.toString(), pendente.toString(), statusGeral,
           ];
-
-          await Sheets.set(`Itens!A${nextRow}:AG${nextRow}`, [row]);
+          await Sheets.set(`Itens!A${nextRow}:AL${nextRow}`, [row]);
           nextRow++;
         }
-
         const count = pedidoItems.length;
         document.getElementById('step-3').classList.remove('active');
         document.getElementById('step-indicator').style.display = 'none';
         document.getElementById('success-screen').classList.add('show');
-        document.getElementById('success-title').textContent = count === 1 ? 'Item salvo!' : `${count} itens salvos!`;
-        document.getElementById('success-sub').textContent = `${count} ${count === 1 ? 'item foi adicionado' : 'itens foram adicionados'} à sua planilha.`;
+        document.getElementById('success-title').textContent = count===1?'Item salvo!':`${count} itens salvos!`;
+        document.getElementById('success-sub').textContent = `${count} ${count===1?'item foi adicionado':'itens foram adicionados'} à sua planilha.`;
       } catch(e) {
         alert('Erro ao salvar. Tente novamente.');
         btn.innerHTML = '<i class="ti ti-circle-check"></i> Salvar tudo';
@@ -606,9 +485,8 @@
     }
 
     function resetForm() {
-      pedidoItems = [];
-      tipoCeg = 'inter';
-      document.querySelectorAll('input, select').forEach(el => el.value = '');
+      pedidoItems = []; tipoCeg = 'inter';
+      document.querySelectorAll('input, select').forEach(el=>el.value='');
       document.getElementById('items-list').innerHTML = '';
       document.getElementById('add-item-form').classList.remove('show');
       document.getElementById('add-item-btn').style.display = 'flex';
@@ -617,11 +495,11 @@
       document.getElementById('tab-inter').classList.add('active');
       document.getElementById('tab-cx').classList.remove('active');
       document.getElementById('cx-box').classList.remove('show');
-      document.getElementById('f-setpob-wrap').style.display  = 'block';
-      
-      document.getElementById('fi-valor-wrap').style.display  = 'none';
+      document.getElementById('f-inter-wrap').style.display = 'block';
+      document.getElementById('fi-cx-fields').style.display = 'none';
+      document.getElementById('fi-valor-wrap').style.display = 'none';
       currentStep = 1;
-      document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.form-step').forEach(s=>s.classList.remove('active'));
       document.getElementById('step-1').classList.add('active');
       updateIndicator();
       document.getElementById('submit-btn').innerHTML = '<i class="ti ti-circle-check"></i> Salvar tudo';
