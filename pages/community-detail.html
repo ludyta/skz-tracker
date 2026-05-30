@@ -8,60 +8,93 @@
   <link rel="stylesheet" href="../css/tokens.css">
   <link rel="stylesheet" href="../css/base.css">
   <style>
-    .back-btn { display: inline-flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 13px; text-decoration: none; margin-bottom: 20px; transition: color var(--transition); }
-    .back-btn:hover { color: var(--text-primary); }
+    .back-btn { display:inline-flex; align-items:center; gap:6px; color:var(--text-muted); font-size:13px; text-decoration:none; margin-bottom:20px; transition:color var(--transition); }
+    .back-btn:hover { color:var(--text-primary); }
 
-    .comm-hero { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); margin-bottom: var(--space-4); }
-    .comm-hero-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-4); }
-    .comm-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--accent-muted); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 500; color: var(--accent-deep); flex-shrink: 0; }
-    .comm-hero-info { flex: 1; min-width: 0; }
-    .comm-name { font-family: var(--font-display); font-size: 22px; font-weight: 500; color: var(--text-primary); margin-bottom: 3px; }
-    .comm-gom { font-size: 13px; color: var(--text-muted); }
-    .pending-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 3px 10px; border-radius: var(--radius-pill); background: var(--status-pending-bg); color: var(--status-pending-color); border: 1px solid var(--status-pending-border); margin-bottom: var(--space-4); }
+    .comm-hero { background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:var(--space-5); margin-bottom:var(--space-4); }
+    .comm-hero-header { display:flex; align-items:center; gap:var(--space-4); margin-bottom:var(--space-4); }
+    .comm-avatar { width:52px; height:52px; border-radius:50%; background:var(--accent-muted); display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:500; color:var(--accent-deep); flex-shrink:0; }
+    .comm-name { font-family:var(--font-display); font-size:22px; font-weight:500; color:var(--text-primary); margin-bottom:3px; }
+    .comm-gom { font-size:13px; color:var(--text-muted); }
+    .pending-tag { display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:3px 10px; border-radius:var(--radius-pill); background:var(--status-pending-bg); color:var(--status-pending-color); border:1px solid var(--status-pending-border); margin-bottom:var(--space-4); }
 
-    .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-4); }
-    .stat { background: var(--bg-elevated); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); }
-    .stat-val { font-size: 24px; font-weight: 400; font-family: var(--font-mono); line-height: 1; margin-bottom: 3px; }
-    .stat-lab { font-size: 9px; color: var(--text-faint); letter-spacing: 0.07em; text-transform: uppercase; }
+    .stats-row { display:grid; grid-template-columns:1fr 1fr; gap:var(--space-3); margin-bottom:var(--space-4); }
+    .stat { background:var(--bg-elevated); border-radius:var(--radius-md); padding:var(--space-3) var(--space-4); cursor:pointer; text-decoration:none; display:block; transition:opacity var(--transition); }
+    .stat:hover { opacity:0.8; }
+    .stat-val { font-size:24px; font-weight:400; font-family:var(--font-mono); line-height:1; margin-bottom:3px; }
+    .stat-lab { font-size:9px; color:var(--text-faint); letter-spacing:0.07em; text-transform:uppercase; }
+    .stat.full { grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; }
 
-    .action-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-2); }
-    .action-btn { display: flex; align-items: center; justify-content: center; gap: 5px; padding: 9px 6px; border-radius: var(--radius-md); border: 1px solid var(--border); font-size: 11px; color: var(--text-muted); cursor: pointer; transition: all var(--transition); text-decoration: none; background: transparent; }
-    .action-btn.whats { border-color: rgba(37,211,102,0.25); color: #1a9e6a; background: rgba(37,211,102,0.05); }
-    .action-btn.sheet { border-color: rgba(56,168,96,0.25); color: #1a6b3a; background: rgba(56,168,96,0.05); }
-    .action-btn.items { border-color: var(--accent-border); color: var(--accent-deep); background: var(--accent-muted); }
+    /* Botões ação */
+    .action-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:var(--space-2); }
+    .action-btn { display:flex; align-items:center; justify-content:center; gap:5px; padding:9px 6px; border-radius:var(--radius-md); font-size:11px; cursor:pointer; transition:all var(--transition); text-decoration:none; border:none; font-family:var(--font-body); }
+    .action-btn.lilac { background:var(--lilac-light); color:var(--lilac-dark); }
+    .action-btn.lilac:hover { background:var(--lilac-mid); color:#fff; }
+    .action-btn.dark { background:var(--text-primary); color:#fff; }
+    .action-btn.dark:hover { opacity:0.85; }
+    .action-btn.disabled { background:var(--bg-elevated); color:var(--text-faint); cursor:default; }
 
-    .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2); }
-    .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+    .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--space-3); }
+    .section-title { font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); display:flex; align-items:center; gap:var(--space-2); flex:1; }
+    .section-title::after { content:''; flex:1; height:1px; background:var(--border); margin-left:var(--space-2); }
+    .edit-toggle-btn { display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--text-muted); padding:4px 10px; border:1px solid var(--border); border-radius:var(--radius-pill); background:transparent; cursor:pointer; transition:all var(--transition); flex-shrink:0; margin-left:8px; }
+    .edit-toggle-btn:hover, .edit-toggle-btn.active { border-color:var(--accent-border); color:var(--lilac-dark); background:var(--lilac-light); }
 
-    .info-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); margin-bottom: var(--space-2); }
-    .info-label { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 4px; }
-    .info-value { font-size: 13px; color: var(--text-primary); }
-    .info-value a { color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
-    .info-obs { font-size: 13px; color: var(--text-secondary); font-style: italic; line-height: 1.6; }
+    /* Info cards inline edit */
+    .info-card { background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:var(--space-3) var(--space-4); margin-bottom:var(--space-2); transition:border-color var(--transition); }
+    .info-card.full { grid-column:1/-1; }
+    .info-card.editing { border-color:var(--accent-border); background:var(--bg-base); }
+    .info-label { font-size:10px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-faint); margin-bottom:4px; }
+    .info-value { font-size:13px; color:var(--text-primary); }
+    .info-value a { color:var(--lilac-dark); text-decoration:none; display:inline-flex; align-items:center; gap:4px; }
+    .info-notes { font-size:13px; color:var(--text-secondary); line-height:1.6; white-space:pre-wrap; }
+    .info-input { width:100%; background:transparent; border:none; border-bottom:1px solid var(--accent-border); padding:2px 0; font-family:var(--font-body); font-size:13px; color:var(--text-primary); outline:none; }
+    .info-input::placeholder { color:var(--text-faint); }
+    .info-textarea { width:100%; background:transparent; border:none; border-bottom:1px solid var(--accent-border); padding:2px 0; font-family:var(--font-body); font-size:13px; color:var(--text-primary); outline:none; resize:none; min-height:60px; }
 
-    .edit-section { background: var(--bg-surface); border: 1px solid var(--accent-border); border-radius: var(--radius-lg); padding: var(--space-5); margin-top: var(--space-5); display: none; }
-    .edit-section.open { display: block; }
-    .field { margin-bottom: var(--space-4); }
-    .field label { display: block; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
-    .field input, .field textarea { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; font-family: var(--font-body); font-size: 14px; color: var(--text-primary); outline: none; transition: border-color var(--transition); }
-    .field input:focus, .field textarea:focus { border-color: var(--accent-border); }
-    .field input::placeholder, .field textarea::placeholder { color: var(--text-faint); }
-    .field textarea { resize: vertical; min-height: 80px; }
+    /* Links úteis */
+    .links-card { background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-md); margin-bottom:var(--space-2); overflow:hidden; }
+    .link-item { display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid var(--border); text-decoration:none; transition:background var(--transition); }
+    .link-item:last-child { border-bottom:none; }
+    .link-item:hover { background:var(--bg-elevated); }
+    .link-icon { width:30px; height:30px; border-radius:var(--radius-sm); background:var(--lilac-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .link-icon i { font-size:14px; color:var(--lilac-dark); }
+    .link-info { flex:1; min-width:0; }
+    .link-name { font-size:13px; font-weight:500; color:var(--text-primary); }
+    .link-url { font-size:10px; color:var(--text-faint); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-    .danger-zone { background: var(--status-cancelled-bg); border: 1px solid var(--status-cancelled-border); border-radius: var(--radius-lg); padding: var(--space-4); margin-top: var(--space-5); display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
-    .danger-text p { font-size: 13px; font-weight: 500; color: var(--status-cancelled-color); margin-bottom: 2px; }
-    .danger-text span { font-size: 11px; color: var(--text-muted); }
+    /* Links edit */
+    .link-edit-item { display:flex; align-items:center; gap:8px; background:var(--bg-elevated); border-radius:var(--radius-md); padding:8px 10px; margin-bottom:6px; }
+    .link-edit-item input { flex:1; background:transparent; border:none; font-family:var(--font-body); font-size:12px; color:var(--text-primary); outline:none; }
+    .link-edit-item input::placeholder { color:var(--text-faint); }
+    .link-edit-item input:first-child { font-weight:500; border-right:1px solid var(--border); padding-right:8px; margin-right:4px; max-width:100px; flex-shrink:0; }
+    .link-del { width:26px; height:26px; border-radius:var(--radius-sm); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-faint); background:transparent; flex-shrink:0; transition:all var(--transition); }
+    .link-del:hover { border-color:var(--status-cancelled-border); color:var(--status-cancelled-color); }
+    .add-link-btn { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--lilac-dark); cursor:pointer; padding:6px 12px; border:1px dashed var(--lilac-mid); border-radius:var(--radius-md); background:transparent; font-family:var(--font-body); transition:all var(--transition); margin-bottom:var(--space-3); }
+    .add-link-btn:hover { background:var(--lilac-light); }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spinner { animation: spin 1s linear infinite; display: inline-block; }
-    .edit-toggle { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); cursor: pointer; padding: 6px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); transition: all var(--transition); background: transparent; margin-top: var(--space-4); }
-    .edit-toggle:hover { border-color: var(--accent-border); color: var(--accent-deep); }
+    /* GOMs edit */
+    .gom-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .gom-row input { flex:1; background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius-md); padding:9px 12px; font-family:var(--font-body); font-size:13px; color:var(--text-primary); outline:none; transition:border-color var(--transition); }
+    .gom-row input:focus { border-color:var(--accent-border); }
+    .gom-del { width:36px; height:36px; border-radius:var(--radius-md); border:1px solid var(--border); background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-faint); flex-shrink:0; transition:all var(--transition); }
+    .gom-del:hover { border-color:var(--status-cancelled-border); color:var(--status-cancelled-color); }
+    .add-gom-btn { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--lilac-dark); cursor:pointer; padding:6px 12px; border:1px dashed var(--lilac-mid); border-radius:var(--radius-md); background:transparent; font-family:var(--font-body); transition:all var(--transition); margin-bottom:var(--space-3); }
+    .add-gom-btn:hover { background:var(--lilac-light); }
+
+    .save-actions { display:flex; gap:8px; margin-top:var(--space-3); margin-bottom:var(--space-4); }
+
+    .danger-zone { background:var(--status-cancelled-bg); border:1px solid var(--status-cancelled-border); border-radius:var(--radius-lg); padding:var(--space-4); margin-top:var(--space-5); display:flex; align-items:center; justify-content:space-between; gap:var(--space-4); }
+    .danger-text p { font-size:13px; font-weight:500; color:var(--status-cancelled-color); margin-bottom:2px; }
+    .danger-text span { font-size:11px; color:var(--text-muted); }
+
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .spinner { animation:spin 1s linear infinite; display:inline-block; }
   </style>
   <script src="../js/app.js"></script>
   <script src="../js/nav.js"></script>
 </head>
 <body>
-
   <main class="container" style="padding-top:24px; padding-bottom:80px;">
     <a href="communities.html" class="back-btn"><i class="ti ti-arrow-left"></i> Voltar para comunidades</a>
     <div id="content">
@@ -73,6 +106,7 @@
   </main>
   <script>
     let commData = [], sheetRow = 0, allItems = [];
+    let editingInfo = false, linkCount = 0, gomCount = 0;
 
     document.addEventListener('DOMContentLoaded', async () => {
       await Auth.init();
@@ -86,7 +120,7 @@
 
     async function loadData() {
       const [commRows, itemRows] = await Promise.all([
-        Sheets.get(`Comunidades!A${sheetRow}:F${sheetRow}`),
+        Sheets.get(`Comunidades!A${sheetRow}:G${sheetRow}`),
         Sheets.get(CONFIG.RANGES.ITEMS),
       ]);
       commData = commRows?.[0] || [];
@@ -94,139 +128,265 @@
       render();
     }
 
+    function gomsArray(str) { return (str||'').split('|').map(g=>g.trim()).filter(Boolean); }
+    function gomsString(arr) { return arr.filter(Boolean).join('|'); }
+
+    // Links úteis ficam em commData[5] como JSON: [{name, url}, ...]
+    function parseLinks(str) {
+      try { return JSON.parse(str||'[]'); } catch(e) { return []; }
+    }
+    function stringifyLinks(arr) { return JSON.stringify(arr); }
+
     function render() {
-      const nome  = commData[0]||'—';
-      const gom   = commData[1]||'—';
-      const whats = commData[2]||'';
-      const sheet = commData[3]||'';
-      const tipos = commData[4]||'—';
-      const obs   = commData[5]||'';
+      const nome   = commData[0]||'—';
+      const goms   = gomsArray(commData[1]);
+      const whats  = commData[2]||'';
+      const sheet  = commData[3]||'';
+      const tipos  = commData[4]||'';
+      const obs    = commData[5]||'';
+      const links  = parseLinks(commData[6]||'[]');
+
+      const gomDisplay = goms.length ? goms.join(', ') : '—';
       const inicial = nome.charAt(0).toUpperCase();
 
       const itemsDaCom = allItems.filter(r => r[COL.COMUNIDADE] === nome);
       const ativos    = itemsDaCom.filter(r => !r[COL.STATUS]?.includes('Recebido') && !r[COL.STATUS]?.includes('Cancelado')).length;
-      const pendentes = itemsDaCom.filter(r => r[COL.STATUS]?.includes('pendente')).length;
+      const pendentes = itemsDaCom.filter(r => statusClass(r[COL.STATUS]||'')==='pending').length;
       const recebidos = itemsDaCom.filter(r => r[COL.STATUS]?.includes('Recebido')).length;
       const total     = itemsDaCom.length;
+
+      function infoCard(label, viewHtml, editEl) {
+        return `<div class="info-card${editingInfo?' editing':''}">
+          <div class="info-label">${label}</div>
+          ${editingInfo ? editEl : `<div class="info-value">${viewHtml}</div>`}
+        </div>`;
+      }
+
+      const gomsEditHtml = editingInfo ? `
+        <div class="info-card editing">
+          <div class="info-label">GOM</div>
+          <div id="gom-list">
+            ${goms.length ? goms.map((g,i) => gomRowHtml(g, i)).join('') : gomRowHtml('', 0)}
+          </div>
+          <button class="add-gom-btn" onclick="addGomRow()"><i class="ti ti-plus" style="font-size:13px;"></i> Adicionar outro(a) GOM</button>
+        </div>` :
+        infoCard('GOM', gomDisplay, '');
+
+      const linksEditHtml = editingInfo ? `
+        <div class="info-card editing">
+          <div class="info-label">Links úteis</div>
+          <div id="links-list">
+            ${links.map((l,i) => linkEditRowHtml(l.name, l.url, i)).join('')}
+          </div>
+          <button class="add-link-btn" onclick="addLinkRow()"><i class="ti ti-plus" style="font-size:13px;"></i> Adicionar link</button>
+        </div>` : '';
+
+      const linksViewHtml = !editingInfo && links.length ? `
+        <div class="section-header" style="margin-top:var(--space-4);">
+          <div class="section-title">Links úteis</div>
+        </div>
+        <div class="links-card">
+          ${links.map(l => `
+            <a class="link-item" href="${l.url}" target="_blank">
+              <div class="link-icon"><i class="ti ti-link"></i></div>
+              <div class="link-info">
+                <div class="link-name">${l.name}</div>
+                <div class="link-url">${l.url}</div>
+              </div>
+              <i class="ti ti-external-link" style="font-size:13px;color:var(--text-faint);flex-shrink:0;"></i>
+            </a>`).join('')}
+        </div>` : '';
+
+      const saveInfoBtns = editingInfo ? `<div class="save-actions">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;" onclick="cancelInfo()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:2;justify-content:center;" onclick="saveInfo()" id="save-info-btn"><i class="ti ti-check"></i> Salvar</button>
+      </div>` : '';
 
       document.getElementById('content').innerHTML = `
         <div class="comm-hero">
           <div class="comm-hero-header">
             <div class="comm-avatar">${inicial}</div>
-            <div class="comm-hero-info">
+            <div>
               <div class="comm-name">${nome}</div>
-              <div class="comm-gom">GOM: ${gom}</div>
+              <div class="comm-gom">GOM: ${gomDisplay}</div>
             </div>
           </div>
 
           ${pendentes > 0 ? `<div class="pending-tag"><i class="ti ti-alert-triangle" style="font-size:11px;"></i> ${pendentes} pagamento${pendentes>1?'s':''} pendente${pendentes>1?'s':''}</div>` : ''}
 
           <div class="stats-row">
-            <div class="stat">
+            <a class="stat" href="items.html?community=${encodeURIComponent(nome)}">
               <div class="stat-val" style="color:var(--accent);">${ativos}</div>
-              <div class="stat-lab">itens ativos</div>
-            </div>
-            <div class="stat">
+              <div class="stat-lab">Itens ativos</div>
+            </a>
+            <a class="stat" href="items.html?community=${encodeURIComponent(nome)}&filter=pending">
               <div class="stat-val" style="color:${pendentes>0?'var(--status-pending-color)':'var(--status-done-color)'};">${pendentes}</div>
-              <div class="stat-lab">pgto pendente</div>
-            </div>
-            <div class="stat" style="grid-column:1/-1; display:flex; justify-content:space-between; align-items:center;">
+              <div class="stat-lab">Pgto pendente</div>
+            </a>
+            <div class="stat full">
               <div>
-                <div class="stat-val" style="color:var(--status-done-color); font-size:18px;">${recebidos}</div>
-                <div class="stat-lab">recebidos</div>
+                <div class="stat-val" style="color:var(--status-done-color);font-size:18px;">${recebidos}</div>
+                <div class="stat-lab">Recebidos</div>
               </div>
               <div style="text-align:right;">
                 <div class="stat-val" style="font-size:18px;">${total}</div>
-                <div class="stat-lab">total de itens</div>
+                <div class="stat-lab">Total de itens</div>
               </div>
             </div>
           </div>
 
           <div class="action-row">
-            ${whats ? `<a class="action-btn whats" href="${whats}" target="_blank"><i class="ti ti-brand-whatsapp" style="font-size:14px;"></i> WhatsApp</a>` : `<div class="action-btn" style="opacity:0.35;cursor:default;"><i class="ti ti-brand-whatsapp" style="font-size:14px;"></i> WhatsApp</div>`}
-            ${sheet ? `<a class="action-btn sheet" href="${sheet}" target="_blank"><i class="ti ti-table" style="font-size:14px;"></i> Planilha</a>` : `<div class="action-btn" style="opacity:0.35;cursor:default;"><i class="ti ti-table" style="font-size:14px;"></i> Planilha</div>`}
-            <a class="action-btn items" href="items.html?community=${encodeURIComponent(nome)}"><i class="ti ti-package" style="font-size:14px;"></i> Ver itens</a>
+            ${whats
+              ? `<a class="action-btn lilac" href="${whats}" target="_blank"><i class="ti ti-brand-whatsapp" style="font-size:14px;"></i> WhatsApp</a>`
+              : `<div class="action-btn disabled"><i class="ti ti-brand-whatsapp" style="font-size:14px;"></i> WhatsApp</div>`}
+            ${sheet
+              ? `<a class="action-btn lilac" href="${sheet}" target="_blank"><i class="ti ti-table" style="font-size:14px;"></i> Planilha</a>`
+              : `<div class="action-btn disabled"><i class="ti ti-table" style="font-size:14px;"></i> Planilha</div>`}
+            <a class="action-btn dark" href="items.html?community=${encodeURIComponent(nome)}"><i class="ti ti-package" style="font-size:14px;"></i> Ver itens</a>
           </div>
         </div>
 
-        <div class="section-title">Informações</div>
-
-        <div class="info-card">
-          <div class="info-label">Tipos de item</div>
-          <div class="info-value">${tipos}</div>
+        <div class="section-header">
+          <div class="section-title">Informações</div>
+          <button class="edit-toggle-btn${editingInfo?' active':''}" onclick="toggleInfo()">
+            <i class="ti ti-pencil" style="font-size:12px;"></i> ${editingInfo?'Editando...':'Editar'}
+          </button>
         </div>
 
-        ${whats ? `<div class="info-card">
-          <div class="info-label">Link do WhatsApp</div>
-          <div class="info-value"><a href="${whats}" target="_blank">${whats} <i class="ti ti-external-link" style="font-size:11px;"></i></a></div>
-        </div>` : ''}
+        ${gomsEditHtml}
 
-        ${sheet ? `<div class="info-card">
-          <div class="info-label">Planilha da CEG</div>
-          <div class="info-value"><a href="${sheet}" target="_blank">Abrir planilha <i class="ti ti-external-link" style="font-size:11px;"></i></a></div>
-        </div>` : ''}
+        ${infoCard('WhatsApp',
+          whats ? `<a href="${whats}" target="_blank"><i class="ti ti-external-link" style="font-size:11px;"></i> Abrir WhatsApp</a>` : '—',
+          `<input class="info-input" id="e-whats" type="url" value="${whats}" placeholder="https://wa.me/...">`
+        )}
 
-        ${obs ? `<div class="info-card">
-          <div class="info-label">Observações</div>
-          <div class="info-obs">${obs}</div>
-        </div>` : ''}
+        ${infoCard('Planilha da CEG',
+          sheet ? `<a href="${sheet}" target="_blank"><i class="ti ti-external-link" style="font-size:11px;"></i> Abrir planilha</a>` : '—',
+          `<input class="info-input" id="e-sheet" type="url" value="${sheet}" placeholder="https://docs.google.com/...">`
+        )}
 
-        <button class="edit-toggle" onclick="toggleEdit()">
-          <i class="ti ti-pencil" style="font-size:13px;"></i> Editar informações
-        </button>
+        ${infoCard('Tipos de item', tipos||'—',
+          `<input class="info-input" id="e-tipos" value="${tipos}" placeholder="ex: Photocard, Merch">`
+        )}
 
-        <div class="edit-section" id="edit-section">
-          <div class="section-title" style="margin-bottom:16px;">Editar comunidade</div>
-          <div class="field"><label>Nome da comunidade</label><input type="text" id="e-nome" value="${nome}"></div>
-          <div class="field"><label>GOM / CEG</label><input type="text" id="e-gom" value="${gom}"></div>
-          <div class="field"><label>Link do WhatsApp</label><input type="url" id="e-whats" value="${whats}" placeholder="https://wa.me/..."></div>
-          <div class="field"><label>Link da planilha CEG</label><input type="url" id="e-sheet" value="${sheet}" placeholder="https://docs.google.com/..."></div>
-          <div class="field"><label>Tipos de item</label><input type="text" id="e-tipos" value="${tipos}" placeholder="ex: Photocard, Merch"></div>
-          <div class="field"><label>Observações</label><textarea id="e-obs" placeholder="Notas sobre essa comunidade...">${obs}</textarea></div>
-          <div style="display:flex; gap:10px;">
-            <button class="btn btn-ghost" style="flex:1;" onclick="toggleEdit()">Cancelar</button>
-            <button class="btn btn-primary" style="flex:2; justify-content:center;" onclick="saveEdit()" id="save-btn">
-              <i class="ti ti-check"></i> Salvar
-            </button>
-          </div>
-        </div>
+        ${infoCard('Observações',
+          `<div class="info-notes">${obs||'—'}</div>`,
+          `<textarea class="info-textarea" id="e-obs" placeholder="Notas sobre essa comunidade...">${obs}</textarea>`
+        )}
+
+        ${linksEditHtml}
+        ${saveInfoBtns}
+        ${linksViewHtml}
 
         <div class="danger-zone">
           <div class="danger-text">
             <p>Remover comunidade</p>
             <span>Os itens cadastrados não serão afetados.</span>
           </div>
-          <button class="btn btn-danger" onclick="deleteCommunity()">
-            <i class="ti ti-trash"></i> Remover
-          </button>
+          <button class="btn btn-danger" onclick="deleteCommunity()"><i class="ti ti-trash"></i> Remover</button>
         </div>`;
+
+      gomCount = goms.length || 1;
+      linkCount = links.length;
     }
 
-    function toggleEdit() {
-      document.getElementById('edit-section').classList.toggle('open');
+    function gomRowHtml(value, idx) {
+      return `<div class="gom-row" id="gom-row-${idx}">
+        <input type="text" placeholder="ex: Dani, Carol, João" value="${value}">
+        ${idx > 0 ? `<button class="gom-del" onclick="document.getElementById('gom-row-${idx}').remove()" title="Remover"><i class="ti ti-x" style="font-size:13px;"></i></button>` : '<div style="width:36px;flex-shrink:0;"></div>'}
+      </div>`;
     }
 
-    async function saveEdit() {
-      const btn = document.getElementById('save-btn');
+    function addGomRow() {
+      const list = document.getElementById('gom-list');
+      const div = document.createElement('div');
+      div.className = 'gom-row';
+      div.id = `gom-row-${gomCount}`;
+      div.innerHTML = `<input type="text" placeholder="ex: Dani, Carol, João">
+        <button class="gom-del" onclick="this.parentNode.remove()" title="Remover"><i class="ti ti-x" style="font-size:13px;"></i></button>`;
+      list.appendChild(div);
+      gomCount++;
+    }
+
+    function getGomsFromForm() {
+      return Array.from(document.querySelectorAll('#gom-list .gom-row input'))
+        .map(i => i.value.trim()).filter(Boolean);
+    }
+
+    function linkEditRowHtml(name, url, idx) {
+      return `<div class="link-edit-item" id="link-row-${idx}">
+        <input type="text" placeholder="Nome" value="${name}" style="font-weight:500;border-right:1px solid var(--border);padding-right:8px;margin-right:4px;max-width:100px;flex-shrink:0;">
+        <input type="url" placeholder="https://..." value="${url}" style="flex:1;">
+        <button class="link-del" onclick="document.getElementById('link-row-${idx}').remove()" title="Remover"><i class="ti ti-x" style="font-size:12px;"></i></button>
+      </div>`;
+    }
+
+    function addLinkRow() {
+      const list = document.getElementById('links-list');
+      const div = document.createElement('div');
+      div.className = 'link-edit-item';
+      div.id = `link-row-${linkCount}`;
+      div.innerHTML = `<input type="text" placeholder="Nome" style="font-weight:500;border-right:1px solid var(--border);padding-right:8px;margin-right:4px;max-width:100px;flex-shrink:0;">
+        <input type="url" placeholder="https://..." style="flex:1;">
+        <button class="link-del" onclick="this.parentNode.remove()" title="Remover"><i class="ti ti-x" style="font-size:12px;"></i></button>`;
+      list.appendChild(div);
+      linkCount++;
+    }
+
+    function getLinksFromForm() {
+      const rows = document.querySelectorAll('#links-list .link-edit-item');
+      const links = [];
+      rows.forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        const name = inputs[0]?.value.trim();
+        const url  = inputs[1]?.value.trim();
+        if (name && url) links.push({ name, url });
+      });
+      return links;
+    }
+
+    function toggleInfo() {
+      editingInfo = !editingInfo;
+      render();
+      if (editingInfo) setTimeout(() => document.querySelector('.info-card.editing')?.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+    }
+
+    function cancelInfo() { editingInfo = false; render(); }
+
+    async function saveInfo() {
+      const btn = document.getElementById('save-info-btn');
       btn.innerHTML = '<i class="ti ti-loader spinner"></i> Salvando...';
       btn.disabled = true;
-      const g = id => document.getElementById(id).value;
+      const g = id => document.getElementById(id)?.value || '';
+      const goms  = gomsString(getGomsFromForm());
+      const links = getLinksFromForm();
+      const obsText = g('e-obs');
+
       try {
-        await Sheets.set(`Comunidades!A${sheetRow}:F${sheetRow}`, [[
-          g('e-nome'), g('e-gom'), g('e-whats'), g('e-sheet'), g('e-tipos'), g('e-obs')
+        await Sheets.set(`Comunidades!A${sheetRow}:G${sheetRow}`, [[
+          g('e-nome') || commData[0] || '',
+          goms,
+          g('e-whats'),
+          g('e-sheet'),
+          g('e-tipos'),
+          obsText,
+          stringifyLinks(links),
         ]]);
         await loadData();
-        document.getElementById('edit-section').classList.remove('open');
+        editingInfo = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch(e) { alert('Erro ao salvar. Tente novamente.'); }
-      btn.innerHTML = '<i class="ti ti-check"></i> Salvar';
-      btn.disabled = false;
+      if (document.getElementById('save-info-btn')) {
+        document.getElementById('save-info-btn').innerHTML = '<i class="ti ti-check"></i> Salvar';
+        document.getElementById('save-info-btn').disabled = false;
+      }
     }
 
     async function deleteCommunity() {
       const nome = commData[0]||'esta comunidade';
       if (!confirm(`Remover "${nome}"? Os itens cadastrados não serão afetados.`)) return;
       try {
-        await Sheets.set(`Comunidades!A${sheetRow}:F${sheetRow}`, [['','','','','','']]);
+        await Sheets.set(`Comunidades!A${sheetRow}:G${sheetRow}`, [['','','','','','','']]);
         window.location.href = 'communities.html';
       } catch(e) { alert('Erro ao remover.'); }
     }
