@@ -9,7 +9,7 @@ const CONFIG = {
   },
   RANGES: {
     ITEMS:       'Itens!A4:AL',
-    COMMUNITIES: 'Comunidades!A3:F',
+    COMMUNITIES: 'Comunidades!A3:G',
   },
 };
 
