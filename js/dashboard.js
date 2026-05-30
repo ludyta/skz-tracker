@@ -7,47 +7,48 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadDashboard();
 });
 
+// Estado do filtro ativo na seção "Total de itens"
+let activeFilter = 'comeback';
+let dashItems = [];
+
 async function loadDashboard() {
   const el = document.getElementById('dash-content');
-
-  // Greeting
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good Morning,' : hour < 18 ? 'Good Afternoon,' : 'Good Evening,';
-  const dateStr = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 
-  // Load data in parallel
   const [itemRows, commRows] = await Promise.all([
     Sheets.get(CONFIG.RANGES.ITEMS),
     Sheets.get(CONFIG.RANGES.COMMUNITIES),
   ]);
 
-  const items = (itemRows||[]).filter(r => r[COL.TIPO]);
+  // Inclui sheetRow para cada item (dados começam na linha 4)
+  const itemsWithRow = (itemRows||[]).map((row, idx) => ({ row, sheetRow: idx + 4 })).filter(({ row }) => row[COL.TIPO]);
+  dashItems = itemsWithRow;
+  const items = itemsWithRow.map(i => i.row);
   const comms = (commRows||[]).filter(r => r[0]);
 
-  // Metrics
+  // Métricas
   let pendingCount = 0, pendingValue = 0, transitCount = 0, doneCount = 0, wishCount = 0;
   items.forEach(row => {
     const cls = statusClass(row[COL.STATUS]||'');
     const pend = parseFloat(row[COL.PENDENTE])||0;
-    if (cls === 'pending') { pendingCount++; pendingValue += pend; }
-    if (cls === 'transit') transitCount++;
-    if (cls === 'done') doneCount++;
+    if (cls === 'pending')   { pendingCount++; pendingValue += pend; }
+    if (cls === 'transit')   transitCount++;
+    if (cls === 'done')      doneCount++;
   });
 
-  // Wishlist count
   try {
     const wishRows = await Sheets.get('Wishlist!A2:P');
     wishCount = (wishRows||[]).filter(r => r[0]).length;
   } catch(e) {}
 
-  // Recent items (last 3, combined with wishlist)
-  const recentItems = [...items].reverse().slice(0, 3).map(row => ({
-    type: 'comprado',
+  // Recentes — 3 mais recentes com sheetRow para link direto ao detalhe
+  const recentItems = [...itemsWithRow].reverse().slice(0, 3).map(({ row, sheetRow }) => ({
+    sheetRow,
     name: [row[COL.TIPO], row[COL.MEMBRO], row[COL.COMEBACK]].filter(Boolean).join(' · '),
-    sub: row[COL.SET_POB] || '—',
+    sub:  row[COL.SET_POB] || '—',
     info: [row[COL.COMUNIDADE], row[COL.GOM]].filter(Boolean).join(' · ') || '—',
-    img: row[COL.IMG_LINK] || '',
-    status: row[COL.STATUS] || '',
+    img:  row[COL.IMG_LINK] || '',
   }));
 
   // Community stats
@@ -55,33 +56,15 @@ async function loadDashboard() {
     const commName = comm[0];
     const commItems = items.filter(r => r[COL.COMUNIDADE] === commName);
     const pendItems = commItems.filter(r => statusClass(r[COL.STATUS]||'') === 'pending');
-    return { name: commName, gom: comm[1]||'', total: commItems.length, pending: pendItems.length };
+    return { name: commName, total: commItems.length, pending: pendItems.length };
   });
-
-  // Comeback stats
-  const comebackMap = {};
-  items.forEach(row => {
-    const cb = row[COL.COMEBACK];
-    if (cb) comebackMap[cb] = (comebackMap[cb]||0) + 1;
-  });
-  const comebacks = Object.entries(comebackMap).sort((a,b) => b[1]-a[1]).slice(0,8);
-  const maxCb = comebacks[0]?.[1] || 1;
-
-  // Relative date
-  function relDate(idx) {
-    if (idx === 0) return 'hoje';
-    if (idx === 1) return 'ontem';
-    return `${idx + 1} dias`;
-  }
 
   el.innerHTML = `
-    <!-- Greeting -->
     <div class="greeting">
       <div class="greeting-text">${greeting}<br><span class="greeting-name">Stay!</span></div>
       <div class="greeting-icon">🌸</div>
     </div>
 
-    <!-- CTA -->
     <a href="item-form.html" class="cta-btn">
       <i class="ti ti-plus" style="font-size:14px;color:#fff;"></i>
       <span>Adicionar novo item</span>
@@ -153,45 +136,39 @@ async function loadDashboard() {
     <div>
       <div class="sec-hdr">
         <span class="sec-title">Recentes</span>
-        <button class="ver-mais" onclick="location.href='items.html'">ver mais</button>
+        <button class="ver-mais" onclick="location.href='items.html?sort=recent'">ver mais</button>
       </div>
       <div class="recent-list">
-        ${recentItems.map((item, idx) => `
-          <a href="items.html" class="recent-item">
+        ${recentItems.map(item => `
+          <a href="item-detail.html?row=${item.sheetRow}" class="recent-item">
             <div class="recent-thumb">
               ${item.img ? `<img src="${item.img}" alt="${item.name}" onerror="this.parentNode.innerHTML='<i class=\\'ti ti-photo\\'></i>'">` : '<i class="ti ti-photo"></i>'}
             </div>
             <div class="recent-body">
-              <span class="recent-badge ${item.type === 'comprado' ? 'badge-comprado' : 'badge-wishlist'}">${item.type === 'comprado' ? 'Comprado' : 'Wishlist'}</span>
+              <span class="recent-badge badge-comprado">Comprado</span>
               <div class="recent-name">${item.name}</div>
               <div class="recent-subtitle">${item.sub}</div>
               <div class="recent-info">${item.info}</div>
             </div>
-            <div class="recent-date">${relDate(idx)}</div>
           </a>`).join('')}
       </div>
     </div>` : ''}
 
     <!-- Total de itens -->
-    ${comebacks.length ? `
+    ${items.length ? `
     <div>
       <div class="sec-hdr">
         <span class="sec-title">Total de itens</span>
         <button class="ver-mais" onclick="location.href='items.html'">ver mais</button>
       </div>
       <div class="filter-pills">
-        <button class="filter-pill active">Comeback</button>
-        <button class="filter-pill">Membro</button>
-        <button class="filter-pill">Tipo de item</button>
-        <button class="filter-pill">Comunidade</button>
+        <button class="filter-pill ${activeFilter==='comeback'?'active':''}"   onclick="setDashFilter('comeback')">Comeback</button>
+        <button class="filter-pill ${activeFilter==='membro'?'active':''}"     onclick="setDashFilter('membro')">Membro</button>
+        <button class="filter-pill ${activeFilter==='tipo'?'active':''}"       onclick="setDashFilter('tipo')">Tipo de item</button>
+        <button class="filter-pill ${activeFilter==='comunidade'?'active':''}" onclick="setDashFilter('comunidade')">Comunidade</button>
       </div>
-      <div class="bars">
-        ${comebacks.map(([cb, count]) => `
-          <div class="bar-row">
-            <div class="bar-label">${cb}</div>
-            <div class="bar-track"><div class="bar-fill" style="width:${Math.round(count/maxCb*100)}%;"></div></div>
-            <div class="bar-num">${count}</div>
-          </div>`).join('')}
+      <div class="bars" id="dash-bars">
+        ${renderBars(items, activeFilter)}
       </div>
     </div>` : ''}
 
@@ -223,4 +200,38 @@ async function loadDashboard() {
       </div>
     </div>
   `;
+}
+
+function renderBars(items, filter) {
+  const colMap = {
+    comeback:   COL.COMEBACK,
+    membro:     COL.MEMBRO,
+    tipo:       COL.TIPO,
+    comunidade: COL.COMUNIDADE,
+  };
+  const col = colMap[filter];
+  const map = {};
+  items.forEach(row => {
+    const val = row[col];
+    if (val) map[val] = (map[val]||0) + 1;
+  });
+  const entries = Object.entries(map).sort((a,b) => b[1]-a[1]).slice(0,8);
+  if (!entries.length) return '<div style="font-size:13px;color:var(--text-faint);padding:8px 0;">Nenhum dado ainda.</div>';
+  const max = entries[0][1];
+  return entries.map(([label, count]) => `
+    <div class="bar-row">
+      <div class="bar-label">${label}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(count/max*100)}%;"></div></div>
+      <div class="bar-num">${count}</div>
+    </div>`).join('');
+}
+
+function setDashFilter(filter) {
+  activeFilter = filter;
+  // Atualiza pills
+  document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  // Atualiza barras
+  const items = dashItems.map(i => i.row);
+  document.getElementById('dash-bars').innerHTML = renderBars(items, filter);
 }
