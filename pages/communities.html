@@ -163,6 +163,8 @@
       return Array.from(document.querySelectorAll('#gom-list-new .gom-row input'))
         .map(i => i.value.trim()).filter(Boolean).join('|');
     }
+
+    async function saveCommunity() {
       const nome = document.getElementById('fn-nome').value.trim();
       if (!nome) { alert('Informe o nome da comunidade.'); return; }
       const goms = getGomsNew();
