@@ -5,42 +5,74 @@ const CONFIG = {
   SCOPES:     'https://www.googleapis.com/auth/spreadsheets',
   SHEETS: {
     ITEMS:       'Itens',
-    PAYMENTS:    'Pagamentos',
     COMMUNITIES: 'Comunidades',
   },
   RANGES: {
-    ITEMS:       'Itens!A4:AG',
+    ITEMS:       'Itens!A4:AL',
     COMMUNITIES: 'Comunidades!A3:F',
-    PAYMENTS:    'Pagamentos!A3:F',
   },
 };
 
 // ══ COL MAP ══════════════════════════════════════
 const COL = {
-  // Identificação
-  TIPO:0, COMEBACK:1, SET_POB:2, NUM_SET:3, IMG_LINK:4,
-  // Claim & Origem
-  CLAIM_TYPE:5, MEMBRO:6, NUM_CLAIM:7, COMUNIDADE:8, GOM:9, LINK_CEG:10,
-  // Pagamentos
-  VL_ITEM:11, ST_ITEM:12, VL_FI1:13, ST_FI1:14, VL_FI2:15, ST_FI2:16,
-  // Status geral
-  STATUS:17, ETAPA:18, DATA_CLAIM:19, NOTAS:20, DATA_REC:21,
-  // Alfândega e Frete Nacional
-  VL_ALF:22, ST_ALF:23, VL_FNAC:24, ST_FNAC:25,
-  // Totais
-  TOTAL_PAGO:26, PENDENTE:27,
-  // CEG (novos campos)
-  TIPO_CEG:28,       // col AC — Internacional / Caixinha
-  PLATAFORMA:29,     // col AD — Mercari, Bunjang, etc (só caixinha)
-  MES_EDICAO:30,     // col AE — formato YYYY-MM (só caixinha)
-  LINHA_GOM:31,      // col AF — linha na planilha da GOM (só caixinha)
-  NOME_SET:32,       // col AG — nome do set/pedido (só caixinha)
+  // Grupo 1 — Identificação
+  TIPO:      0,  // A
+  MEMBRO:    1,  // B
+  COMEBACK:  2,  // C
+  SET_POB:   3,  // D
+  NUM_SET:   4,  // E
+  NUM_CLAIM: 5,  // F
+  IMG_LINK:  6,  // G
+
+  // Grupo 2 — Origem / CEG
+  TIPO_CEG:   7,  // H
+  PLATAFORMA: 8,  // I
+  MES_EDICAO: 9,  // J
+  NOME_SET:   10, // K
+  LINHA_GOM:  11, // L
+  COMUNIDADE: 12, // M
+  GOM:        13, // N
+  CEG:        14, // O
+  LINK_CEG:   15, // P
+  DATA_CLAIM: 16, // Q
+
+  // Grupo 3 — Trânsito
+  ETAPA:    17, // R
+  DATA_REC: 18, // S
+  NOTAS:    19, // T
+
+  // Grupo 4 — Pagamentos (triplas: valor + status + data limite)
+  VL_ITEM: 20, ST_ITEM: 21, DT_ITEM: 22, // U V W
+  VL_FI1:  23, ST_FI1:  24, DT_FI1:  25, // X Y Z
+  VL_FI2:  26, ST_FI2:  27, DT_FI2:  28, // AA AB AC
+  VL_ALF:  29, ST_ALF:  30, DT_ALF:  31, // AD AE AF
+  VL_FNAC: 32, ST_FNAC: 33, DT_FNAC: 34, // AG AH AI
+
+  // Grupo 5 — Totais calculados
+  TOTAL_PAGO: 35, // AJ
+  PENDENTE:   36, // AK
+  STATUS:     37, // AL
 };
+
+// Etapas de trânsito
+const ETAPAS = [
+  'Em processo de compra',
+  'Comprado',
+  'Aguardando envio para seller',
+  'Com a seller',
+  'Em trânsito para warehouse',
+  'Na warehouse',
+  'Enviado para o Brasil',
+  'No Brasil / Com a GOM',
+  'Liberado envio nacional',
+  'Aguardando cotação nacional',
+  'Em trânsito para o joiner',
+  'Recebido',
+];
 
 // ══ AUTH ═════════════════════════════════════════
 const Auth = {
   isSignedIn: false,
-  user: null,
   tokenClient: null,
   accessToken: null,
 
@@ -73,7 +105,6 @@ const Auth = {
     if (Auth.accessToken) google.accounts.oauth2.revoke(Auth.accessToken);
     Auth.accessToken = null;
     Auth.isSignedIn = false;
-    Auth.user = null;
     localStorage.removeItem('skz_token');
     const isPages = window.location.pathname.includes('/pages/');
     window.location.href = isPages ? '../index.html' : 'index.html';
@@ -145,21 +176,20 @@ const Sheets = {
 // ══ HELPERS ══════════════════════════════════════
 function statusClass(status) {
   if (!status) return 'waiting';
-  if (status.includes('pendente'))  return 'pending';
-  if (status.includes('trânsito'))  return 'transit';
-  if (status.includes('Recebido'))  return 'done';
-  if (status.includes('Cancelado')) return 'cancelled';
+  if (status.includes('pendente') || status.includes('Pendente')) return 'pending';
+  if (status.includes('atrasado') || status.includes('Atrasado')) return 'cancelled';
+  if (status.includes('Recebido')) return 'done';
   return 'waiting';
 }
 
 function statusIcon(status) {
-  const icons = { pending:'ti-alert-triangle', transit:'ti-truck', done:'ti-circle-check', cancelled:'ti-x', waiting:'ti-clock' };
+  const icons = { pending:'ti-alert-triangle', transit:'ti-truck', done:'ti-circle-check', cancelled:'ti-alert-circle', waiting:'ti-clock' };
   return icons[statusClass(status)] || 'ti-clock';
 }
 
 function statusLabel(status) {
   if (!status) return 'Aguardando';
-  return status.replace('💰 ','').replace('🚢 ','').replace('⏳ ','').replace('✅ ','').replace('❌ ','');
+  return status;
 }
 
 function formatBRL(value) {
@@ -169,13 +199,44 @@ function formatBRL(value) {
 
 function indexToCol(idx) {
   if (idx < 26) return String.fromCharCode(65 + idx);
-  return String.fromCharCode(64 + Math.floor(idx/26)) + String.fromCharCode(65 + (idx%26));
+  return String.fromCharCode(64 + Math.floor(idx / 26)) + String.fromCharCode(65 + (idx % 26));
 }
 
-// Formata YYYY-MM para "Maio 2025"
 function formatMesAno(value) {
   if (!value) return '—';
   const [year, month] = value.split('-');
+  if (!year || !month) return value;
   const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   return `${meses[parseInt(month)-1]} ${year}`;
+}
+
+// Calcula status de pagamento de uma etapa considerando data limite
+function calcPayStatus(st, dt) {
+  if (!st || st === 'Pago') return st || 'Aguardando cobrança';
+  if (st === 'Aguardando cobrança') return 'Aguardando cobrança';
+  if (st === 'Cobrado — pendente' && dt) {
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const limite = new Date(dt); limite.setHours(0,0,0,0);
+    if (hoje > limite) return 'Atrasado';
+  }
+  return st;
+}
+
+// Resumo de pagamentos pendentes/atrasados de um item
+function paymentSummary(row) {
+  const steps = [
+    { name:'Item',           vl: COL.VL_ITEM, st: COL.ST_ITEM, dt: COL.DT_ITEM },
+    { name:'Frete inter 1',  vl: COL.VL_FI1,  st: COL.ST_FI1,  dt: COL.DT_FI1  },
+    { name:'Frete inter 2',  vl: COL.VL_FI2,  st: COL.ST_FI2,  dt: COL.DT_FI2  },
+    { name:'Alfândega',      vl: COL.VL_ALF,  st: COL.ST_ALF,  dt: COL.DT_ALF  },
+    { name:'Frete nacional', vl: COL.VL_FNAC, st: COL.ST_FNAC, dt: COL.DT_FNAC },
+  ];
+  const issues = [];
+  steps.forEach(s => {
+    const realSt = calcPayStatus(row[s.st], row[s.dt]);
+    if (realSt === 'Cobrado — pendente' || realSt === 'Atrasado') {
+      issues.push({ name: s.name, valor: parseFloat(row[s.vl])||0, status: realSt });
+    }
+  });
+  return issues;
 }
