@@ -92,8 +92,11 @@
       const restored = await Auth.tryRestore();
       if (!restored) { window.location.href = '../index.html'; return; }
       const params = new URLSearchParams(window.location.search);
-      if (params.get('filter') === 'pending') document.getElementById('filter-status').value = 'pending';
-      if (params.get('community')) document.getElementById('filter-community').value = decodeURIComponent(params.get('community'));
+      if (params.get('filter') === 'pending') setFilter('status','pending','Pgto pendente');
+      if (params.get('filter') === 'transit') setFilter('status','transit','Em trânsito');
+      if (params.get('filter') === 'done')    setFilter('status','done','Recebido');
+      if (params.get('community')) setFilter('community', decodeURIComponent(params.get('community')), decodeURIComponent(params.get('community')));
+      if (params.get('sort') === 'recent') filterState.sort = 'recent';
       await loadItems();
       setupFilters();
     });
@@ -149,7 +152,11 @@
       const doneItems = filtered.filter(({ row }) => statusClass(row[COL.STATUS]) === 'done');
       const showing = hasFilter || showDone ? filtered : filtered.filter(({ row }) => statusClass(row[COL.STATUS]) !== 'done');
       const order = { pending:0, transit:1, waiting:2, done:3, cancelled:4 };
-      showing.sort((a,b) => (order[statusClass(a.row[COL.STATUS])]||99) - (order[statusClass(b.row[COL.STATUS])]||99));
+      if (filterState.sort === 'recent') {
+        showing.reverse(); // já vem ordenado por posição na planilha, reverter = mais recente primeiro
+      } else {
+        showing.sort((a,b) => (order[statusClass(a.row[COL.STATUS])]||99) - (order[statusClass(b.row[COL.STATUS])]||99));
+      }
 
       document.getElementById('results-info').textContent = `${showing.length} ${showing.length===1?'item':'itens'}${hasFilter?' encontrados':' ativos'}`;
 
