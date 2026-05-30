@@ -167,7 +167,7 @@
         setStep(4,'running','Recriando aba Comunidades...');
         await recreateSheet(BASE, headers, 'Comunidades', 2);
         await writeValues(BASE, headers, 'Comunidades!A1:F1', [['SKZ TRACKER — Comunidades','','','','','']]);
-        await writeValues(BASE, headers, 'Comunidades!A2:F2', [['Nome','GOM','WhatsApp','Planilha CEG','Tipos de Item','Observações']]);
+        await writeValues(BASE, headers, 'Comunidades!A2:G2', [['Nome','GOM','WhatsApp','Planilha CEG','Tipos de Item','Observações','Links']]);
         setStep(4,'done','Aba Comunidades criada!');
 
         // Aba Wishlist
