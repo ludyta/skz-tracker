@@ -86,17 +86,18 @@
   <a href="item-form.html" class="fab" title="Novo item"><i class="ti ti-plus"></i></a>
   <script>
     let allItems = [], showDone = false;
+    const filterState = { status:'', community:'', sort:'' };
 
     document.addEventListener('DOMContentLoaded', async () => {
       await Auth.init();
       const restored = await Auth.tryRestore();
       if (!restored) { window.location.href = '../index.html'; return; }
       const params = new URLSearchParams(window.location.search);
-      if (params.get('filter') === 'pending') setFilter('status','pending','Pgto pendente');
-      if (params.get('filter') === 'transit') setFilter('status','transit','Em trânsito');
-      if (params.get('filter') === 'done')    setFilter('status','done','Recebido');
-      if (params.get('community')) setFilter('community', decodeURIComponent(params.get('community')), decodeURIComponent(params.get('community')));
-      if (params.get('sort') === 'recent') filterState.sort = 'recent';
+      if (params.get('filter') === 'pending') { filterState.status = 'pending'; document.getElementById('filter-status').value = 'pending'; }
+      if (params.get('filter') === 'transit') { filterState.status = 'transit'; document.getElementById('filter-status').value = 'transit'; }
+      if (params.get('filter') === 'done')    { filterState.status = 'done';    document.getElementById('filter-status').value = 'done'; }
+      if (params.get('community')) { filterState.community = decodeURIComponent(params.get('community')); document.getElementById('filter-community').value = filterState.community; }
+      if (params.get('sort') === 'recent') { filterState.sort = 'recent'; }
       await loadItems();
       setupFilters();
     });
@@ -123,10 +124,10 @@
     function getFilters() {
       return {
         search:    document.getElementById('search-input').value.toLowerCase().trim(),
-        status:    document.getElementById('filter-status').value,
+        status:    filterState.status || document.getElementById('filter-status').value,
         comeback:  document.getElementById('filter-comeback').value,
         member:    document.getElementById('filter-member').value,
-        community: document.getElementById('filter-community').value,
+        community: filterState.community || document.getElementById('filter-community').value,
         type:      document.getElementById('filter-type').value,
       };
     }
