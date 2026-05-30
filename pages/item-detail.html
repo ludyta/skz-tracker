@@ -96,36 +96,56 @@
     const STEP_ICONS = { 'Aguardando cobrança':'ti-clock','Cobrado — pendente':'ti-alert-triangle','Pago':'ti-circle-check' };
 
     document.addEventListener('DOMContentLoaded', async () => {
-      await Auth.init();
-      const restored = await Auth.tryRestore();
-      if (!restored) { window.location.href = '../index.html'; return; }
-      const params = new URLSearchParams(window.location.search);
-      sheetRow = parseInt(params.get('row'));
-      if (!sheetRow) { window.location.href = 'items.html'; return; }
-      const [commRows, listRows] = await Promise.all([
-        Sheets.get(CONFIG.RANGES.COMMUNITIES),
-        Sheets.get('Listas!A3:D100'),
-      ]);
-      comunidadesData = (commRows||[]).filter(r=>r[0]).map(r=>({
-        nome: r[0],
-        goms: (r[1]||'').split('|').map(g=>g.trim()).filter(Boolean),
-        linkCeg: r[3]||'',
-      }));
-      listasData.tipos     = [...new Set((listRows||[]).map(r=>r[0]).filter(Boolean))];
-      listasData.comebacks = [...new Set((listRows||[]).map(r=>r[1]).filter(Boolean))];
-      listasData.membros   = [...new Set((listRows||[]).map(r=>r[2]).filter(Boolean))];
-      listasData.plats     = [...new Set((listRows||[]).map(r=>r[3]).filter(v=>v&&v.trim()))];
-      await loadItem();
+      try {
+        await Auth.init();
+        const restored = await Auth.tryRestore();
+        if (!restored) { window.location.href = '../index.html'; return; }
+        const params = new URLSearchParams(window.location.search);
+        sheetRow = parseInt(params.get('row'));
+        if (!sheetRow) { window.location.href = 'items.html'; return; }
+        const [commRows, listRows] = await Promise.all([
+          Sheets.get(CONFIG.RANGES.COMMUNITIES),
+          Sheets.get('Listas!A3:D100'),
+        ]);
+        comunidadesData = (commRows||[]).filter(r=>r[0]).map(r=>({
+          nome: r[0],
+          goms: (r[1]||'').split('|').map(g=>g.trim()).filter(Boolean),
+          linkCeg: r[3]||'',
+        }));
+        listasData.tipos     = [...new Set((listRows||[]).map(r=>r[0]).filter(Boolean))];
+        listasData.comebacks = [...new Set((listRows||[]).map(r=>r[1]).filter(Boolean))];
+        listasData.membros   = [...new Set((listRows||[]).map(r=>r[2]).filter(Boolean))];
+        listasData.plats     = [...new Set((listRows||[]).map(r=>r[3]).filter(v=>v&&v.trim()))];
+        await loadItem();
+      } catch(e) {
+        document.getElementById('content').innerHTML = `
+          <div style="text-align:center; padding:32px; color:var(--text-muted);">
+            <i class="ti ti-wifi-off" style="font-size:28px; display:block; margin-bottom:12px;"></i>
+            <p style="margin-bottom:16px;">Erro ao carregar. Tente fazer login novamente.</p>
+            <a href="../index.html" class="btn btn-primary" style="justify-content:center;">Fazer login</a>
+          </div>`;
+      }
     });
 
     async function loadItem() {
-      const rows = await Sheets.get(`Itens!A${sheetRow}:AG${sheetRow}`);
-      if (!rows||!rows[0]||!rows[0].some(v=>v)) { document.getElementById('content').innerHTML='<p style="color:var(--text-muted);text-align:center;padding:32px;">Item não encontrado.</p>'; return; }
-      rowData = rows[0];
-      while (rowData.length < 33) rowData.push('');
-      editingInfo = false;
-      editingPay  = false;
-      render();
+      try {
+        const rows = await Sheets.get(`Itens!A${sheetRow}:AG${sheetRow}`);
+        if (!rows||!rows[0]||!rows[0].some(v=>v)) {
+          document.getElementById('content').innerHTML='<p style="color:var(--text-muted);text-align:center;padding:32px;">Item não encontrado.</p>';
+          return;
+        }
+        rowData = rows[0];
+        while (rowData.length < 33) rowData.push('');
+        editingInfo = false;
+        editingPay  = false;
+        render();
+      } catch(e) {
+        document.getElementById('content').innerHTML = `
+          <div style="text-align:center; padding:32px; color:var(--text-muted);">
+            <p style="margin-bottom:16px;">Erro ao carregar item: ${e.message}</p>
+            <button class="btn btn-ghost" onclick="loadItem()">Tentar novamente</button>
+          </div>`;
+      }
     }
 
     function isCx() { return (rowData[COL.TIPO_CEG]||'')==='Caixinha'; }
@@ -366,13 +386,13 @@
         rowData[COL.TIPO]||'', rowData[COL.COMEBACK]||'', rowData[COL.SET_POB]||'', rowData[COL.NUM_SET]||'', rowData[COL.IMG_LINK]||'',
         rowData[COL.CLAIM_TYPE]||'', rowData[COL.MEMBRO]||'', rowData[COL.NUM_CLAIM]||'',
         rowData[COL.COMUNIDADE]||'', rowData[COL.GOM]||'', rowData[COL.LINK_CEG]||'',
-        vals[COL.VL_ITEM]??rowData[COL.VL_ITEM]||'', sts[COL.ST_ITEM]||'',
-        vals[COL.VL_FI1]??rowData[COL.VL_FI1]||'',  sts[COL.ST_FI1]||'',
-        vals[COL.VL_FI2]??rowData[COL.VL_FI2]||'',  sts[COL.ST_FI2]||'',
+        (vals[COL.VL_ITEM]??rowData[COL.VL_ITEM])||'', sts[COL.ST_ITEM]||'',
+        (vals[COL.VL_FI1]??rowData[COL.VL_FI1])||'',  sts[COL.ST_FI1]||'',
+        (vals[COL.VL_FI2]??rowData[COL.VL_FI2])||'',  sts[COL.ST_FI2]||'',
         novoStatus, rowData[COL.ETAPA]||'',
         rowData[COL.DATA_CLAIM]||'', rowData[COL.NOTAS]||'', rowData[COL.DATA_REC]||'',
-        vals[COL.VL_ALF]??rowData[COL.VL_ALF]||'',  sts[COL.ST_ALF]||'',
-        vals[COL.VL_FNAC]??rowData[COL.VL_FNAC]||'',sts[COL.ST_FNAC]||'',
+        (vals[COL.VL_ALF]??rowData[COL.VL_ALF])||'',  sts[COL.ST_ALF]||'',
+        (vals[COL.VL_FNAC]??rowData[COL.VL_FNAC])||'',sts[COL.ST_FNAC]||'',
         totalPago.toString(), totalPend.toString(),
         rowData[COL.TIPO_CEG]||'', rowData[COL.PLATAFORMA]||'', rowData[COL.MES_EDICAO]||'',
         rowData[COL.LINHA_GOM]||'', rowData[COL.NOME_SET]||'',
