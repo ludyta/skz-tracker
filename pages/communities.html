@@ -79,15 +79,48 @@
       </div>
       <div class="field"><label>Link do WhatsApp</label><input type="url" id="fn-whats" placeholder="https://wa.me/..."></div>
       <div class="field"><label>Link da planilha CEG</label><input type="url" id="fn-sheet" placeholder="https://docs.google.com/..."></div>
-      <div class="field"><label>Tipos de item</label><input type="text" id="fn-tipos" placeholder="ex: Photocard, Merch"></div>
+      <div class="field"><label>Grupos / Fandoms</label><input type="text" id="fn-tipos" placeholder="ex: Stray Kids, BTS"></div>
       <div class="field"><label>Observações</label><textarea id="fn-obs" placeholder="Notas sobre essa comunidade..."></textarea></div>
+
+      <div class="field">
+        <label>Links úteis</label>
+        <div id="new-links-list"></div>
+        <button type="button" class="add-link-btn" onclick="addNewLink()" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--lilac-dark);cursor:pointer;padding:6px 12px;border:1px dashed var(--lilac-mid);border-radius:var(--radius-md);background:transparent;font-family:var(--font-body);margin-top:4px;">
+          <i class="ti ti-plus" style="font-size:13px;"></i> Adicionar link
+        </button>
+      </div>
       <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="saveCommunity()" id="save-btn">
         <i class="ti ti-check"></i> Salvar comunidade
       </button>
     </div>
   </main>
   <script>
-    let allItems = [], allComms = [];
+    let newLinkCount = 0;
+
+    function addNewLink() {
+      const list = document.getElementById('new-links-list');
+      const div = document.createElement('div');
+      div.style = 'display:flex;gap:8px;margin-bottom:6px;';
+      div.id = `new-link-${newLinkCount}`;
+      div.innerHTML = `
+        <input type="text" placeholder="Nome" style="width:100px;flex-shrink:0;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;font-family:var(--font-body);font-size:13px;color:var(--text-primary);outline:none;">
+        <input type="url" placeholder="https://..." style="flex:1;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:8px 10px;font-family:var(--font-body);font-size:13px;color:var(--text-primary);outline:none;">
+        <button type="button" onclick="this.parentNode.remove()" style="width:36px;height:36px;border-radius:var(--radius-md);border:1px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-faint);flex-shrink:0;"><i class="ti ti-x" style="font-size:13px;"></i></button>`;
+      list.appendChild(div);
+      newLinkCount++;
+    }
+
+    function getNewLinks() {
+      const rows = document.querySelectorAll('#new-links-list > div');
+      const links = [];
+      rows.forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        const name = inputs[0]?.value.trim();
+        const url  = inputs[1]?.value.trim();
+        if (name && url) links.push({ name, url });
+      });
+      return JSON.stringify(links);
+    }
 
     document.addEventListener('DOMContentLoaded', async () => {
       await Auth.init();
@@ -180,6 +213,7 @@
           document.getElementById('fn-sheet').value,
           document.getElementById('fn-tipos').value,
           document.getElementById('fn-obs').value,
+          getNewLinks(),
         ]]);
         document.querySelectorAll('#panel-form input, #panel-form textarea').forEach(i => i.value = '');
         await loadAll();
